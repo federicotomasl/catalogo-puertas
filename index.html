@@ -223,6 +223,34 @@ select.finput{cursor:pointer;}
 .fchip-opt:hover{background:var(--bg3);}
 .fchip-opt.selected{background:var(--accent);color:#fff;}
 
+/* MOSAIC VIEW */
+.mosaic-grid{padding:6px 8px 24px;display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.mosaic-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:border-color .15s;}
+.mosaic-card:hover{border-color:var(--accent);}
+.mosaic-card.no-photo{border-style:dashed;opacity:0.6;}
+.mosaic-img-wrap{width:100%;aspect-ratio:4/3;background:var(--bg3);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+.mosaic-img-wrap img{width:100%;height:100%;object-fit:cover;}
+.mosaic-no-img{font-size:28px;color:var(--dim);}
+.mosaic-info{padding:6px 8px 7px;display:flex;flex-direction:column;gap:3px;}
+.mosaic-desc{font-family:'Barlow',sans-serif;font-size:12px;font-weight:500;color:var(--text);line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.mosaic-fab{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mosaic-tags{display:flex;gap:3px;flex-wrap:wrap;}
+.mosaic-tag{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;padding:1px 5px;border-radius:3px;background:var(--tbg);border:1px solid var(--tbd);color:var(--muted);}
+.mosaic-group-sep{grid-column:1/-1;display:flex;align-items:center;gap:8px;padding:6px 2px 2px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
+.mosaic-group-line{flex:1;height:1px;background:var(--border);}
+.mosaic-group-count{color:var(--dim);font-weight:400;}
+/* Modal overlay para foto ampliada */
+.mosaic-modal{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.85);align-items:center;justify-content:center;padding:16px;}
+.mosaic-modal.open{display:flex;}
+.mosaic-modal-inner{max-width:520px;width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;}
+.mosaic-modal-img{width:100%;max-height:55vh;object-fit:contain;background:var(--bg3);}
+.mosaic-modal-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px;}
+.mosaic-modal-desc{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--text);}
+.mosaic-modal-meta{display:flex;gap:5px;flex-wrap:wrap;}
+.mosaic-modal-actions{display:flex;gap:6px;margin-top:4px;}
+.mosaic-modal-close{position:absolute;top:12px;right:14px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-size:16px;cursor:pointer;border-radius:4px;padding:3px 9px;font-family:'Barlow Condensed',sans-serif;font-weight:700;}
+.mosaic-modal-close:hover{border-color:var(--accent);color:var(--accent);}
+
 </style>
 </head>
 <body>
@@ -230,9 +258,10 @@ select.finput{cursor:pointer;}
   <div id="page-catalog">
     <div class="topbar">
       <div class="topbar-inner">
-        <div style="display:flex;align-items:center;gap:10px;">
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;">
           <div class="topbar-title">Catalogo de Puertas</div>
           <button class="btn btn-accent" onclick="openForm(null)">+ Agregar</button>
+          <button class="btn btn-outline" onclick="openTemporal()" id="btn-temporal" style="border-color:#7abf9e;color:#7abf9e;">⏱ Temporal</button>
         </div>
         <div class="topbar-actions">
           <button class="btn btn-outline" onclick="exportJSON()">Exportar</button>
@@ -244,6 +273,7 @@ select.finput{cursor:pointer;}
           <div class="view-toggle">
             <button id="vt-cards" class="active" onclick="setViewMode('cards')" title="Vista cards">▦</button>
             <button id="vt-table" onclick="setViewMode('table')" title="Vista tabla">☰</button>
+            <button id="vt-mosaic" onclick="setViewMode('mosaic')" title="Vista mosaico">⊟</button>
           </div>
           <button class="btn btn-ghost" onclick="toggleTheme()">&#9788;</button>
         </div>
@@ -302,6 +332,8 @@ select.finput{cursor:pointer;}
           <button class="fchip" id="fchip-medida" onclick="toggleFchip('medida')">Medida <span class="fchip-arrow">▼</span></button>
           <div class="fchip-drop" id="fchip-drop-medida"><div class="fchip-opts" id="fchip-opts-medida"></div></div>
         </div>
+        <!-- Filtro solo-con-foto: visible solo en cards y mosaico -->
+        <button id="filter-photo-btn" class="fchip" onclick="toggleFilterPhoto()" title="Mostrar solo puertas con foto" style="display:none;">Con foto</button>
         <!-- Hidden selects used by getFiltered() -->
         <select id="f-fabrica-filter" style="display:none;"><option value="">Todas</option></select>
         <select id="f-marco-filter" style="display:none;"><option value="">Todos</option></select>
@@ -420,6 +452,109 @@ select.finput{cursor:pointer;}
   </div>
 
 <div class="toast" id="toast"></div>
+<div class="toast" id="toast-temp" style="bottom:60px;"></div>
+
+<!-- ===== MOSAIC MODAL ===== -->
+<div class="mosaic-modal" id="mosaic-modal" onclick="closeMosaicModal(event)">
+  <div class="mosaic-modal-inner" id="mosaic-modal-inner">
+    <div style="position:relative;">
+      <img class="mosaic-modal-img" id="mosaic-modal-img" src="" alt="">
+      <button class="mosaic-modal-close" onclick="closeMosaicModal()">✕</button>
+    </div>
+    <div class="mosaic-modal-body">
+      <div class="mosaic-modal-desc" id="mosaic-modal-desc"></div>
+      <div class="mosaic-modal-meta" id="mosaic-modal-meta"></div>
+      <div class="mosaic-modal-actions">
+        <button class="abtn abtn-edit" id="mosaic-modal-edit">Editar</button>
+        <button class="abtn abtn-dup" id="mosaic-modal-dup">Copiar</button>
+        <button class="abtn abtn-del" id="mosaic-modal-del">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TEMPORAL PAGE ===== -->
+<div id="page-temporal" style="display:none;">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;">
+        <div class="topbar-title" style="color:#7abf9e;">Catálogo Temporal</div>
+        <button class="btn btn-accent" onclick="openTempForm(null)">+ Agregar</button>
+        <button class="btn btn-ghost" onclick="closeTemporal()">← Principal</button>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost" onclick="exportTempJSON()">Exportar</button>
+        <label class="btn btn-ghost" style="cursor:pointer;">Importar<input type="file" accept=".json" style="display:none" onchange="importTempJSON(event)"></label>
+        <button class="btn btn-ghost" onclick="exportTempPDF()">PDF</button>
+        <button class="btn btn-ghost" onclick="exportTempCSV()">CSV</button>
+        <button id="temp-undo-btn" class="btn btn-ghost" onclick="performTempUndo()" disabled style="opacity:0.35;">&#8630;</button>
+        <button id="temp-redo-btn" class="btn btn-ghost" onclick="performTempRedo()" disabled style="opacity:0.35;">&#8631;</button>
+        <div class="view-toggle">
+          <button id="tvt-cards" class="active" onclick="setTempViewMode('cards')" title="Vista cards">▦</button>
+          <button id="tvt-table" onclick="setTempViewMode('table')" title="Vista tabla">☰</button>
+        </div>
+        <button class="btn btn-ghost" onclick="toggleTheme()">&#9788;</button>
+      </div>
+    </div>
+  </div>
+  <div style="max-width:560px;margin:0 auto;padding:8px 12px;">
+    <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+      <div id="temp-count" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--muted);"></div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0;">
+        <button id="promote-sel-btn" onclick="promoteSelected()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:default;white-space:nowrap;transition:all .15s;" disabled>↑ Promover</button>
+        <button id="discard-temp-btn" onclick="discardTemporal()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid #e05555;color:#e05555;background:transparent;cursor:pointer;transition:all .15s;">✕ Descartar</button>
+      </div>
+    </div>
+  </div>
+  <div id="temp-door-list" style="max-width:560px;margin:0 auto;padding:0 8px 40px;"></div>
+</div>
+
+<!-- ===== TEMPORAL FORM PAGE ===== -->
+<div id="page-temp-form" style="display:none;">
+  <div class="topbar">
+    <div class="topbar-inner" style="flex-direction:row;justify-content:space-between;">
+      <div class="topbar-title" id="temp-form-title-bar" style="color:#7abf9e;">Nuevo Modelo Temporal</div>
+      <button class="btn btn-ghost" onclick="closeTempForm()">← Volver</button>
+    </div>
+  </div>
+  <div class="form-wrap">
+    <div class="fgrp">
+      <div class="flabel">Fabrica</div>
+      <input class="finput" id="tff-fabrica" type="text" placeholder="ej: Aluar">
+    </div>
+    <div class="fgrp">
+      <div class="flabel">Descripcion</div>
+      <input class="finput" id="tff-desc" type="text" placeholder="Descripcion breve...">
+    </div>
+    <div class="frow" style="align-items:flex-start;margin-bottom:0;">
+      <div class="fgrp-half">
+        <div class="flabel">Color de Puerta</div>
+        <input class="finput" id="tff-color" type="text" placeholder="ej: Blanco">
+      </div>
+      <div class="fgrp-half">
+        <div class="flabel">Tipo de Marco</div>
+        <input class="finput" id="tff-marco" type="text" placeholder="ej: Aluminio">
+      </div>
+    </div>
+    <div class="sizes-section" style="margin-top:10px;">
+      <div class="sizes-title">Medidas y Stock</div>
+      <div id="temp-sizes-container"></div>
+      <div class="srow">
+        <input class="sinput" id="tnew-medida" type="text" placeholder="00/00" maxlength="5" oninput="maskMedida(this)" onkeydown="medidaKeydown(event,this)">
+        <div class="stinput-wrap">
+          <span class="stinput-lbl lbl-r">D</span>
+          <input class="stinput-bare" id="tnew-r" type="number" value="0" min="0">
+        </div>
+        <div class="stinput-wrap">
+          <span class="stinput-lbl lbl-l">I</span>
+          <input class="stinput-bare" id="tnew-l" type="number" value="0" min="0">
+        </div>
+        <button class="addbtn" onclick="addTempSize()">+</button>
+      </div>
+    </div>
+    <button class="btn-save" id="temp-btn-save" onclick="saveTempModel()">Guardar Modelo Temporal</button>
+  </div>
+</div>
 
 <script>
 // ===== STATE =====
@@ -446,10 +581,11 @@ function pushUndo(label){
     label: label,
     models: JSON.parse(JSON.stringify(models)),
     colors: JSON.parse(JSON.stringify(colors)),
-    marcos: JSON.parse(JSON.stringify(marcos))
+    marcos: JSON.parse(JSON.stringify(marcos)),
+    tempModels: JSON.parse(JSON.stringify(tempModels))
   });
   if(undoHistory.length > UNDO_LIMIT) undoHistory.shift();
-  redoHistory = []; // clear redo on new action
+  redoHistory = [];
   updateUndoBtn();
   updateRedoBtn();
 }
@@ -482,13 +618,15 @@ function performUndo(){
     label: undoHistory[undoHistory.length-1].label,
     models: JSON.parse(JSON.stringify(models)),
     colors: JSON.parse(JSON.stringify(colors)),
-    marcos: JSON.parse(JSON.stringify(marcos))
+    marcos: JSON.parse(JSON.stringify(marcos)),
+    tempModels: JSON.parse(JSON.stringify(tempModels))
   });
   if(redoHistory.length > UNDO_LIMIT) redoHistory.shift();
   var snap = undoHistory.pop();
   models = snap.models;
   colors = snap.colors;
   marcos = snap.marcos;
+  if(snap.tempModels !== undefined){ tempModels=snap.tempModels; saveTempModels(); renderTempList(); var tb=document.getElementById('btn-temporal'); if(tb) tb.textContent=tempModels.length>0?'⏱ Temporal ('+tempModels.length+')':'⏱ Temporal'; }
   saveModels(); saveColors(); saveMarcos();
   updateFilters(); renderList();
   restoreOpenCards(open);
@@ -505,13 +643,15 @@ function performRedo(){
     label: redoHistory[redoHistory.length-1].label,
     models: JSON.parse(JSON.stringify(models)),
     colors: JSON.parse(JSON.stringify(colors)),
-    marcos: JSON.parse(JSON.stringify(marcos))
+    marcos: JSON.parse(JSON.stringify(marcos)),
+    tempModels: JSON.parse(JSON.stringify(tempModels))
   });
   if(undoHistory.length > UNDO_LIMIT) undoHistory.shift();
   var snap = redoHistory.pop();
   models = snap.models;
   colors = snap.colors;
   marcos = snap.marcos;
+  if(snap.tempModels !== undefined){ tempModels=snap.tempModels; saveTempModels(); renderTempList(); var tb=document.getElementById('btn-temporal'); if(tb) tb.textContent=tempModels.length>0?'⏱ Temporal ('+tempModels.length+')':'⏱ Temporal'; }
   saveModels(); saveColors(); saveMarcos();
   updateFilters(); renderList();
   restoreOpenCards(open);
@@ -523,22 +663,16 @@ function performRedo(){
 
 function updateUndoBtn(){
   var btn = document.getElementById('undo-btn');
-  if(!btn) return;
-  var has = undoHistory.length > 0;
-  btn.disabled = !has;
-  btn.style.opacity = has ? '1' : '0.35';
-  btn.style.cursor = has ? 'pointer' : 'default';
-  btn.title = has ? 'Deshacer: '+undoHistory[undoHistory.length-1].label : 'Sin acciones para deshacer';
+  if(btn){ var has=undoHistory.length>0; btn.disabled=!has; btn.style.opacity=has?'1':'0.35'; btn.style.cursor=has?'pointer':'default'; btn.title=has?'Deshacer: '+undoHistory[undoHistory.length-1].label:'Sin acciones para deshacer'; }
+  var tbtn=document.getElementById('temp-undo-btn');
+  if(tbtn){ var has2=undoHistory.length>0; tbtn.disabled=!has2; tbtn.style.opacity=has2?'1':'0.35'; }
 }
 
 function updateRedoBtn(){
   var btn = document.getElementById('redo-btn');
-  if(!btn) return;
-  var has = redoHistory.length > 0;
-  btn.disabled = !has;
-  btn.style.opacity = has ? '1' : '0.35';
-  btn.style.cursor = has ? 'pointer' : 'default';
-  btn.title = has ? 'Rehacer: '+redoHistory[redoHistory.length-1].label : 'Sin acciones para rehacer';
+  if(btn){ var has=redoHistory.length>0; btn.disabled=!has; btn.style.opacity=has?'1':'0.35'; btn.style.cursor=has?'pointer':'default'; btn.title=has?'Rehacer: '+redoHistory[redoHistory.length-1].label:'Sin acciones para rehacer'; }
+  var tbtn=document.getElementById('temp-redo-btn');
+  if(tbtn){ var has2=redoHistory.length>0; tbtn.disabled=!has2; tbtn.style.opacity=has2?'1':'0.35'; }
 }
 
 try {
@@ -927,13 +1061,14 @@ function adjustStock(btn, modelId, sizeIdx, side, delta){
 }
 
 // ===== TOGGLE CARD =====
-function toggleCard(btn, id){
-  var body=document.getElementById('cb-'+id);
-  if(!body)return;
+function toggleCard(id){
+  var body=document.getElementById(id);
+  if(!body) return;
+  var card=body.parentNode;
+  var btn=card.querySelector('.abtn-exp');
   var open=(body.className==='card-body open');
   body.className=open?'card-body':'card-body open';
-  btn.className=open?'abtn abtn-exp':'abtn abtn-exp open';
-  btn.textContent=open?'▼':'▲';
+  if(btn){btn.className=open?'abtn abtn-exp':'abtn abtn-exp open';btn.textContent=open?'▼':'▲';}
 }
 
 // ===== FILTERS =====
@@ -1032,6 +1167,7 @@ function getFiltered(){
     if(mf && (m.marco||'')!==mf) continue;
     if(cf && (m.color||'')!==cf) continue;
     if(medf){var found=false;for(var j=0;j<(m.sizes||[]).length;j++){if(m.sizes[j].medida===medf){found=true;break;}} if(!found)continue;}
+    if(filterOnlyWithPhoto && !m.photo) continue;
     out.push(m);
   }
   if(currentSort==='fabrica') out.sort(function(a,b){return(a.fabrica||'').localeCompare(b.fabrica||'');});
@@ -1201,6 +1337,10 @@ function resetFilters(){
   document.getElementById('search-input').value='';
   var ids=['f-fabrica-filter','f-marco-filter','f-color-filter','f-medida-filter'];
   for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el)el.value='';}
+  // Reset filtro de foto
+  filterOnlyWithPhoto = false;
+  var fpb=document.getElementById('filter-photo-btn');
+  if(fpb) fpb.classList.remove('active');
   // Reset chip labels
   var labels={fabrica:'Fábrica',marco:'Marco',color:'Color',medida:'Medida'};
   var keys=Object.keys(labels);
@@ -1224,7 +1364,7 @@ function updateResetBtn(){
   var mf=(document.getElementById('f-marco-filter')||{}).value||'';
   var cf=(document.getElementById('f-color-filter')||{}).value||'';
   var medf=(document.getElementById('f-medida-filter')||{}).value||'';
-  var active=q||ff||mf||cf||medf;
+  var active=q||ff||mf||cf||medf||filterOnlyWithPhoto;
   btn.style.display=active?'block':'none';
   btn.style.borderColor=active?'var(--accent)':'var(--border)';
   btn.style.color=active?'var(--accent)':'var(--dim)';
@@ -1294,6 +1434,17 @@ function updateFchipLabel(key){
 function toggleFilters(){ /* legacy no-op */ }
 
 var showPhotos = true;
+var filterOnlyWithPhoto = false;
+
+function toggleFilterPhoto(){
+  filterOnlyWithPhoto = !filterOnlyWithPhoto;
+  var btn = document.getElementById('filter-photo-btn');
+  if(btn){
+    btn.classList.toggle('active', filterOnlyWithPhoto);
+  }
+  updateResetBtn();
+  renderList();
+}
 
 function togglePhotoDisplay(){
   showPhotos = !showPhotos;
@@ -1364,9 +1515,13 @@ function groupModels(filtered){
 function setViewMode(mode){
   viewMode = mode;
   try{localStorage.setItem('puertas_viewmode', mode);}catch(e){}
-  document.getElementById('vt-cards').className = mode==='cards' ? 'active' : '';
-  document.getElementById('vt-table').className = mode==='table' ? 'active' : '';
+  document.getElementById('vt-cards').className  = mode==='cards'  ? 'active' : '';
+  document.getElementById('vt-table').className  = mode==='table'  ? 'active' : '';
+  document.getElementById('vt-mosaic').className = mode==='mosaic' ? 'active' : '';
   document.getElementById('card-only-btns').style.display = mode==='cards' ? 'inline-flex' : 'none';
+  // Botón "Con foto": visible solo en cards y mosaico
+  var fpb = document.getElementById('filter-photo-btn');
+  if(fpb) fpb.style.display = (mode==='cards' || mode==='mosaic') ? '' : 'none';
   renderList();
 }
 
@@ -1482,6 +1637,87 @@ function renderTable(filtered){
   }
 }
 
+// ===== RENDER MOSAIC =====
+function renderMosaic(filtered){
+  var list = document.getElementById('door-list');
+  if(filtered.length===0){
+    list.innerHTML='<div class="empty-state"><div class="empty-icon">&#128247;</div><p>No hay resultados</p></div>';
+    return;
+  }
+  var groups = groupModels(filtered);
+  var html='<div class="mosaic-grid">';
+  for(var g=0;g<groups.length;g++){
+    var grp=groups[g];
+    if(grp.key!==null){
+      html+='<div class="mosaic-group-sep"><span>'+esc(grp.key)+'</span>'
+        +'<span class="mosaic-group-count">'+grp.models.length+' modelo'+(grp.models.length!==1?'s':'')+'</span>'
+        +'<div class="mosaic-group-line"></div></div>';
+    }
+    for(var j=0;j<grp.models.length;j++){
+      var m=grp.models[j], mid=m.id;
+      var hasPhoto=!!m.photo;
+      var imgHtml=hasPhoto
+        ? '<img src="'+m.photo+'" loading="lazy" alt="'+esc(m.descripcion||m.fabrica||'')+'">'
+        : '<span class="mosaic-no-img">&#128682;</span>';
+      var descHtml=m.descripcion?esc(m.descripcion):(m.fabrica?esc(m.fabrica):'Sin descripción');
+      var fabHtml=m.fabrica&&m.descripcion?'<div class="mosaic-fab">'+esc(m.fabrica)+'</div>':'';
+      var tags='';
+      if(m.color) tags+='<span class="mosaic-tag">'+esc(m.color)+'</span>';
+      if(m.marco) tags+='<span class="mosaic-tag">'+esc(m.marco)+'</span>';
+      var tagsHtml=tags?'<div class="mosaic-tags">'+tags+'</div>':'';
+      html+='<div class="mosaic-card'+(hasPhoto?'':' no-photo')+'" onclick="openMosaicModal(\''+mid+'\')">'
+        +'<div class="mosaic-img-wrap">'+imgHtml+'</div>'
+        +'<div class="mosaic-info">'
+        +'<div class="mosaic-desc">'+descHtml+'</div>'
+        +fabHtml
+        +tagsHtml
+        +'</div>'
+        +'</div>';
+    }
+  }
+  html+='</div>';
+  list.innerHTML=html;
+}
+
+// ===== MOSAIC MODAL =====
+function openMosaicModal(id){
+  var m=getModel(id); if(!m) return;
+  var modal=document.getElementById('mosaic-modal');
+  var imgEl=document.getElementById('mosaic-modal-img');
+  var descEl=document.getElementById('mosaic-modal-desc');
+  var metaEl=document.getElementById('mosaic-modal-meta');
+  var editBtn=document.getElementById('mosaic-modal-edit');
+  var dupBtn=document.getElementById('mosaic-modal-dup');
+  var delBtn=document.getElementById('mosaic-modal-del');
+
+  if(m.photo){ imgEl.src=m.photo; imgEl.style.display='block'; }
+  else { imgEl.src=''; imgEl.style.display='none'; }
+
+  descEl.textContent = m.descripcion || m.fabrica || 'Sin descripción';
+
+  var metaHtml='';
+  if(m.fabrica) metaHtml+='<span class="mosaic-tag">'+esc(m.fabrica)+'</span>';
+  if(m.color)   metaHtml+='<span class="mosaic-tag">'+esc(m.color)+'</span>';
+  if(m.marco)   metaHtml+='<span class="mosaic-tag">'+esc(m.marco)+'</span>';
+  // Stock total
+  var total=0; for(var i=0;i<(m.sizes||[]).length;i++) total+=(m.sizes[i].r||0)+(m.sizes[i].l||0);
+  if((m.sizes||[]).length>0) metaHtml+='<span class="mosaic-tag" style="color:var(--text);">Stock: '+total+'</span>';
+  metaEl.innerHTML=metaHtml;
+
+  editBtn.onclick=function(){ closeMosaicModal(); openForm(id); };
+  dupBtn.onclick=function(){ closeMosaicModal(); duplicateModel(id); };
+  delBtn.onclick=function(){ closeMosaicModal(); deleteModel(id); };
+
+  modal.className='mosaic-modal open';
+  document.body.style.overflow='hidden';
+}
+
+function closeMosaicModal(e){
+  if(e && e.target !== document.getElementById('mosaic-modal')) return;
+  document.getElementById('mosaic-modal').className='mosaic-modal';
+  document.body.style.overflow='';
+}
+
 // ===== RENDER LIST =====
 function renderList(){
   var filtered=getFiltered();
@@ -1491,6 +1727,7 @@ function renderList(){
   noStockExpanded=false;
 
   if(viewMode==='table'){ renderTable(filtered); updateResetBtn(); return; }
+  if(viewMode==='mosaic'){ renderMosaic(filtered); updateResetBtn(); return; }
 
   var list=document.getElementById('door-list');
   if(n===0){
@@ -1576,7 +1813,7 @@ function renderList(){
       +'</div>'
       +'</div>'
       +'<div class="door-actions">'
-      +(hasBody?'<button class="abtn abtn-exp" onclick="toggleCard(this,\''+mid+'\')">▼</button>':'')
+      +(hasBody?'<button class="abtn abtn-exp" onclick="toggleCard(\'cb-'+mid+'\')">▼</button>':'')
       +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')">Editar</button>'
       +'<button class="abtn abtn-dup" onclick="duplicateModel(\''+mid+'\')">Copiar</button>'
       +'<button class="abtn abtn-del" onclick="deleteModel(\''+mid+'\')">Eliminar</button>'
@@ -1796,7 +2033,515 @@ function exportPDF(){
   else{var blob=new Blob([html],{type:'text/html'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='catalogo.html';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(url);},1000);}
 }
 
-// ===== THEME =====
+// ===== TEMPORAL STATE =====
+var tempModels = [];
+var tempEditingId = null;
+var tempFormSizes = [];
+var tempViewMode = 'cards';
+var discardTempPending = false;
+
+try { var ts = localStorage.getItem('puertas_temp_models'); if(ts) tempModels = JSON.parse(ts); } catch(e){ tempModels=[]; }
+
+function saveTempModels(){ try{localStorage.setItem('puertas_temp_models', JSON.stringify(tempModels));}catch(e){} }
+
+function pushTempUndo(label){
+  pushUndo(label);
+}
+
+function performTempUndo(){ performUndo(); }
+function performTempRedo(){ performRedo(); }
+
+function updateTempUndoBtns(){
+  var u=document.getElementById('temp-undo-btn'), r=document.getElementById('temp-redo-btn');
+  if(u){u.disabled=!undoHistory.length; u.style.opacity=undoHistory.length?'1':'0.35';}
+  if(r){r.disabled=!redoHistory.length; r.style.opacity=redoHistory.length?'1':'0.35';}
+}
+
+function showTempToast(msg){
+  var t=document.getElementById('toast-temp');
+  t.textContent=msg; t.className='toast show';
+  setTimeout(function(){t.className='toast';},2500);
+}
+
+function openTemporal(){
+  document.getElementById('page-catalog').style.display='none';
+  document.getElementById('page-form').style.display='none';
+  document.getElementById('page-temporal').style.display='block';
+  // Update button indicator
+  var btn=document.getElementById('btn-temporal');
+  if(btn && tempModels.length>0) btn.textContent='⏱ Temporal ('+tempModels.length+')';
+  renderTempList();
+  updateTempUndoBtns();
+}
+
+function closeTemporal(){
+  document.getElementById('page-temporal').style.display='none';
+  document.getElementById('page-catalog').style.display='block';
+  // Update indicator
+  var btn=document.getElementById('btn-temporal');
+  if(btn) btn.textContent=tempModels.length>0?'⏱ Temporal ('+tempModels.length+')':'⏱ Temporal';
+  window.scrollTo(0,0);
+}
+
+function discardTemporal(){
+  if(!discardTempPending){
+    discardTempPending=true;
+    var b=document.getElementById('discard-temp-btn');
+    if(b){b.textContent='Seguro?';b.style.background='#e05555';b.style.color='#fff';}
+    setTimeout(function(){
+      document.addEventListener('click', cancelDiscardTemp, {once:true, capture:true});
+    },0);
+    return;
+  }
+}
+
+function cancelDiscardTemp(e){
+  var b=document.getElementById('discard-temp-btn');
+  if(b && b.contains(e.target)){
+    discardTempPending=false;
+    // Check if any selected
+    var checks=document.querySelectorAll('.temp-check:checked'), ids={};
+    for(var i=0;i<checks.length;i++) ids[checks[i].getAttribute('data-id')]=true;
+    var hasSelected=Object.keys(ids).length>0;
+    if(hasSelected){
+      pushTempUndo('Descartar seleccionados');
+      tempModels=tempModels.filter(function(m){return !ids[m.id];});
+      showTempToast('Modelos descartados');
+    } else {
+      pushTempUndo('Descartar todo el temporal');
+      tempModels=[];
+      tempUndoHistory=[]; tempRedoHistory=[];
+      updateTempUndoBtns();
+      showTempToast('Temporal descartado');
+    }
+    saveTempModels(); renderTempList();
+    var btn=document.getElementById('btn-temporal');
+    if(btn) btn.textContent=tempModels.length>0?'⏱ Temporal ('+tempModels.length+')':'⏱ Temporal';
+    if(b){b.textContent='✕ Descartar';b.style.background='transparent';b.style.color='#e05555';}
+    return;
+  }
+  discardTempPending=false;
+  if(b){b.textContent='✕ Descartar';b.style.background='transparent';b.style.color='#e05555';}
+}
+
+function openTempForm(id){
+  tempEditingId=id||null;
+  tempFormSizes=[];
+  document.getElementById('tff-fabrica').value='';
+  document.getElementById('tff-desc').value='';
+  document.getElementById('tff-color').value='';
+  document.getElementById('tff-marco').value='';
+  document.getElementById('tnew-medida').value='';
+  document.getElementById('tnew-r').value=0;
+  document.getElementById('tnew-l').value=0;
+  document.getElementById('temp-form-title-bar').textContent=id?'Editar Modelo Temporal':'Nuevo Modelo Temporal';
+  document.getElementById('temp-btn-save').textContent=id?'Guardar Cambios':'Guardar Modelo Temporal';
+  if(id){
+    var m=tempModels.filter(function(x){return x.id===id;})[0];
+    if(m){
+      document.getElementById('tff-fabrica').value=m.fabrica||'';
+      document.getElementById('tff-desc').value=m.descripcion||'';
+      document.getElementById('tff-color').value=m.color||'';
+      document.getElementById('tff-marco').value=m.marco||'';
+      for(var i=0;i<(m.sizes||[]).length;i++) tempFormSizes.push({medida:m.sizes[i].medida,r:m.sizes[i].r,l:m.sizes[i].l});
+    }
+  }
+  renderTempSizesForm();
+  document.getElementById('page-temporal').style.display='none';
+  document.getElementById('page-temp-form').style.display='block';
+  window.scrollTo(0,0);
+}
+
+function closeTempForm(){
+  document.getElementById('page-temp-form').style.display='none';
+  document.getElementById('page-temporal').style.display='block';
+  window.scrollTo(0,0);
+}
+
+function renderTempSizesForm(){
+  var c=document.getElementById('temp-sizes-container'); c.innerHTML='';
+  for(var i=0;i<tempFormSizes.length;i++){
+    (function(idx){
+      var row=document.createElement('div'); row.className='srow';
+      var digits=(tempFormSizes[idx].medida||'').replace(/\D/g,'').slice(0,4);
+      var initVal=digits.slice(0,2)+'/'+digits.slice(2);
+      var mi=document.createElement('input'); mi.className='sinput'; mi.type='text'; mi.value=initVal||'/'; mi.placeholder='00/00'; mi.maxLength=5;
+      mi.oninput=function(){maskMedida(this);tempFormSizes[idx].medida=this.value;};
+      mi.onkeydown=function(e){medidaKeydown(e,this);};
+      var rWrap=document.createElement('div'); rWrap.className='stinput-wrap';
+      var rLbl=document.createElement('span'); rLbl.className='stinput-lbl lbl-r'; rLbl.textContent='D';
+      var ri=document.createElement('input'); ri.className='stinput-bare'; ri.type='number'; ri.value=tempFormSizes[idx].r; ri.min=0; ri.oninput=function(){tempFormSizes[idx].r=parseInt(this.value)||0;};
+      rWrap.appendChild(rLbl); rWrap.appendChild(ri);
+      var lWrap=document.createElement('div'); lWrap.className='stinput-wrap';
+      var lLbl=document.createElement('span'); lLbl.className='stinput-lbl lbl-l'; lLbl.textContent='I';
+      var li=document.createElement('input'); li.className='stinput-bare'; li.type='number'; li.value=tempFormSizes[idx].l; li.min=0; li.oninput=function(){tempFormSizes[idx].l=parseInt(this.value)||0;};
+      lWrap.appendChild(lLbl); lWrap.appendChild(li);
+      var rb=document.createElement('button'); rb.className='rmbtn'; rb.textContent='x'; rb.type='button'; rb.onclick=function(){tempFormSizes.splice(idx,1);renderTempSizesForm();};
+      row.appendChild(mi); row.appendChild(rWrap); row.appendChild(lWrap); row.appendChild(rb);
+      c.appendChild(row);
+    })(i);
+  }
+}
+
+function addTempSize(){
+  var med=document.getElementById('tnew-medida').value.trim();
+  var digits=med.replace(/\D/g,'');
+  if(!med||digits.length===0){showTempToast('Ingresa una medida');return;}
+  var r=parseInt(document.getElementById('tnew-r').value)||0;
+  var l=parseInt(document.getElementById('tnew-l').value)||0;
+  tempFormSizes.push({medida:med,r:r,l:l});
+  tempFormSizes=sortSizes(tempFormSizes);
+  document.getElementById('tnew-medida').value='';
+  document.getElementById('tnew-r').value=0;
+  document.getElementById('tnew-l').value=0;
+  renderTempSizesForm();
+}
+
+function saveTempModel(){
+  var fab=document.getElementById('tff-fabrica').value.trim();
+  var desc=document.getElementById('tff-desc').value.trim();
+  var color=document.getElementById('tff-color').value.trim();
+  var marco=document.getElementById('tff-marco').value.trim();
+  if(!desc&&!fab){showTempToast('Ingresa al menos una descripción o fábrica');return;}
+  pushTempUndo(tempEditingId?'Editar '+desc:'Agregar '+desc);
+  if(tempEditingId){
+    for(var i=0;i<tempModels.length;i++){
+      if(tempModels[i].id===tempEditingId){
+        tempModels[i]={id:tempEditingId,fabrica:fab,descripcion:desc,color:color,marco:marco,sizes:tempFormSizes.slice()};
+        break;
+      }
+    }
+  } else {
+    tempModels.push({id:'t'+Date.now(),fabrica:fab,descripcion:desc,color:color,marco:marco,sizes:tempFormSizes.slice()});
+  }
+  saveTempModels();
+  closeTempForm();
+  renderTempList();
+  var btn=document.getElementById('btn-temporal');
+  if(btn) btn.textContent='⏱ Temporal ('+tempModels.length+')';
+}
+
+function deleteTempModel(id){
+  pushTempUndo('Eliminar modelo');
+  tempModels=tempModels.filter(function(m){return m.id!==id;});
+  saveTempModels(); renderTempList();
+  var btn=document.getElementById('btn-temporal');
+  if(btn) btn.textContent=tempModels.length>0?'⏱ Temporal ('+tempModels.length+')':'⏱ Temporal';
+}
+
+function updateTempSelLabel(){
+  var checks=document.querySelectorAll('.temp-check'), n=0;
+  for(var i=0;i<checks.length;i++){if(checks[i].checked)n++;}
+  var total=tempModels.length;
+  var countEl=document.getElementById('temp-count');
+  if(countEl) countEl.innerHTML=total+' modelo'+(total!==1?'s':'')+(n>0?' &nbsp;<span style="color:#7abf9e;font-weight:600">'+n+' seleccionado'+(n!==1?'s':'')+'</span>':'');
+  var promBtn=document.getElementById('promote-sel-btn');
+  if(promBtn){
+    if(n>0){
+      promBtn.disabled=false; promBtn.textContent='↑ Promover'; promBtn.style.background='transparent';
+      promBtn.style.borderColor='#7abf9e'; promBtn.style.color='#7abf9e'; promBtn.style.cursor='pointer';
+      promBtn.onmouseover=function(){this.style.background='#7abf9e';this.style.color='#fff';};
+      promBtn.onmouseout=function(){this.style.background='transparent';this.style.color='#7abf9e';};
+    } else {
+      promBtn.disabled=true; promBtn.textContent='↑ Promover'; promBtn.style.borderColor='var(--border)';
+      promBtn.style.color='var(--dim)'; promBtn.style.cursor='default'; promBtn.style.background='transparent';
+      promBtn.onmouseover=null; promBtn.onmouseout=null;
+    }
+  }
+}
+
+var promoteSelPending=false;
+
+function promoteSelected(){
+  var checks=document.querySelectorAll('.temp-check:checked');
+  if(!checks.length) return;
+  var btn=document.getElementById('promote-sel-btn');
+  if(!promoteSelPending){
+    promoteSelPending=true;
+    if(btn){btn.textContent='Seguro?';btn.style.background='#7abf9e';btn.style.color='#fff';}
+    setTimeout(function(){
+      document.addEventListener('click', function cancelProm(e){
+        if(btn && btn.contains(e.target)){
+          // Confirm
+          promoteSelPending=false;
+          btn.textContent='↑ Promover';btn.style.background='transparent';btn.style.color='#7abf9e';
+          var ids={};
+          var ch=document.querySelectorAll('.temp-check:checked');
+          for(var i=0;i<ch.length;i++) ids[ch[i].getAttribute('data-id')]=true;
+          var n=Object.keys(ids).length;
+          pushUndo('Promover '+n+' modelo'+(n!==1?'s':''));
+          for(var id in ids){
+            var m=tempModels.filter(function(x){return x.id===id;})[0];
+            if(!m) continue;
+            var newM=JSON.parse(JSON.stringify(m));
+            newM.id='m'+Date.now()+Math.random();
+            models.push(newM);
+          }
+          tempModels=tempModels.filter(function(m){return !ids[m.id];});
+          saveModels(); updateFilters(); renderList();
+          saveTempModels(); renderTempList();
+          var tb=document.getElementById('btn-temporal');
+          if(tb) tb.textContent=tempModels.length>0?'⏱ Temporal ('+tempModels.length+')':'⏱ Temporal';
+          showToast(n+' modelo'+(n!==1?'s':'')+' promovido'+(n!==1?'s':'')+' al catálogo');
+          document.removeEventListener('click', cancelProm, true);
+          return;
+        }
+        // Cancel
+        promoteSelPending=false;
+        if(btn){btn.textContent='↑ Promover';btn.style.background='transparent';btn.style.color='#7abf9e';}
+        document.removeEventListener('click', cancelProm, true);
+      }, true);
+    },0);
+  }
+}
+
+function duplicateTempModel(id){
+  var m=tempModels.filter(function(x){return x.id===id;})[0]; if(!m) return;
+  pushTempUndo('Copiar '+m.descripcion);
+  var copy=JSON.parse(JSON.stringify(m));
+  copy.id='t'+Date.now();
+  copy.descripcion=(m.descripcion||'')+(m.descripcion?' (copia)':'copia');
+  tempModels.push(copy);
+  saveTempModels(); renderTempList();
+  var tb=document.getElementById('btn-temporal');
+  if(tb) tb.textContent='⏱ Temporal ('+tempModels.length+')';
+}
+
+function adjustTempStock(btn, modelId, sizeIdx, side, delta){
+  var m=tempModels.filter(function(x){return x.id===modelId;})[0];
+  if(!m||!m.sizes[sizeIdx]) return;
+  var sz=m.sizes[sizeIdx];
+  pushTempUndo('Stock: '+sz.medida+' '+(side==='r'?'D':'I')+(delta>0?'+':'')+delta);
+  if(side==='r') sz.r=Math.max(0,(sz.r||0)+delta);
+  else sz.l=Math.max(0,(sz.l||0)+delta);
+  saveTempModels();
+  var span=btn.parentNode.querySelector('.qval')||btn.parentNode.querySelector('.tbl-qval');
+  if(span){
+    var newVal=side==='r'?sz.r:sz.l;
+    span.textContent=newVal;
+    var base=span.className.indexOf('tbl-qval')!==-1?'tbl-qval':'qval';
+    span.className=base+' '+(newVal===0?'stock-zero':(side==='r'?'stock-r':'stock-l'));
+  }
+}
+
+function renderTempList(){
+  var list=document.getElementById('temp-door-list');
+  var countEl=document.getElementById('temp-count');
+  if(countEl) countEl.textContent=tempModels.length+' modelo'+(tempModels.length!==1?'s':'');
+  if(tempModels.length===0){
+    list.innerHTML='<div class="empty-state"><div class="empty-icon">⏱</div><p>Sin modelos temporales</p></div>';
+    return;
+  }
+
+  if(tempViewMode==='table'){
+    renderTempTable(list);
+    return;
+  }
+
+  var html='';
+  for(var j=0;j<tempModels.length;j++){
+    var m=tempModels[j], mid=m.id;
+    var numSizes=(m.sizes||[]).length;
+    var numRows=Math.ceil(numSizes/2);
+    var leftCol=[], rightCol=[];
+    for(var s=0;s<numSizes;s++){ if(s<numRows) leftCol.push(s); else rightCol.push(s); }
+    var chips='';
+    for(var r=0;r<numRows;r++){
+      var li=leftCol[r], ri=rightCol[r];
+      var szL=m.sizes[li];
+      var rClsL=(szL.r||0)===0?'stock-zero':'stock-r';
+      var lClsL=(szL.l||0)===0?'stock-zero':'stock-l';
+      chips+='<div class="size-chip" style="border-right:1px solid var(--border);">'
+        +'<span class="size-val">'+esc(szL.medida)+'</span><span class="ssep">D</span>'
+        +'<div class="qbtns"><button class="qbtn" onclick="adjustTempStock(this,\''+mid+'\','+li+',\'r\',-1)">-</button><span class="qval '+rClsL+'">'+(szL.r||0)+'</span><button class="qbtn" onclick="adjustTempStock(this,\''+mid+'\','+li+',\'r\',1)">+</button></div>'
+        +'<span class="ssep">I</span>'
+        +'<div class="qbtns"><button class="qbtn" onclick="adjustTempStock(this,\''+mid+'\','+li+',\'l\',-1)">-</button><span class="qval '+lClsL+'">'+(szL.l||0)+'</span><button class="qbtn" onclick="adjustTempStock(this,\''+mid+'\','+li+',\'l\',1)">+</button></div>'
+        +'</div>';
+      if(ri!==undefined){
+        var szR=m.sizes[ri];
+        var rClsR=(szR.r||0)===0?'stock-zero':'stock-r';
+        var lClsR=(szR.l||0)===0?'stock-zero':'stock-l';
+        chips+='<div class="size-chip">'
+          +'<span class="size-val">'+esc(szR.medida)+'</span><span class="ssep">D</span>'
+          +'<div class="qbtns"><button class="qbtn" onclick="adjustTempStock(this,\''+mid+'\','+ri+',\'r\',-1)">-</button><span class="qval '+rClsR+'">'+(szR.r||0)+'</span><button class="qbtn" onclick="adjustTempStock(this,\''+mid+'\','+ri+',\'r\',1)">+</button></div>'
+          +'<span class="ssep">I</span>'
+          +'<div class="qbtns"><button class="qbtn" onclick="adjustTempStock(this,\''+mid+'\','+ri+',\'l\',-1)">-</button><span class="qval '+lClsR+'">'+(szR.l||0)+'</span><button class="qbtn" onclick="adjustTempStock(this,\''+mid+'\','+ri+',\'l\',1)">+</button></div>'
+          +'</div>';
+      }
+    }
+    var hasBody=numSizes>0;
+    var tags=(m.fabrica?'<span class="ftag">'+esc(m.fabrica)+'</span>':'')
+      +(m.color?'<span class="ftag">'+esc(m.color)+'</span>':'')
+      +(m.marco?'<span class="ftag">'+esc(m.marco)+'</span>':'');
+    html+='<div class="door-card">'
+      +'<input type="checkbox" class="temp-check" data-id="'+mid+'" onchange="updateTempSelLabel()" style="margin:0 4px 0 8px;flex-shrink:0;align-self:center;">'
+      +'<div class="door-header-wrap" onclick="toggleCard(\'tcb-'+mid+'\')" style="cursor:pointer;flex:1;">'
+      +'<div class="door-header">'
+      +'<div class="door-header-row1"><span class="door-name">'+esc(m.descripcion||m.fabrica||'Sin nombre')+'</span></div>'
+      +'<div class="door-desc-row">'+tags+'</div>'
+      +'</div>'
+      +'</div>'
+      +'<div class="door-actions">'
+      +'<button class="abtn abtn-exp" onclick="toggleCard(\'tcb-'+mid+'\')">▼</button>'
+      +'<button class="abtn abtn-edit" onclick="openTempForm(\''+mid+'\')">Editar</button>'
+      +'<button class="abtn abtn-dup" onclick="duplicateTempModel(\''+mid+'\')">Copiar</button>'
+      +'<button class="abtn abtn-del" onclick="deleteTempModel(\''+mid+'\')">Eliminar</button>'
+      +'</div>'
+      +(hasBody?'<div class="card-body" id="tcb-'+mid+'"><div class="sizes-row-wrap"><div class="sizes-row">'+chips+'</div></div></div>':'')
+      +'</div>';
+  }
+  list.innerHTML=html;
+  updateTempSelLabel();
+}
+
+function renderTempTable(list){
+  var html='<div class="tbl-wrap"><table class="tbl"><thead><tr>'
+    +'<th></th>'
+    +'<th>Fabrica</th><th>Descripcion</th><th>Color</th><th>Marco</th><th>Medida</th><th>D</th><th>I</th><th>Total</th><th></th>'
+    +'</tr></thead><tbody>';
+  for(var j=0;j<tempModels.length;j++){
+    var m=tempModels[j], mid=m.id;
+    var sizes=m.sizes||[];
+    var rowspan=sizes.length||1;
+    var isOdd=(j%2===1);
+    var oddCls=isOdd?' tbl-odd':'';
+    var fabHtml=m.fabrica?'<span class="tbl-ftag">'+esc(m.fabrica)+'</span>':'—';
+    var colHtml=m.color?'<span class="tbl-ftag">'+esc(m.color)+'</span>':'—';
+    var marHtml=m.marco?'<span class="tbl-ftag">'+esc(m.marco)+'</span>':'—';
+    var descHtml=m.descripcion?esc(m.descripcion):'—';
+    var actHtml='<div class="tbl-acts">'
+      +'<button class="abtn abtn-edit" onclick="openTempForm(\''+mid+'\')">Editar</button>'
+      +'<button class="abtn abtn-dup" onclick="duplicateTempModel(\''+mid+'\')">Copiar</button>'
+      +'<button class="abtn abtn-del" onclick="deleteTempModel(\''+mid+'\')">Eliminar</button>'
+      +'</div>';
+    if(sizes.length===0){
+      html+='<tr data-model="'+mid+'" class="'+oddCls+'">'
+        +'<td><input type="checkbox" class="temp-check" data-id="'+mid+'" onchange="updateTempSelLabel()"></td>'
+        +'<td>'+fabHtml+'</td><td>'+descHtml+'</td><td>'+colHtml+'</td><td>'+marHtml+'</td>'
+        +'<td>—</td><td>—</td><td>—</td><td>—</td><td>'+actHtml+'</td></tr>';
+    } else {
+      var modelTotal=0;
+      for(var t=0;t<sizes.length;t++) modelTotal+=(sizes[t].r||0)+(sizes[t].l||0);
+      for(var s=0;s<sizes.length;s++){
+        var sz=sizes[s];
+        var rCls=(sz.r||0)===0?'stock-zero':'stock-r';
+        var lCls=(sz.l||0)===0?'stock-zero':'stock-l';
+        var rCtrl='<div class="tbl-qbtns"><button class="tbl-qbtn" onclick="adjustTempStock(this,\''+mid+'\','+s+',\'r\',-1)">-</button><span class="tbl-qval '+rCls+'">'+(sz.r||0)+'</span><button class="tbl-qbtn" onclick="adjustTempStock(this,\''+mid+'\','+s+',\'r\',1)">+</button></div>';
+        var lCtrl='<div class="tbl-qbtns"><button class="tbl-qbtn" onclick="adjustTempStock(this,\''+mid+'\','+s+',\'l\',-1)">-</button><span class="tbl-qval '+lCls+'">'+(sz.l||0)+'</span><button class="tbl-qbtn" onclick="adjustTempStock(this,\''+mid+'\','+s+',\'l\',1)">+</button></div>';
+        if(s===0){
+          html+='<tr data-model="'+mid+'" class="'+oddCls+'">'
+            +'<td rowspan="'+rowspan+'"><input type="checkbox" class="temp-check" data-id="'+mid+'" onchange="updateTempSelLabel()"></td>'
+            +'<td rowspan="'+rowspan+'">'+fabHtml+'</td>'
+            +'<td rowspan="'+rowspan+'">'+descHtml+'</td>'
+            +'<td rowspan="'+rowspan+'">'+colHtml+'</td>'
+            +'<td rowspan="'+rowspan+'">'+marHtml+'</td>'
+            +'<td class="td-medida">'+esc(sz.medida)+'</td>'
+            +'<td>'+rCtrl+'</td>'
+            +'<td style="border-right:1px solid var(--border)">'+lCtrl+'</td>'
+            +'<td rowspan="'+rowspan+'" style="text-align:center;font-weight:700;" id="tbl-temp-total-'+mid+'">'+modelTotal+'</td>'
+            +'<td rowspan="'+rowspan+'">'+actHtml+'</td>'
+            +'</tr>';
+        } else {
+          html+='<tr data-model="'+mid+'" class="'+oddCls+'">'
+            +'<td class="td-medida">'+esc(sz.medida)+'</td>'
+            +'<td>'+rCtrl+'</td>'
+            +'<td style="border-right:1px solid var(--border)">'+lCtrl+'</td>'
+            +'</tr>';
+        }
+      }
+    }
+  }
+  html+='</tbody></table></div>';
+  list.innerHTML=html;
+  updateTempSelLabel();
+  // Grouped hover
+  var tbody=list.querySelector('tbody');
+  if(tbody){
+    tbody.addEventListener('mouseover',function(e){
+      var tr=e.target.closest('tr'); if(!tr) return;
+      var mid=tr.getAttribute('data-model'); if(!mid) return;
+      var rows=tbody.querySelectorAll('tr[data-model="'+mid+'"]');
+      for(var i=0;i<rows.length;i++) rows[i].classList.add('tbl-hover');
+    });
+    tbody.addEventListener('mouseout',function(e){
+      var tr=e.target.closest('tr'); if(!tr) return;
+      var mid=tr.getAttribute('data-model'); if(!mid) return;
+      var rows=tbody.querySelectorAll('tr[data-model="'+mid+'"]');
+      for(var i=0;i<rows.length;i++) rows[i].classList.remove('tbl-hover');
+    });
+  }
+}
+
+function setTempViewMode(mode){
+  tempViewMode=mode;
+  document.getElementById('tvt-cards').className=mode==='cards'?'active':'';
+  document.getElementById('tvt-table').className=mode==='table'?'active':'';
+  renderTempList();
+}
+
+function exportTempJSON(){
+  var data=JSON.stringify({models:tempModels},null,2);
+  var blob=new Blob([data],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download='catalogo-temporal.json';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},1000);
+}
+
+function importTempJSON(e){
+  var file=e.target.files[0]; if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      var data=JSON.parse(ev.target.result);
+      var imported=data.models||data;
+      if(!Array.isArray(imported)){showTempToast('Formato inválido');return;}
+      pushTempUndo('Importar JSON temporal');
+      for(var j=0;j<imported.length;j++) tempModels.push(imported[j]);
+      saveTempModels(); renderTempList();
+      var btn=document.getElementById('btn-temporal');
+      if(btn) btn.textContent='⏱ Temporal ('+tempModels.length+')';
+      showTempToast('Importado: '+imported.length+' modelos');
+    } catch(err){showTempToast('Error al importar');}
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+function exportTempPDF(){
+  var rows='';
+  for(var i=0;i<tempModels.length;i++){
+    var m=tempModels[i];
+    var sizesHtml='';
+    for(var s=0;s<(m.sizes||[]).length;s++){var sz=m.sizes[s];sizesHtml+='<div>'+esc(sz.medida)+'&nbsp;D:'+sz.r+'&nbsp;I:'+sz.l+'</div>';}
+    rows+='<tr><td>'+esc(m.fabrica||'-')+'</td><td>'+esc(m.descripcion||'-')+'</td><td>'+esc(m.color||'-')+'</td><td>'+esc(m.marco||'-')+'</td><td>'+(sizesHtml||'-')+'</td></tr>';
+  }
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Temporal</title><style>body{font-family:Arial,sans-serif;padding:20px;font-size:12px;}h1{color:#7abf9e;font-size:16px;margin-bottom:14px;}table{width:100%;border-collapse:collapse;}th{background:#7abf9e;color:#fff;padding:6px;text-align:left;font-size:11px;}td{padding:5px 6px;border-bottom:1px solid #eee;vertical-align:top;}tr:nth-child(even) td{background:#f5fbf7;}</style></head><body><h1>Catálogo Temporal — '+tempModels.length+' modelo'+(tempModels.length!==1?'s':'')+'</h1><table><thead><tr><th>Fabrica</th><th>Descripcion</th><th>Color</th><th>Marco</th><th>Medidas</th></tr></thead><tbody>'+rows+'</tbody></table></body></html>';
+  var win=window.open('','_blank');
+  if(win){win.document.write(html);win.document.close();}
+  else{var blob=new Blob([html],{type:'text/html'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='temporal.html';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(url);},1000);}
+}
+
+function exportTempCSV(){
+  var rows=[['Fabrica','Descripcion','Color','Marco','Medida','Derechas','Izquierdas']];
+  for(var i=0;i<tempModels.length;i++){
+    var m=tempModels[i];
+    if((m.sizes||[]).length===0){
+      rows.push([m.fabrica||'',m.descripcion||'',m.color||'',m.marco||'','','','']);
+    } else {
+      for(var s=0;s<m.sizes.length;s++){
+        var sz=m.sizes[s];
+        rows.push([m.fabrica||'',m.descripcion||'',m.color||'',m.marco||'',sz.medida||'',sz.r||0,sz.l||0]);
+      }
+    }
+  }
+  var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  var blob=new Blob([csv],{type:'text/csv'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download='catalogo-temporal.csv';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},1000);
+}
 function toggleTheme(){
   darkMode=!darkMode;
   document.body.classList.toggle('light',!darkMode);
@@ -1816,9 +2561,26 @@ if(viewMode==='table'){
   document.getElementById('vt-cards').className='';
   document.getElementById('vt-table').className='active';
   document.getElementById('card-only-btns').style.display='none';
+  // ocultar botón foto en tabla
+  var _fpb=document.getElementById('filter-photo-btn');
+  if(_fpb) _fpb.style.display='none';
+} else if(viewMode==='mosaic'){
+  document.getElementById('vt-cards').className='';
+  document.getElementById('vt-mosaic').className='active';
+  document.getElementById('card-only-btns').style.display='none';
+  // mostrar botón foto en mosaico
+  var _fpb2=document.getElementById('filter-photo-btn');
+  if(_fpb2) _fpb2.style.display='';
+} else {
+  // cards: mostrar botón foto
+  var _fpb3=document.getElementById('filter-photo-btn');
+  if(_fpb3) _fpb3.style.display='';
 }
 document.getElementById('grp-none').classList.add('active');
 renderList();
+// Update temporal button indicator
+var _tb=document.getElementById('btn-temporal');
+if(_tb && tempModels.length>0) _tb.textContent='⏱ Temporal ('+tempModels.length+')';
 
 // Set totals-bar top to match topbar height
 function updateTotalsBarTop(){
