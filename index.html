@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aberturas Torri — Catálogos</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTQwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iIzExMSIgcng9IjgiLz48cmVjdCB4PSIxMiIgeT0iMTIiIHdpZHRoPSI3NiIgaGVpZ2h0PSIxMTYiIGZpbGw9IndoaXRlIi8+PHBvbHlnb24gcG9pbnRzPSIxMiwxMiA1NSwxMiAxMiw1MiIgZmlsbD0iIzRhOGZkNCIvPjxkZWZzPjxjbGlwUGF0aCBpZD0iYyI+PHJlY3QgeD0iMTIiIHk9IjEyIiB3aWR0aD0iNzYiIGhlaWdodD0iMTE2Ii8+PC9jbGlwUGF0aD48L2RlZnM+PGcgY2xpcC1wYXRoPSJ1cmwoI2MpIj48bGluZSB4MT0iLTEwIiB5MT0iMTAwIiB4Mj0iMTEwIiB5Mj0iLTIwIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjgiLz48bGluZSB4MT0iLTEwIiB5MT0iMTMwIiB4Mj0iMTEwIiB5Mj0iMTAiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iOCIvPjxsaW5lIHgxPSItMTAiIHkxPSIxNjAiIHgyPSIxMTAiIHkyPSI0MCIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSI4Ii8+PC9nPjwvc3ZnPg==">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Barlow:wght@400;500&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f0f;
+  --bg2: #181818;
+  --bg3: #222;
+  --border: #2e2e2e;
+  --accent: #c8621a;
+  --al: #e0741f;
+  --text: #e8e0d8;
+  --muted: #7a7268;
+  --dim: #4a4540;
+  --tbg: #2a2218;
+}
+
+body.light {
+  --bg: #f4f1ed;
+  --bg2: #fff;
+  --bg3: #ede9e3;
+  --border: #d8d2c8;
+  --text: #2a2218;
+  --muted: #7a6a58;
+  --dim: #b0a090;
+  --tbg: #f0ebe3;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── LAYOUT ── */
+.page {
+  max-width: 560px;
+  margin: 0 auto;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ── */
+.header {
+  padding: 36px 20px 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.header-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.header-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  text-transform: uppercase;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.header-title span {
+  color: var(--accent);
+}
+
+.header-sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.theme-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 4px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s;
+}
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── CATALOG GRID ── */
+.section-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 20px 20px 10px;
+}
+
+.catalog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 12px;
+}
+
+/* ── CATALOG CARD ── */
+.catalog-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  text-decoration: none;
+  color: var(--text);
+  transition: border-color .15s, background .15s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.catalog-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: transparent;
+  transition: background .15s;
+  border-radius: 3px 0 0 3px;
+}
+
+.catalog-card:hover {
+  border-color: var(--accent);
+  background: var(--tbg);
+}
+
+.catalog-card:hover::before {
+  background: var(--accent);
+}
+
+.catalog-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.catalog-icon svg {
+  width: 32px;
+  height: 32px;
+  opacity: 0.6;
+  transition: opacity .15s;
+}
+
+.catalog-card:hover .catalog-icon svg {
+  opacity: 1;
+}
+
+.catalog-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.catalog-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 3px;
+  transition: color .15s;
+}
+
+.catalog-card:hover .catalog-name {
+  color: var(--accent);
+}
+
+.catalog-desc {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.03em;
+}
+
+.catalog-arrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px;
+  color: var(--dim);
+  flex-shrink: 0;
+  transition: color .15s, transform .15s;
+}
+
+.catalog-card:hover .catalog-arrow {
+  color: var(--accent);
+  transform: translateX(3px);
+}
+
+.catalog-badge {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+/* ── FOOTER ── */
+.footer {
+  padding: 20px;
+  margin-top: auto;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-brand {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.footer-version {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  color: var(--dim);
+}
+
+/* ── DIVIDER ── */
+.list-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 12px;
+}
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="header">
+    <button class="theme-btn" onclick="toggleTheme()" title="Cambiar tema">&#9788;</button>
+    <div class="header-eyebrow">Sistema de Catálogos</div>
+    <div class="header-title">Aberturas <span>Torri</span></div>
+    <div class="header-sub">Stock de productos · Gestión interna</div>
+  </div>
+
+  <div class="section-label">Catálogos disponibles</div>
+
+  <div class="catalog-list">
+
+    <!-- PUERTAS -->
+    <a class="catalog-card" href="puertas.html">
+      <div class="catalog-icon">
+        <svg viewBox="0 0 32 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="1" width="28" height="38" rx="1.5" stroke="#c8621a" stroke-width="2"/>
+          <rect x="5" y="4" width="22" height="32" rx="1" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 2"/>
+          <circle cx="24" cy="20" r="2" fill="#c8621a"/>
+          <line x1="24" y1="20" x2="20" y2="20" stroke="#c8621a" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="catalog-info">
+        <div class="catalog-name">Puertas</div>
+        <div class="catalog-desc">Stock por medida · Derechas e izquierdas</div>
+      </div>
+      <div class="catalog-arrow">›</div>
+    </a>
+
+    <!-- VENTANAS -->
+    <a class="catalog-card" href="ventanas.html">
+      <div class="catalog-icon">
+        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="28" height="28" rx="1.5" stroke="#c8621a" stroke-width="2"/>
+          <line x1="16" y1="2" x2="16" y2="30" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="2" y1="16" x2="30" y2="16" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="5" y="5" width="8" height="8" rx="0.5" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+          <rect x="19" y="5" width="8" height="8" rx="0.5" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+          <rect x="5" y="19" width="8" height="8" rx="0.5" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+          <rect x="19" y="19" width="8" height="8" rx="0.5" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+        </svg>
+      </div>
+      <div class="catalog-info">
+        <div class="catalog-name">Ventanas</div>
+        <div class="catalog-desc">Stock por medida · Derechas e izquierdas</div>
+      </div>
+      <div class="catalog-arrow">›</div>
+    </a>
+
+  </div>
+
+  <div class="footer">
+    <div class="footer-brand">Aberturas Torri</div>
+    <div class="footer-version">v1.0 — 2025</div>
+  </div>
+
+</div>
+
+<script>
+var darkMode = true;
+try { var t = localStorage.getItem('torri_theme'); if(t === 'light') { darkMode = false; document.body.classList.add('light'); } } catch(e) {}
+
+function toggleTheme() {
+  darkMode = !darkMode;
+  document.body.classList.toggle('light', !darkMode);
+  try { localStorage.setItem('torri_theme', darkMode ? 'dark' : 'light'); } catch(e) {}
+}
+</script>
+</body>
+</html>
