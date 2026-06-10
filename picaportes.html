@@ -32,45 +32,55 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .summary-chip{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;padding:3px 7px;border-radius:4px;background:var(--bg2);border:1px solid var(--border);color:var(--muted);white-space:nowrap;cursor:default;}
 .summary-chip span{color:var(--text);font-weight:700;}
 .summary-chip.alert{border-color:var(--zero);color:var(--zero);cursor:pointer;}
-.summary-chip.alert span{color:var(--zero);}
 
 .catalog-controls{padding:8px 12px 0;}
 .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:12px;pointer-events:none;}
 .search-box{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:7px 10px 7px 30px;color:var(--text);font-family:'Barlow',sans-serif;font-size:12px;outline:none;}
 .search-box::placeholder{color:var(--dim);}
 .divider{height:1px;background:var(--border);margin:0 12px;}
-.inline-btn{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--muted);background:transparent;cursor:pointer;white-space:nowrap;transition:all .15s;min-width:80px;text-align:center;}
-.inline-btn:hover{border-color:var(--accent);color:var(--accent);}
 
-/* CARDS */
-.item-list{padding:3px 8px 20px;display:flex;flex-direction:column;gap:2px;}
-.item-card{background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:7px 8px;display:flex;flex-direction:column;gap:0;}
-.card-body{display:none;width:100%;}
-.card-body.open{display:block;padding-top:6px;border-top:1px solid var(--border);margin-top:6px;}
+/* TABLE */
+.tbl-wrap{padding:0 8px 20px;}
+.tbl{width:100%;border-collapse:collapse;font-family:'Barlow Condensed',sans-serif;font-size:11px;}
+.tbl thead tr{border-bottom:1px solid var(--accent);}
+.tbl th{font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);padding:4px 5px;text-align:left;white-space:nowrap;border-right:1px solid var(--border);}
+.tbl th:last-child{border-right:none;}
+.tbl tbody tr.tbl-main{border-bottom:1px solid var(--border);cursor:default;}
+.tbl tbody tr.tbl-main:hover td{background:var(--tbg);}
+.tbl tbody tr.tbl-odd td{background:var(--bg3);}
+.tbl tbody tr.tbl-photo-row td{padding:0;border-bottom:1px solid var(--border);}
+.tbl td{padding:4px 5px;vertical-align:middle;color:var(--text);line-height:1.3;border-right:1px solid var(--border);}
+.tbl td:last-child{border-right:none;}
+.tbl td.td-desc{font-size:12px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tbl td.td-code{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;color:var(--muted);white-space:nowrap;}
+.tbl td.td-tipo{white-space:nowrap;}
 
-/* TAG medio picaporte */
-.tag-medio{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;padding:1px 6px;border-radius:3px;background:var(--tbg);border:1px solid var(--tbd);color:var(--muted);flex-shrink:0;white-space:nowrap;}
-
-/* STOCK DISPLAY */
-.stock-simple{display:flex;align-items:center;justify-content:center;gap:4px;padding:4px 0;}
-.stock-medio{display:flex;align-items:center;justify-content:center;gap:10px;padding:4px 0;}
-.stock-block{display:flex;flex-direction:column;align-items:center;gap:2px;}
-.stock-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;}
-.lbl-d{color:#7abf9e;}
-.lbl-i{color:#9ab3d4;}
-.lbl-u{color:var(--muted);}
+/* STOCK CONTROLS */
+.qbtns{display:inline-flex;align-items:center;gap:1px;}
+.qbtn{background:var(--bg3);border:1px solid var(--border);border-radius:2px;color:var(--muted);cursor:pointer;font-size:11px;font-weight:700;width:17px;height:17px;display:inline-flex;align-items:center;justify-content:center;padding:0;line-height:1;}
+.qbtn:active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.qval{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;min-width:18px;text-align:center;display:inline-block;}
 .stock-r{color:#7abf9e;}
 .stock-l{color:#9ab3d4;}
 .stock-u{color:var(--text);}
 .stock-zero{color:var(--zero);font-weight:700;}
-.qbtns{display:flex;align-items:center;gap:1px;}
-.qbtn{background:var(--bg3);border:1px solid var(--border);border-radius:2px;color:var(--muted);cursor:pointer;font-size:11px;font-weight:700;width:17px;height:17px;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;}
-.qbtn:active{background:var(--accent);color:#fff;border-color:var(--accent);}
-.qval{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;min-width:20px;text-align:center;}
-.card-photo-img{width:100%;max-height:220px;object-fit:contain;border-radius:4px;border:1px solid var(--border);background:var(--bg3);margin-top:6px;}
 
-/* CARD ACTION BUTTONS */
-.abtn{background:transparent;border:1px solid transparent;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:3px 7px;border-radius:3px;white-space:nowrap;transition:all .15s;}
+/* MEDIO STOCK CELL */
+.medio-stock{display:flex;align-items:center;gap:5px;flex-wrap:nowrap;}
+.medio-lbl{font-size:9px;font-weight:700;letter-spacing:0.06em;}
+
+/* PHOTO TOGGLE BTN */
+.photo-btn{background:transparent;border:1px solid var(--border);border-radius:3px;color:var(--dim);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;padding:2px 6px;transition:all .15s;white-space:nowrap;}
+.photo-btn:hover{border-color:var(--muted);color:var(--muted);}
+.photo-btn.open{border-color:var(--accent);color:var(--accent);}
+
+/* PHOTO EXPAND ROW */
+.photo-expand{display:none;padding:8px 12px;}
+.photo-expand.open{display:block;}
+.photo-expand img{max-width:100%;max-height:240px;object-fit:contain;border-radius:4px;border:1px solid var(--border);background:var(--bg3);}
+
+/* ACTION BUTTONS */
+.abtn{background:transparent;border:1px solid transparent;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:2px 6px;border-radius:3px;white-space:nowrap;transition:all .15s;}
 .abtn-edit{color:var(--accent);border-color:var(--accent);}
 .abtn-edit:hover{background:var(--accent);color:#fff;}
 .abtn-edit:active{background:var(--al);border-color:var(--al);color:#fff;}
@@ -80,10 +90,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .abtn-del{color:var(--dim);border-color:var(--border);}
 .abtn-del:hover{color:#e05555;border-color:#e05555;}
 .abtn-del:active{background:#e05555;color:#fff;border-color:#e05555;}
-.abtn-exp{color:var(--dim);border-color:var(--border);font-size:12px;padding:3px 6px;}
-.abtn-exp:hover{color:var(--muted);border-color:var(--muted);}
-.abtn-exp.open{color:var(--accent);border-color:var(--accent);}
-.abtn-exp.open:hover{background:var(--accent);color:#fff;}
 
 /* EMPTY */
 .empty-state{text-align:center;padding:40px 20px;}
@@ -110,7 +116,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .switch-row.active .switch-label{color:var(--text);}
 .switch-hint{font-family:'Barlow',sans-serif;font-size:11px;color:var(--dim);font-style:italic;}
 
-/* STOCK FORM SECTION */
+/* STOCK FORM */
 .stock-section{background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:12px;margin-bottom:12px;}
 .stock-section-title{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
 .stock-inputs{display:flex;align-items:center;gap:8px;justify-content:center;}
@@ -123,30 +129,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 /* SAVE BTN */
 .btn-save{width:100%;padding:12px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;background:var(--accent);color:#fff;border:none;border-radius:5px;cursor:pointer;margin-top:4px;display:block;}
 .btn-save:active{background:var(--al);}
-
-/* TABLE */
-.tbl-wrap{padding:0 8px 20px;}
-.tbl{width:100%;border-collapse:collapse;font-family:'Barlow Condensed',sans-serif;font-size:11px;}
-.tbl thead tr{border-bottom:1px solid var(--accent);}
-.tbl th{font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);padding:3px 5px;text-align:left;white-space:nowrap;border-right:1px solid var(--border);}
-.tbl th:last-child{border-right:none;}
-.tbl tbody tr{border-bottom:1px solid var(--border);}
-.tbl tbody tr.tbl-odd td{background:var(--bg3);}
-.tbl tbody tr:hover td{background:var(--tbg);}
-.tbl td{padding:5px 6px;vertical-align:middle;color:var(--text);line-height:1.2;border-right:1px solid var(--border);}
-.tbl td:last-child{border-right:none;}
-.tbl td.td-muted{color:var(--muted);}
-.tbl-qbtns{display:inline-flex;align-items:center;gap:1px;}
-.tbl-qbtn{background:var(--bg3);border:1px solid var(--border);border-radius:2px;color:var(--muted);cursor:pointer;font-size:11px;font-weight:700;width:17px;height:17px;display:inline-flex;align-items:center;justify-content:center;padding:0;line-height:1;}
-.tbl-qbtn:active{background:var(--accent);color:#fff;border-color:var(--accent);}
-.tbl-qval{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;min-width:18px;text-align:center;display:inline-block;}
-.tbl-acts{display:flex;gap:2px;align-items:center;}
-
-/* VIEW TOGGLE */
-.view-toggle{display:inline-flex;border:1px solid var(--border);border-radius:4px;overflow:hidden;flex-shrink:0;}
-.view-toggle button{background:transparent;border:none;padding:5px 9px;font-family:'Barlow Condensed',sans-serif;font-size:13px;cursor:pointer;color:var(--muted);line-height:1;}
-.view-toggle button.active{background:var(--accent);color:#fff;}
-.view-toggle button:not(.active):hover{color:var(--accent);}
 
 /* TOAST */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg3);border:1px solid var(--accent);color:var(--text);padding:7px 16px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-size:12px;z-index:999;transition:transform .25s;white-space:nowrap;pointer-events:none;}
@@ -174,10 +156,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
         <button class="btn btn-outline" onclick="exportCSV()">CSV</button>
         <button id="undo-btn" class="btn btn-ghost" onclick="performUndo()" disabled style="opacity:0.35;" title="Sin acciones para deshacer">&#8630;</button>
         <button id="redo-btn" class="btn btn-ghost" onclick="performRedo()" disabled style="opacity:0.35;" title="Sin acciones para rehacer">&#8631;</button>
-        <div class="view-toggle">
-          <button id="vt-cards" class="active" onclick="setViewMode('cards')" title="Vista cards">▦</button>
-          <button id="vt-table" onclick="setViewMode('table')" title="Vista tabla">☰</button>
-        </div>
         <button class="btn btn-ghost" onclick="toggleTheme()">&#9788;</button>
       </div>
     </div>
@@ -193,20 +171,13 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
       <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Buscar</span>
       <div style="position:relative;flex:1;">
         <span class="search-icon">&#128269;</span>
-        <input class="search-box" id="search-input" type="text" placeholder="Buscar descripcion..." oninput="debouncedRender()">
+        <input class="search-box" id="search-input" type="text" placeholder="Buscar descripcion o codigo..." oninput="debouncedRender()">
       </div>
-    </div>
-    <div style="display:flex;align-items:center;gap:5px;margin-top:7px;flex-wrap:wrap;">
-      <span id="card-only-btns" style="display:inline-flex;gap:5px;">
-        <button onclick="expandAll()" class="inline-btn">Desplegar todo</button>
-        <button onclick="collapseAll()" class="inline-btn">Colapsar todo</button>
-      </span>
-      <div id="count-label" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--muted);display:none;margin-left:4px;"></div>
     </div>
   </div>
 
   <div class="divider" style="margin-top:8px;"></div>
-  <div id="item-list" class="item-list"></div>
+  <div id="item-list" class="tbl-wrap"></div>
 </div>
 
 <!-- ===== FORM PAGE ===== -->
@@ -219,9 +190,16 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
   </div>
   <div class="form-wrap">
 
-    <div class="fgrp">
-      <div class="flabel">Descripcion</div>
-      <input class="finput" id="ff-desc" type="text" placeholder="ej: Picaporte 20cm inox...">
+    <!-- DESCRIPCION + CODIGO -->
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <div style="flex:1;min-width:0;">
+        <div class="flabel">Descripcion</div>
+        <input class="finput" id="ff-desc" type="text" placeholder="ej: Picaporte 20cm inox...">
+      </div>
+      <div style="flex-shrink:0;width:80px;">
+        <div class="flabel">Codigo</div>
+        <input class="finput" id="ff-codigo" type="text" placeholder="ej: A12" maxlength="4" style="text-transform:uppercase;">
+      </div>
     </div>
 
     <!-- SWITCH MEDIO PICAPORTE -->
@@ -229,21 +207,19 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
       <div class="switch-track" id="switch-track"><div class="switch-thumb"></div></div>
       <div>
         <div class="switch-label" id="switch-label">Medio picaporte</div>
-        <div class="switch-hint" id="switch-hint">Activar para diferenciar Derecha / Izquierda</div>
+        <div class="switch-hint">Activar para diferenciar Derecha / Izquierda</div>
       </div>
     </div>
 
-    <!-- STOCK SECTION -->
+    <!-- STOCK -->
     <div class="stock-section">
       <div class="stock-section-title">Stock</div>
-      <!-- Simple: un solo número -->
       <div id="stock-simple-inputs" class="stock-inputs">
         <div class="stock-input-group">
-          <div class="stock-input-lbl lbl-u" style="color:var(--muted);">Unidades</div>
+          <div class="stock-input-lbl" style="color:var(--muted);">Unidades</div>
           <input class="stock-number" id="ff-stock" type="number" value="0" min="0">
         </div>
       </div>
-      <!-- Medio: D + I -->
       <div id="stock-medio-inputs" class="stock-inputs" style="display:none;">
         <div class="stock-input-group">
           <div class="stock-input-lbl" style="color:#7abf9e;">Derecha</div>
@@ -265,7 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
           <span style="display:inline-flex;align-items:center;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:7px 14px;border-radius:4px;border:1px solid var(--border);color:var(--muted);background:var(--bg2);transition:all .15s;white-space:nowrap;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128247; Subir foto</span>
           <input type="file" id="ff-photo" accept="image/*" onchange="handlePhoto(event)" style="display:none;">
         </label>
-        <button id="remove-photo-btn" type="button" onclick="removePhoto()" style="display:none;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;padding:7px 10px;border:1px solid var(--border);color:var(--dim);background:transparent;border-radius:4px;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='#e05555';this.style.color='#e05555'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--dim)'">&#10005; Quitar</button>
+        <button id="remove-photo-btn" type="button" onclick="removePhoto()" style="display:none;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;padding:7px 10px;border:1px solid var(--border);color:var(--dim);background:transparent;border-radius:4px;cursor:pointer;" onmouseover="this.style.borderColor='#e05555';this.style.color='#e05555'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--dim)'">&#10005; Quitar</button>
       </div>
       <div id="photo-wrap" style="display:none;margin-top:8px;">
         <img id="photo-preview" style="width:100%;max-height:200px;object-fit:contain;border-radius:4px;border:1px solid var(--border);background:var(--bg3);">
@@ -285,8 +261,6 @@ var editingId = null;
 var formPhoto = null;
 var formMedio = false;
 var darkMode = true;
-var allExpanded = false;
-var viewMode = 'cards';
 
 // ===== UNDO =====
 var UNDO_LIMIT = 20;
@@ -294,103 +268,67 @@ var undoHistory = [];
 var redoHistory = [];
 
 function pushUndo(label){
-  undoHistory.push({label:label, models:JSON.parse(JSON.stringify(models))});
-  if(undoHistory.length > UNDO_LIMIT) undoHistory.shift();
-  redoHistory = [];
-  updateUndoBtn(); updateRedoBtn();
+  undoHistory.push({label:label,models:JSON.parse(JSON.stringify(models))});
+  if(undoHistory.length>UNDO_LIMIT) undoHistory.shift();
+  redoHistory=[];
+  updateUndoBtn();updateRedoBtn();
 }
-
-function getOpenCards(){
-  var open={};
-  var bodies=document.querySelectorAll('.card-body.open');
-  for(var i=0;i<bodies.length;i++){var id=bodies[i].id.replace('cb-','');open[id]=true;}
-  return open;
-}
-function restoreOpenCards(open){
-  for(var id in open){
-    var body=document.getElementById('cb-'+id);
-    if(body){
-      body.className='card-body open';
-      var btn=body.parentNode.querySelector('.abtn-exp');
-      if(btn){btn.className='abtn abtn-exp open';btn.textContent='▲';}
-    }
-  }
-}
-
 function performUndo(){
-  if(undoHistory.length===0) return;
-  var open=getOpenCards();
-  redoHistory.push({label:undoHistory[undoHistory.length-1].label, models:JSON.parse(JSON.stringify(models))});
+  if(!undoHistory.length) return;
+  redoHistory.push({label:undoHistory[undoHistory.length-1].label,models:JSON.parse(JSON.stringify(models))});
   if(redoHistory.length>UNDO_LIMIT) redoHistory.shift();
   var snap=undoHistory.pop();
   models=snap.models;
-  saveModels(); renderList();
-  restoreOpenCards(open);
+  saveModels();renderList();
   showToast('Deshecho: '+snap.label);
-  updateUndoBtn(); updateRedoBtn();
+  updateUndoBtn();updateRedoBtn();
 }
 function performRedo(){
-  if(redoHistory.length===0) return;
-  var open=getOpenCards();
-  undoHistory.push({label:redoHistory[redoHistory.length-1].label, models:JSON.parse(JSON.stringify(models))});
+  if(!redoHistory.length) return;
+  undoHistory.push({label:redoHistory[redoHistory.length-1].label,models:JSON.parse(JSON.stringify(models))});
   if(undoHistory.length>UNDO_LIMIT) undoHistory.shift();
   var snap=redoHistory.pop();
   models=snap.models;
-  saveModels(); renderList();
-  restoreOpenCards(open);
+  saveModels();renderList();
   showToast('Rehecho: '+snap.label);
-  updateUndoBtn(); updateRedoBtn();
+  updateUndoBtn();updateRedoBtn();
 }
 function updateUndoBtn(){
   var b=document.getElementById('undo-btn');
-  if(b){var h=undoHistory.length>0;b.disabled=!h;b.style.opacity=h?'1':'0.35';b.style.cursor=h?'pointer':'default';b.title=h?'Deshacer: '+undoHistory[undoHistory.length-1].label:'Sin acciones para deshacer';}
+  if(b){var h=undoHistory.length>0;b.disabled=!h;b.style.opacity=h?'1':'0.35';b.title=h?'Deshacer: '+undoHistory[undoHistory.length-1].label:'Sin acciones para deshacer';}
 }
 function updateRedoBtn(){
   var b=document.getElementById('redo-btn');
-  if(b){var h=redoHistory.length>0;b.disabled=!h;b.style.opacity=h?'1':'0.35';b.style.cursor=h?'pointer':'default';b.title=h?'Rehacer: '+redoHistory[redoHistory.length-1].label:'Sin acciones para rehacer';}
+  if(b){var h=redoHistory.length>0;b.disabled=!h;b.style.opacity=h?'1':'0.35';b.title=h?'Rehacer: '+redoHistory[redoHistory.length-1].label:'Sin acciones para rehacer';}
 }
 
-// ===== LOCALSTORAGE =====
+// ===== STORAGE =====
 try{var s=localStorage.getItem('picaportes_models');if(s)models=JSON.parse(s);}catch(e){}
 try{var t=localStorage.getItem('picaportes_theme');if(t==='light'){darkMode=false;document.body.classList.add('light');}}catch(e){}
-try{var vm=localStorage.getItem('picaportes_viewmode');if(vm==='table')viewMode='table';}catch(e){}
 function saveModels(){try{localStorage.setItem('picaportes_models',JSON.stringify(models));}catch(e){}}
 
 // ===== HELPERS =====
 function getModel(id){for(var i=0;i<models.length;i++){if(models[i].id===id)return models[i];}return null;}
-function esc(str){if(str==null)return '';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function esc(str){if(str==null)return'';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
-// ===== SWITCH MEDIO =====
-function toggleMedio(){
-  formMedio = !formMedio;
-  applyMedioUI();
-}
+// ===== SWITCH =====
+function toggleMedio(){formMedio=!formMedio;applyMedioUI();}
 function applyMedioUI(){
   var track=document.getElementById('switch-track');
   var row=document.getElementById('switch-row');
   var simple=document.getElementById('stock-simple-inputs');
   var medio=document.getElementById('stock-medio-inputs');
-  if(formMedio){
-    track.className='switch-track on';
-    row.className='switch-row active';
-    simple.style.display='none';
-    medio.style.display='flex';
-  } else {
-    track.className='switch-track';
-    row.className='switch-row';
-    simple.style.display='flex';
-    medio.style.display='none';
-  }
+  if(formMedio){track.className='switch-track on';row.className='switch-row active';simple.style.display='none';medio.style.display='flex';}
+  else{track.className='switch-track';row.className='switch-row';simple.style.display='flex';medio.style.display='none';}
 }
 
 // ===== PHOTO =====
 function handlePhoto(e){
-  var f=e.target.files[0]; if(!f) return;
-  var r=new FileReader(); r.onload=function(ev){formPhoto=ev.target.result;renderPhotoPreview();}; r.readAsDataURL(f);
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();r.onload=function(ev){formPhoto=ev.target.result;renderPhotoPreview();};r.readAsDataURL(f);
 }
 function renderPhotoPreview(){
-  var w=document.getElementById('photo-wrap'), p=document.getElementById('photo-preview');
-  var rb=document.getElementById('remove-photo-btn');
+  var w=document.getElementById('photo-wrap'),p=document.getElementById('photo-preview'),rb=document.getElementById('remove-photo-btn');
   if(formPhoto){p.src=formPhoto;w.style.display='block';if(rb)rb.style.display='inline-flex';}
   else{p.src='';w.style.display='none';document.getElementById('ff-photo').value='';if(rb)rb.style.display='none';}
 }
@@ -398,10 +336,9 @@ function removePhoto(){formPhoto=null;renderPhotoPreview();}
 
 // ===== NAVIGATION =====
 function openForm(id){
-  editingId=id||null;
-  formPhoto=null;
-  formMedio=false;
+  editingId=id||null;formPhoto=null;formMedio=false;
   document.getElementById('ff-desc').value='';
+  document.getElementById('ff-codigo').value='';
   document.getElementById('ff-stock').value=0;
   document.getElementById('ff-stock-r').value=0;
   document.getElementById('ff-stock-l').value=0;
@@ -411,18 +348,14 @@ function openForm(id){
     var m=getModel(id);
     if(m){
       document.getElementById('ff-desc').value=m.descripcion||'';
+      document.getElementById('ff-codigo').value=m.codigo||'';
       formMedio=!!m.medio;
-      if(m.medio){
-        document.getElementById('ff-stock-r').value=m.stockR||0;
-        document.getElementById('ff-stock-l').value=m.stockL||0;
-      } else {
-        document.getElementById('ff-stock').value=m.stock||0;
-      }
+      if(m.medio){document.getElementById('ff-stock-r').value=m.stockR||0;document.getElementById('ff-stock-l').value=m.stockL||0;}
+      else{document.getElementById('ff-stock').value=m.stock||0;}
       formPhoto=m.photo||null;
     }
   }
-  applyMedioUI();
-  renderPhotoPreview();
+  applyMedioUI();renderPhotoPreview();
   document.getElementById('page-catalog').style.display='none';
   document.getElementById('page-form').style.display='block';
   window.scrollTo(0,0);
@@ -440,48 +373,44 @@ function saveModel(){
   var m={
     id:editingId||String(Date.now()),
     descripcion:desc,
+    codigo:(document.getElementById('ff-codigo').value.trim().toUpperCase())||'',
     medio:formMedio,
     photo:formPhoto,
     createdAt:editingId?(getModel(editingId)||{}).createdAt||Date.now():Date.now()
   };
-  if(formMedio){
-    m.stockR=parseInt(document.getElementById('ff-stock-r').value)||0;
-    m.stockL=parseInt(document.getElementById('ff-stock-l').value)||0;
-  } else {
-    m.stock=parseInt(document.getElementById('ff-stock').value)||0;
-  }
+  if(formMedio){m.stockR=parseInt(document.getElementById('ff-stock-r').value)||0;m.stockL=parseInt(document.getElementById('ff-stock-l').value)||0;}
+  else{m.stock=parseInt(document.getElementById('ff-stock').value)||0;}
   if(editingId){
     for(var i=0;i<models.length;i++){if(models[i].id===editingId){pushUndo('Editar: '+desc);models[i]=m;break;}}
     showToast('Picaporte actualizado');
   } else {
-    pushUndo('Agregar: '+desc);
-    models.push(m);
+    pushUndo('Agregar: '+desc);models.push(m);
     showToast('Picaporte guardado');
   }
-  saveModels(); renderList(); closeForm();
+  saveModels();renderList();closeForm();
 }
 
 // ===== DUPLICATE =====
 function duplicateModel(id){
-  var src=getModel(id); if(!src) return;
+  var src=getModel(id);if(!src)return;
   var copy=JSON.parse(JSON.stringify(src));
-  copy.id=String(Date.now()); copy.createdAt=Date.now();
+  copy.id=String(Date.now());copy.createdAt=Date.now();
   pushUndo('Duplicar: '+(src.descripcion||'picaporte'));
-  models.push(copy); saveModels(); renderList(); showToast('Picaporte duplicado');
+  models.push(copy);saveModels();renderList();showToast('Picaporte duplicado');
 }
 
 // ===== DELETE =====
 function deleteModel(id){
-  var idx=-1; for(var i=0;i<models.length;i++){if(models[i].id===id){idx=i;break;}}
-  if(idx===-1) return;
+  var idx=-1;for(var i=0;i<models.length;i++){if(models[i].id===id){idx=i;break;}}
+  if(idx===-1)return;
   pushUndo('Eliminar: '+(models[idx].descripcion||'picaporte'));
-  models.splice(idx,1); saveModels(); renderList();
+  models.splice(idx,1);saveModels();renderList();
   showToast('Picaporte eliminado');
 }
 
 // ===== QUICK STOCK =====
-function adjustStock(btn, modelId, side, delta){
-  var m=getModel(modelId); if(!m) return;
+function adjustStock(btn,modelId,side,delta){
+  var m=getModel(modelId);if(!m)return;
   var label='';
   if(m.medio){
     if(side==='r'){m.stockR=Math.max(0,(m.stockR||0)+delta);label='D '+(delta>0?'+':'')+delta;}
@@ -491,29 +420,25 @@ function adjustStock(btn, modelId, side, delta){
   }
   pushUndo('Stock: '+esc(m.descripcion)+' '+label);
   saveModels();
-  // Update span in-place
-  var span=btn.parentNode.querySelector('.qval')||btn.parentNode.querySelector('.tbl-qval');
+  var span=btn.parentNode.querySelector('.qval');
   if(span){
     var newVal=m.medio?(side==='r'?m.stockR:m.stockL):m.stock;
     span.textContent=newVal;
-    var base=span.className.indexOf('tbl-qval')!==-1?'tbl-qval':'qval';
-    if(newVal===0) span.className=base+' stock-zero';
-    else if(m.medio) span.className=base+' '+(side==='r'?'stock-r':'stock-l');
-    else span.className=base+' stock-u';
+    if(newVal===0) span.className='qval stock-zero';
+    else if(m.medio) span.className='qval '+(side==='r'?'stock-r':'stock-l');
+    else span.className='qval stock-u';
   }
   renderSummary();
-  // update table total cell
-  var tc=document.getElementById('tbl-total-'+modelId);
-  if(tc) tc.textContent=m.medio?((m.stockR||0)+(m.stockL||0)):(m.stock||0);
 }
 
-// ===== TOGGLE CARD =====
-function toggleCard(id){
-  var body=document.getElementById(id); if(!body) return;
-  var btn=body.parentNode.querySelector('.abtn-exp');
-  var open=(body.className==='card-body open');
-  body.className=open?'card-body':'card-body open';
-  if(btn){btn.className=open?'abtn abtn-exp':'abtn abtn-exp open';btn.textContent=open?'▼':'▲';}
+// ===== PHOTO TOGGLE =====
+function togglePhoto(id){
+  var expand=document.getElementById('ph-'+id);
+  var btn=document.getElementById('phbtn-'+id);
+  if(!expand)return;
+  var open=expand.className==='photo-expand open';
+  expand.className=open?'photo-expand':'photo-expand open';
+  if(btn){btn.className=open?'photo-btn':'photo-btn open';btn.textContent=open?'&#128247; Foto':'&#9650; Foto';}
 }
 
 // ===== RESET STOCK =====
@@ -526,9 +451,7 @@ function resetAllStock(){
       if(models[i].medio){models[i].stockR=0;models[i].stockL=0;}
       else{models[i].stock=0;}
     }
-    saveModels(); renderList();
-    showToast('Stock reseteado a cero');
-    return;
+    saveModels();renderList();showToast('Stock reseteado a cero');return;
   }
   resetStockPending=true;
   var chip=document.getElementById('reset-stock-chip');
@@ -537,14 +460,14 @@ function resetAllStock(){
 }
 function cancelResetStock(e){
   var chip=document.getElementById('reset-stock-chip');
-  if(chip&&chip.contains(e.target)) return;
+  if(chip&&chip.contains(e.target))return;
   resetStockPending=false;
   if(chip){chip.textContent='Reset stock';chip.style.background='';chip.style.color='';chip.style.borderColor='';}
 }
 
 // ===== SUMMARY =====
 function renderSummary(){
-  var total=models.length, units=0;
+  var total=models.length,units=0;
   for(var i=0;i<models.length;i++){
     var m=models[i];
     units+=m.medio?((m.stockR||0)+(m.stockL||0)):(m.stock||0);
@@ -554,173 +477,98 @@ function renderSummary(){
     '<div class="summary-chip">Unidades: <span>'+units+'</span></div>'+
     '<div class="summary-chip alert" id="reset-stock-chip" title="Resetear todo el stock a cero">Reset stock</div>';
   var rc=document.getElementById('reset-stock-chip');
-  if(rc) rc.addEventListener('click',resetAllStock);
+  if(rc)rc.addEventListener('click',resetAllStock);
 }
 
-// ===== GET FILTERED =====
+// ===== FILTER =====
 function getFiltered(){
   var q=(document.getElementById('search-input').value||'').toLowerCase().trim();
   var out=[];
   for(var i=0;i<models.length;i++){
     var m=models[i];
-    if(q&&(m.descripcion||'').toLowerCase().indexOf(q)===-1) continue;
+    if(q){
+      var matchDesc=(m.descripcion||'').toLowerCase().indexOf(q)!==-1;
+      var matchCod=(m.codigo||'').toLowerCase().indexOf(q)!==-1;
+      if(!matchDesc&&!matchCod)continue;
+    }
     out.push(m);
   }
   out.sort(function(a,b){return(a.createdAt||0)-(b.createdAt||0);});
   return out;
 }
 
-// ===== EXPAND / COLLAPSE =====
-function expandAll(){
-  var bodies=document.querySelectorAll('.card-body');
-  var btns=document.querySelectorAll('.abtn-exp');
-  for(var i=0;i<bodies.length;i++) bodies[i].className='card-body open';
-  for(var j=0;j<btns.length;j++){btns[j].className='abtn abtn-exp open';btns[j].textContent='▲';}
-  allExpanded=true;
-}
-function collapseAll(){
-  var bodies=document.querySelectorAll('.card-body');
-  var btns=document.querySelectorAll('.abtn-exp');
-  for(var i=0;i<bodies.length;i++) bodies[i].className='card-body';
-  for(var j=0;j<btns.length;j++){btns[j].className='abtn abtn-exp';btns[j].textContent='▼';}
-  allExpanded=false;
-}
-
 // ===== DEBOUNCE =====
 var searchTimer=null;
 function debouncedRender(){if(searchTimer)clearTimeout(searchTimer);searchTimer=setTimeout(renderList,180);}
 
-// ===== VIEW MODE =====
-function setViewMode(mode){
-  viewMode=mode;
-  try{localStorage.setItem('picaportes_viewmode',mode);}catch(e){}
-  document.getElementById('vt-cards').className=mode==='cards'?'active':'';
-  document.getElementById('vt-table').className=mode==='table'?'active':'';
-  document.getElementById('card-only-btns').style.display=mode==='cards'?'inline-flex':'none';
-  renderList();
-}
-
-// ===== RENDER TABLE =====
-function renderTable(filtered){
+// ===== RENDER =====
+function renderList(){
+  renderSummary();
+  var filtered=getFiltered();
   var list=document.getElementById('item-list');
   if(filtered.length===0){
-    list.innerHTML='<div class="empty-state"><div class="empty-icon">&#128273;</div><p>No hay resultados</p></div>';
+    list.innerHTML='<div class="empty-state"><div class="empty-icon">&#128273;</div><p>'+(models.length===0?'No hay picaportes cargados.<br>Toca <b>+ Agregar</b> para empezar.':'No hay resultados.')+'</p></div>';
     return;
   }
-  var html='<div class="tbl-wrap"><table class="tbl"><thead><tr>'
-    +'<th>Descripcion</th><th>Tipo</th><th>Stock</th><th>Total</th><th></th>'
+
+  var html='<table class="tbl"><thead><tr>'
+    +'<th>Cod</th>'
+    +'<th>Descripcion</th>'
+    +'<th>Stock</th>'
+    +'<th></th>'
     +'</tr></thead><tbody>';
+
   for(var j=0;j<filtered.length;j++){
-    var m=filtered[j], mid=m.id;
+    var m=filtered[j],mid=m.id;
     var isOdd=(j%2===1);
-    var oddCls=isOdd?' tbl-odd':'';
-    var descHtml=esc(m.descripcion||'—');
-    var tipoHtml=m.medio?'<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:10px;font-weight:600;padding:1px 5px;border-radius:3px;background:var(--tbg);border:1px solid var(--tbd);color:var(--muted);">Medio</span>':'<span style="color:var(--dim);font-size:10px;">Completo</span>';
-    var total=m.medio?((m.stockR||0)+(m.stockL||0)):(m.stock||0);
-    var stockHtml='';
+    var oddCls=isOdd?'tbl-main tbl-odd':'tbl-main';
+
+    // Stock cell
+    var stockCell='';
     if(m.medio){
       var rCls=(m.stockR||0)===0?'stock-zero':'stock-r';
       var lCls=(m.stockL||0)===0?'stock-zero':'stock-l';
-      stockHtml='<div style="display:flex;gap:6px;align-items:center;">'
-        +'<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:10px;color:#7abf9e;font-weight:700;">D</span>'
-        +'<div class="tbl-qbtns"><button class="tbl-qbtn" onclick="adjustStock(this,\''+mid+'\',\'r\',-1)">-</button><span class="tbl-qval '+rCls+'">'+(m.stockR||0)+'</span><button class="tbl-qbtn" onclick="adjustStock(this,\''+mid+'\',\'r\',1)">+</button></div>'
+      stockCell='<div class="medio-stock">'
+        +'<span class="medio-lbl" style="color:#7abf9e;">D</span>'
+        +'<div class="qbtns"><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'r\',-1)">-</button><span class="qval '+rCls+'">'+(m.stockR||0)+'</span><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'r\',1)">+</button></div>'
         +'<span style="color:var(--dim);font-size:10px;">|</span>'
-        +'<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:10px;color:#9ab3d4;font-weight:700;">I</span>'
-        +'<div class="tbl-qbtns"><button class="tbl-qbtn" onclick="adjustStock(this,\''+mid+'\',\'l\',-1)">-</button><span class="tbl-qval '+lCls+'">'+(m.stockL||0)+'</span><button class="tbl-qbtn" onclick="adjustStock(this,\''+mid+'\',\'l\',1)">+</button></div>'
+        +'<span class="medio-lbl" style="color:#9ab3d4;">I</span>'
+        +'<div class="qbtns"><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'l\',-1)">-</button><span class="qval '+lCls+'">'+(m.stockL||0)+'</span><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'l\',1)">+</button></div>'
         +'</div>';
     } else {
       var uCls=(m.stock||0)===0?'stock-zero':'stock-u';
-      stockHtml='<div class="tbl-qbtns"><button class="tbl-qbtn" onclick="adjustStock(this,\''+mid+'\',\'u\',-1)">-</button><span class="tbl-qval '+uCls+'">'+(m.stock||0)+'</span><button class="tbl-qbtn" onclick="adjustStock(this,\''+mid+'\',\'u\',1)">+</button></div>';
+      stockCell='<div class="qbtns"><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'u\',-1)">-</button><span class="qval '+uCls+'">'+(m.stock||0)+'</span><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'u\',1)">+</button></div>';
     }
-    var actHtml='<div class="tbl-acts">'
+
+    // Actions cell
+    var photoBtn=m.photo?'<button class="photo-btn" id="phbtn-'+mid+'" onclick="togglePhoto(\''+mid+'\')">&#128247; Foto</button>':'';
+    var actCell='<div style="display:flex;gap:3px;align-items:center;flex-wrap:nowrap;">'
+      +photoBtn
       +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')">Editar</button>'
+      +'<button class="abtn abtn-dup" onclick="duplicateModel(\''+mid+'\')">Copiar</button>'
       +'<button class="abtn abtn-del" onclick="deleteModel(\''+mid+'\')">Eliminar</button>'
       +'</div>';
+
     html+='<tr class="'+oddCls+'">'
-      +'<td>'+descHtml+'</td>'
-      +'<td>'+tipoHtml+'</td>'
-      +'<td>'+stockHtml+'</td>'
-      +'<td style="font-weight:700;text-align:center;" id="tbl-total-'+mid+'">'+total+'</td>'
-      +'<td>'+actHtml+'</td>'
+      +'<td class="td-code">'+(m.codigo?esc(m.codigo):'<span style="color:var(--dim)">—</span>')+'</td>'
+      +'<td class="td-desc">'+esc(m.descripcion||'—')+'</td>'
+      +'<td style="white-space:nowrap;">'+stockCell+'</td>'
+      +'<td>'+actCell+'</td>'
       +'</tr>';
-  }
-  html+='</tbody></table></div>';
-  list.innerHTML=html;
-}
 
-// ===== RENDER CARDS =====
-function renderCards(filtered){
-  var list=document.getElementById('item-list');
-  if(filtered.length===0){
-    list.innerHTML='<div class="empty-state"><div class="empty-icon">&#128273;</div><p>No hay picaportes cargados.<br>Toca <b>+ Agregar</b> para empezar.</p></div>';
-    return;
-  }
-  var html='';
-  for(var j=0;j<filtered.length;j++){
-    var m=filtered[j], mid=m.id;
-    var hasBody=!!m.photo; // foto siempre en body; stock en la card directamente
-
-    // Stock inline (siempre visible en la card)
-    var stockInline='';
-    if(m.medio){
-      var rCls2=(m.stockR||0)===0?'stock-zero':'stock-r';
-      var lCls2=(m.stockL||0)===0?'stock-zero':'stock-l';
-      stockInline='<div class="stock-medio">'
-        +'<div class="stock-block">'
-        +'<div class="stock-lbl lbl-d">Der</div>'
-        +'<div class="qbtns"><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'r\',-1)">-</button><span class="qval '+rCls2+'">'+(m.stockR||0)+'</span><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'r\',1)">+</button></div>'
+    // Photo expand row (only if has photo)
+    if(m.photo){
+      var photoBg=isOdd?'background:var(--bg3);':'';
+      html+='<tr class="tbl-photo-row"><td colspan="4" style="'+photoBg+'">'
+        +'<div class="photo-expand" id="ph-'+mid+'">'
+        +'<img src="'+m.photo+'" alt="'+esc(m.descripcion||'')+'" loading="lazy">'
         +'</div>'
-        +'<div style="color:var(--dim);font-size:18px;font-weight:300;margin-top:10px;">/</div>'
-        +'<div class="stock-block">'
-        +'<div class="stock-lbl lbl-i">Izq</div>'
-        +'<div class="qbtns"><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'l\',-1)">-</button><span class="qval '+lCls2+'">'+(m.stockL||0)+'</span><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'l\',1)">+</button></div>'
-        +'</div>'
-        +'</div>';
-    } else {
-      var uCls2=(m.stock||0)===0?'stock-zero':'stock-u';
-      stockInline='<div class="stock-simple">'
-        +'<div class="qbtns">'
-        +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'u\',-1)">-</button>'
-        +'<span class="qval '+uCls2+'" style="font-size:15px;min-width:28px;">'+(m.stock||0)+'</span>'
-        +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'u\',1)">+</button>'
-        +'</div>'
-        +'</div>';
+        +'</td></tr>';
     }
-
-    var tagMedio=m.medio?'<span class="tag-medio">Medio</span>':'';
-
-    html+='<div class="item-card">'
-      // Top row: desc + tags + actions
-      +'<div style="display:flex;align-items:center;gap:6px;">'
-      +'<div style="flex:1;min-width:0;display:flex;align-items:center;gap:5px;overflow:hidden;">'
-      +'<span style="font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(m.descripcion||'Sin descripcion')+'</span>'
-      +tagMedio
-      +'</div>'
-      +'<div style="flex-shrink:0;display:flex;gap:3px;align-items:center;">'
-      +(hasBody?'<button class="abtn abtn-exp" onclick="toggleCard(\'cb-'+mid+'\')">▼</button>':'')
-      +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')">Editar</button>'
-      +'<button class="abtn abtn-dup" onclick="duplicateModel(\''+mid+'\')">Dup</button>'
-      +'<button class="abtn abtn-del" onclick="deleteModel(\''+mid+'\')">Del</button>'
-      +'</div>'
-      +'</div>'
-      // Stock inline (always shown)
-      +stockInline
-      // Card body: only photo
-      +(hasBody?'<div class="card-body" id="cb-'+mid+'"><img class="card-photo-img" src="'+m.photo+'" alt="'+esc(m.descripcion||'')+'" loading="lazy"></div>':'')
-      +'</div>';
   }
-  list.innerHTML=html;
-}
 
-// ===== RENDER LIST =====
-function renderList(){
-  var filtered=getFiltered();
-  var n=filtered.length;
-  var cl=document.getElementById('count-label');
-  if(cl){cl.textContent=n+' picaporte'+(n!==1?'s':'');cl.style.display=n>0?'block':'none';}
-  renderSummary();
-  if(viewMode==='table'){renderTable(filtered);return;}
-  renderCards(filtered);
+  html+='</tbody></table>';
+  list.innerHTML=html;
 }
 
 // ===== EXPORT =====
@@ -740,23 +588,23 @@ function exportJSON(){
   }catch(e){showToast('Error al exportar');}
 }
 function importJSON(e){
-  var file=e.target.files[0]; if(!file) return;
+  var file=e.target.files[0];if(!file)return;
   var reader=new FileReader();
   reader.onload=function(ev){
     try{
       var raw=JSON.parse(ev.target.result);
       var imported=Array.isArray(raw)?raw:(raw.models||[]);
-      if(!Array.isArray(imported)) throw new Error();
+      if(!Array.isArray(imported))throw new Error();
       pushUndo('Importar JSON');
       var existIds={};
-      for(var i=0;i<models.length;i++) existIds[models[i].id]=i;
-      var added=0, updated=0;
+      for(var i=0;i<models.length;i++)existIds[models[i].id]=i;
+      var added=0,updated=0;
       for(var j=0;j<imported.length;j++){
         var imp=imported[j];
         if(existIds[imp.id]!==undefined){models[existIds[imp.id]]=imp;updated++;}
         else{models.push(imp);added++;}
       }
-      saveModels(); renderList();
+      saveModels();renderList();
       showToast('Importado: '+added+' nuevo'+(added!==1?'s':'')+', '+updated+' actualizado'+(updated!==1?'s':''));
     }catch(err){showToast('JSON invalido');}
     e.target.value='';
@@ -766,14 +614,11 @@ function importJSON(e){
 function exportCSV(){
   try{
     var data=getExportModels();
-    var rows=[['Descripcion','Tipo','Derecha / Unidades','Izquierda','Total']];
+    var rows=[['Codigo','Descripcion','Tipo','Derecha / Unidades','Izquierda','Total']];
     for(var i=0;i<data.length;i++){
       var m=data[i];
-      if(m.medio){
-        rows.push([m.descripcion||'','Medio picaporte',m.stockR||0,m.stockL||0,(m.stockR||0)+(m.stockL||0)]);
-      } else {
-        rows.push([m.descripcion||'','Completo',m.stock||0,'',m.stock||0]);
-      }
+      if(m.medio)rows.push([m.codigo||'',m.descripcion||'','Medio picaporte',m.stockR||0,m.stockL||0,(m.stockR||0)+(m.stockL||0)]);
+      else rows.push([m.codigo||'',m.descripcion||'','Completo',m.stock||0,'',m.stock||0]);
     }
     var csv=rows.map(function(r){return r.map(function(c){var s=String(c);return s.indexOf(',')!==-1||s.indexOf('"')!==-1||s.indexOf('\n')!==-1?'"'+s.replace(/"/g,'""')+'"':s;}).join(',');}).join('\r\n');
     var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
@@ -788,20 +633,20 @@ function exportPDF(){
   var data=getExportModels();
   var rows='';
   for(var i=0;i<data.length;i++){
-    var m=data[i], rc=(i%2===1)?'even':'';
+    var m=data[i],rc=(i%2===1)?'even':'';
     var stockHtml='';
-    if(m.medio) stockHtml='D: '+(m.stockR||0)+'&nbsp;&nbsp;I: '+(m.stockL||0)+'&nbsp;&nbsp;Total: '+((m.stockR||0)+(m.stockL||0));
+    if(m.medio)stockHtml='D: '+(m.stockR||0)+'&nbsp;&nbsp;I: '+(m.stockL||0)+'&nbsp;&nbsp;Total: '+((m.stockR||0)+(m.stockL||0));
     else stockHtml='Unidades: '+(m.stock||0);
-    rows+='<tr class="'+rc+'"><td>'+esc(m.descripcion||'-')+'</td><td>'+(m.medio?'Medio':'Completo')+'</td><td>'+stockHtml+'</td></tr>';
+    rows+='<tr class="'+rc+'"><td>'+(m.codigo?esc(m.codigo):'—')+'</td><td>'+esc(m.descripcion||'-')+'</td><td>'+(m.medio?'Medio':'Completo')+'</td><td>'+stockHtml+'</td></tr>';
   }
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Catalogo de Picaportes</title><style>'
-    +'body{font-family:Arial,sans-serif;padding:20px;font-size:12px;max-width:600px;margin:0 auto;}'
+    +'body{font-family:Arial,sans-serif;padding:20px;font-size:12px;max-width:640px;margin:0 auto;}'
     +'h1{color:#c8621a;font-size:18px;margin-bottom:14px;}h1 span{font-size:12px;color:#888;font-weight:normal;}'
-    +'table{width:100%;border-collapse:collapse;}th{background:#c8621a;color:#fff;padding:7px 6px;text-align:left;font-size:11px;}'
-    +'td{padding:6px;border-bottom:1px solid #eee;vertical-align:top;}tr.even td{background:#fdf5ef;}'
+    +'table{width:100%;border-collapse:collapse;}th{background:#c8621a;color:#fff;padding:6px;text-align:left;font-size:11px;}'
+    +'td{padding:5px 6px;border-bottom:1px solid #eee;vertical-align:middle;}tr.even td{background:#fdf5ef;}'
     +'</style></head><body>'
     +'<h1>Catalogo de Picaportes <span>'+data.length+' modelo'+(data.length!==1?'s':'')+'</span></h1>'
-    +'<table><thead><tr><th>Descripcion</th><th>Tipo</th><th>Stock</th></tr></thead><tbody>'+rows+'</tbody></table></body></html>';
+    +'<table><thead><tr><th>Cod</th><th>Descripcion</th><th>Tipo</th><th>Stock</th></tr></thead><tbody>'+rows+'</tbody></table></body></html>';
   var win=window.open('','_blank');
   if(win){win.document.write(html);win.document.close();}
   else{var blob=new Blob([html],{type:'text/html'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='catalogo-picaportes.html';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(url);},1000);}
@@ -824,17 +669,12 @@ function showToast(msg){
 // ===== KEYBOARD =====
 document.addEventListener('keydown',function(e){
   var tag=(document.activeElement||{}).tagName||'';
-  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
   if((e.ctrlKey||e.metaKey)&&e.key==='z'&&!e.shiftKey){e.preventDefault();performUndo();}
   else if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.key==='z'&&e.shiftKey))){e.preventDefault();performRedo();}
 });
 
 // ===== INIT =====
-if(viewMode==='table'){
-  document.getElementById('vt-cards').className='';
-  document.getElementById('vt-table').className='active';
-  document.getElementById('card-only-btns').style.display='none';
-}
 renderList();
 </script>
 </body>
