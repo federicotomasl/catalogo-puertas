@@ -91,20 +91,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .qval{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;min-width:16px;text-align:center;}
 .card-photo-img{width:100%;max-height:200px;object-fit:contain;border-radius:4px;border:1px solid var(--border);background:var(--bg3);margin-top:6px;}
 
-/* SIZE CHIPS */
-.sizes-row-wrap{display:flex;justify-content:center;}
-.sizes-row{display:inline-grid;grid-template-columns:auto auto;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden;}
-.size-chip{font-family:'Barlow Condensed',sans-serif;font-size:11px;display:flex;align-items:center;gap:3px;padding:2px 7px;border-bottom:1px solid var(--border);}
-.size-val{color:var(--text);font-weight:700;}
-.ssep{color:var(--dim);font-size:10px;}
-.stock-r{color:#7abf9e;}
-.stock-l{color:#9ab3d4;}
-.stock-zero{color:var(--zero);font-weight:700;}
-.qbtns{display:flex;align-items:center;gap:1px;}
-.qbtn{background:var(--bg3);border:1px solid var(--border);border-radius:2px;color:var(--muted);cursor:pointer;font-size:11px;font-weight:700;width:17px;height:17px;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;}
-.qbtn:active{background:var(--accent);color:#fff;border-color:var(--accent);}
-.qval{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;min-width:16px;text-align:center;}
-
 /* CARD ACTIONS */
 .abtn{background:transparent;border:1px solid transparent;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:3px 7px;border-radius:3px;white-space:nowrap;transition:all .15s;}
 .abtn-edit{color:var(--accent);border-color:var(--accent);}
@@ -255,6 +241,17 @@ select.finput{cursor:pointer;}
 .mosaic-modal-close{position:absolute;top:12px;right:14px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-size:16px;cursor:pointer;border-radius:4px;padding:3px 9px;font-family:'Barlow Condensed',sans-serif;font-weight:700;}
 .mosaic-modal-close:hover{border-color:var(--accent);color:var(--accent);}
 
+/* GLOBAL PANEL items */
+.gp-item{display:flex;align-items:center;justify-content:space-between;padding:4px 6px;border-radius:4px;background:var(--bg3);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;color:var(--text);overflow:hidden;}
+.gp-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+.gp-item-del{background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:11px;padding:0 0 0 3px;line-height:1;flex-shrink:0;}
+.gp-item-del:hover{color:#e05555;}
+
+/* SHARED BUTTON CLASSES */
+.btn-panel-add{padding:0 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.btn-panel-add:hover{background:var(--accent);color:#fff;}
+.pill-danger{border-color:#e05555 !important;color:#e05555 !important;cursor:pointer !important;}
+.pill-danger:hover{background:#e05555 !important;color:#fff !important;}
 /* MEDIDAS CHIPS */
 .medidas-chips{display:flex;flex-wrap:nowrap;gap:4px;margin-bottom:8px;overflow-x:auto;}
 .medida-chip{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;padding:3px 7px;border-radius:4px;border:1px solid var(--border);background:var(--bg3);color:var(--muted);cursor:pointer;transition:all .15s;letter-spacing:0.04em;white-space:nowrap;flex-shrink:0;}
@@ -283,8 +280,9 @@ select.finput{cursor:pointer;}
       <div class="topbar-inner">
         <div style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;">
           <a href="index.html" class="btn btn-ghost" style="text-decoration:none;">⌂</a>
-          <div class="topbar-title">Catalogo de Puertas</div>
-          <button class="btn btn-accent" onclick="openForm(null)">+ Agregar</button>
+          <div class="topbar-title">Puertas</div>
+          <button class="btn btn-accent" onclick="openForm(null)">+ Nuevo</button>
+          <button class="btn btn-outline" onclick="openGlobalPanel()">+ Agregar</button>
           <button class="btn btn-outline" onclick="openTemporal()" id="btn-temporal" style="border-color:#7abf9e;color:#7abf9e;">⏱ Temporal</button>
         </div>
         <div class="topbar-actions">
@@ -376,7 +374,7 @@ select.finput{cursor:pointer;}
       </span>
       <button id="mosaic-size-btn" onclick="toggleMosaicSize()" class="inline-btn" style="display:none;" title="Cambiar tamaño de mosaico">⊟ Chico</button>
       <div style="margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0;">
-        <button id="del-sel-btn" onclick="deleteSelected()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:default;white-space:nowrap;transition:all .15s;" disabled>&#10005; Eliminar seleccionados</button>
+        <button id="del-sel-btn" onclick="deleteSelected()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:default;white-space:nowrap;transition:all .15s;" disabled>Eliminar sel.</button>
         <button class="filter-tab" id="sel-all-btn" onclick="toggleSelectAll(this)">Sel. todo</button>
       </div>
     </div>
@@ -390,6 +388,7 @@ select.finput{cursor:pointer;}
       <div class="topbar-inner" style="flex-direction:row;justify-content:space-between;">
         <div class="topbar-title" id="form-title-bar">Nuevo Modelo</div>
         <div class="topbar-actions">
+          <button class="btn btn-outline" onclick="openGlobalPanel()">+ Agregar</button>
           <button class="btn btn-ghost" onclick="toggleTheme()">&#9788;</button>
           <button class="btn btn-ghost" onclick="closeForm()">&#8592; Volver</button>
         </div>
@@ -401,15 +400,6 @@ select.finput{cursor:pointer;}
         <div class="flabel">Fabrica</div>
         <input type="hidden" id="ff-fabrica" value="">
         <div id="ff-fabrica-chips" class="medidas-chips" style="flex-wrap:wrap;"></div>
-        <button type="button" id="btn-toggle-fabrica" onclick="toggleFabricaPanel()" style="margin-top:4px;width:100%;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;">+ Agregar fábrica</button>
-      </div>
-      <div class="color-panel" id="fabrica-panel" style="margin-bottom:12px;">
-        <div class="flabel">Nombre de la fábrica</div>
-        <div class="add-color-row">
-          <input class="finput" id="ff-new-fabrica" type="text" placeholder="ej: Aluar, Hermat..." style="flex:1;" onkeydown="if(event.keyCode===13){event.preventDefault();addFabrica();}">
-          <button type="button" onclick="addFabrica()" style="padding:0 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Agregar</button>
-        </div>
-        <div class="manage-list" id="fabrica-manage-list"></div>
       </div>
 
       <div class="fgrp">
@@ -423,31 +413,12 @@ select.finput{cursor:pointer;}
           <div class="flabel">Color de Puerta</div>
           <input type="hidden" id="ff-color" value="">
           <div id="ff-color-chips" class="medidas-chips" style="flex-wrap:wrap;max-height:90px;overflow-y:auto;"></div>
-          <button type="button" id="btn-toggle-color" onclick="toggleColorPanel()" style="margin-top:4px;width:100%;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;">+ Agregar color</button>
         </div>
         <div class="fgrp-half">
           <div class="flabel">Tipo de Marco</div>
           <input type="hidden" id="ff-marco" value="">
           <div id="ff-marco-chips" class="medidas-chips" style="flex-wrap:wrap;max-height:90px;overflow-y:auto;"></div>
-          <button type="button" id="btn-toggle-marco" onclick="toggleMarcoPanel()" style="margin-top:4px;width:100%;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;">+ Agregar marco</button>
         </div>
-      </div>
-      <!-- Panels below the row, full width -->
-      <div class="color-panel" id="color-panel" style="margin-bottom:12px;">
-        <div class="flabel">Nombre del color</div>
-        <div class="add-color-row">
-          <input class="finput" id="ff-new-color" type="text" placeholder="ej: Blanco, Roble..." style="flex:1;" onkeydown="if(event.keyCode===13){event.preventDefault();addColor();}">
-          <button type="button" onclick="addColor()" style="padding:0 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Agregar</button>
-        </div>
-        <div class="manage-list" id="color-manage-list"></div>
-      </div>
-      <div class="color-panel" id="marco-panel" style="margin-bottom:12px;">
-        <div class="flabel">Nombre del tipo de marco</div>
-        <div class="add-color-row">
-          <input class="finput" id="ff-new-marco" type="text" placeholder="ej: Madera, Aluminio..." style="flex:1;" onkeydown="if(event.keyCode===13){event.preventDefault();addMarco();}">
-          <button type="button" onclick="addMarco()" style="padding:0 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Agregar</button>
-        </div>
-        <div class="manage-list" id="marco-manage-list"></div>
       </div>
 
       <div class="sizes-section">
@@ -471,7 +442,7 @@ select.finput{cursor:pointer;}
           <div class="flabel">Nueva medida estándar</div>
           <div class="add-color-row">
             <input class="finput" id="ff-new-medida" type="text" placeholder="00/00" maxlength="5" oninput="maskMedida(this)" onkeydown="medidaKeydown(event,this)" style="flex:1;">
-            <button type="button" onclick="addMedidaStd()" style="padding:0 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Agregar</button>
+            <button type="button" onclick="addMedidaStd()" class="btn-panel-add">Agregar</button>
           </div>
           <div class="manage-list" id="medidas-manage-list"></div>
         </div>
@@ -494,6 +465,53 @@ select.finput{cursor:pointer;}
       <button class="btn-save" id="btn-save" onclick="saveModel()">Guardar Modelo</button>
     </div>
   </div>
+
+<!-- ===== GLOBAL PANEL ===== -->
+<div id="global-panel-overlay" onclick="closeGlobalPanel(event)" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.6);align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;">
+  <div id="global-panel-inner" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;width:100%;max-width:540px;margin:auto;overflow:hidden;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px 10px;border-bottom:1px solid var(--border);">
+      <span style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);">Gestionar listas</span>
+      <button onclick="closeGlobalPanel()" style="background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;">✕</button>
+    </div>
+    <div style="padding:14px;display:flex;flex-direction:column;gap:18px;">
+
+      <!-- FABRICAS -->
+      <div>
+        <div class="flabel" style="margin-bottom:6px;">Fábricas</div>
+        <div class="add-color-row" style="margin-bottom:8px;">
+          <input class="finput" id="gp-new-fabrica" type="text" placeholder="Nueva fábrica..." style="flex:1;" onkeydown="if(event.keyCode===13){event.preventDefault();gpAddFabrica();}">
+          <button type="button" onclick="gpAddFabrica()" class="btn-panel-add">+ Agregar</button>
+        </div>
+        <div id="gp-fabrica-list" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:3px;"></div>
+      </div>
+
+      <div style="height:1px;background:var(--border);"></div>
+
+      <!-- COLORES -->
+      <div>
+        <div class="flabel" style="margin-bottom:6px;">Colores</div>
+        <div class="add-color-row" style="margin-bottom:8px;">
+          <input class="finput" id="gp-new-color" type="text" placeholder="Nuevo color..." style="flex:1;" onkeydown="if(event.keyCode===13){event.preventDefault();gpAddColor();}">
+          <button type="button" onclick="gpAddColor()" class="btn-panel-add">+ Agregar</button>
+        </div>
+        <div id="gp-color-list" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:3px;"></div>
+      </div>
+
+      <div style="height:1px;background:var(--border);"></div>
+
+      <!-- MARCOS -->
+      <div>
+        <div class="flabel" style="margin-bottom:6px;">Tipos de Marco</div>
+        <div class="add-color-row" style="margin-bottom:8px;">
+          <input class="finput" id="gp-new-marco" type="text" placeholder="Nuevo marco..." style="flex:1;" onkeydown="if(event.keyCode===13){event.preventDefault();gpAddMarco();}">
+          <button type="button" onclick="gpAddMarco()" class="btn-panel-add">+ Agregar</button>
+        </div>
+        <div id="gp-marco-list" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:3px;"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 <div class="toast" id="toast-temp" style="bottom:60px;"></div>
@@ -523,7 +541,8 @@ select.finput{cursor:pointer;}
     <div class="topbar-inner">
       <div style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;">
         <div class="topbar-title" style="color:#7abf9e;">Catálogo Temporal</div>
-        <button class="btn btn-accent" onclick="openTempForm(null)">+ Agregar</button>
+        <button class="btn btn-accent" onclick="openTempForm(null)">+ Nuevo</button>
+        <button class="btn btn-outline" onclick="openGlobalPanel()">+ Agregar</button>
         <button class="btn btn-ghost" onclick="closeTemporal()">← Principal</button>
       </div>
       <div class="topbar-actions">
@@ -559,6 +578,7 @@ select.finput{cursor:pointer;}
     <div class="topbar-inner" style="flex-direction:row;justify-content:space-between;">
       <div class="topbar-title" id="temp-form-title-bar" style="color:#7abf9e;">Nuevo Modelo Temporal</div>
       <div style="display:flex;gap:5px;">
+        <button class="btn btn-outline" onclick="openGlobalPanel()">+ Agregar</button>
         <button class="btn btn-ghost" onclick="toggleTheme()">&#9788;</button>
         <button class="btn btn-ghost" onclick="closeTempForm()">← Volver</button>
       </div>
@@ -567,7 +587,8 @@ select.finput{cursor:pointer;}
   <div class="form-wrap">
     <div class="fgrp">
       <div class="flabel">Fabrica</div>
-      <input class="finput" id="tff-fabrica" type="text" placeholder="ej: Aluar">
+      <input type="hidden" id="tff-fabrica" value="">
+      <div id="tff-fabrica-chips" class="medidas-chips" style="flex-wrap:wrap;"></div>
     </div>
     <div class="fgrp">
       <div class="flabel">Descripcion</div>
@@ -576,15 +597,18 @@ select.finput{cursor:pointer;}
     <div class="frow" style="align-items:flex-start;margin-bottom:0;">
       <div class="fgrp-half">
         <div class="flabel">Color de Puerta</div>
-        <input class="finput" id="tff-color" type="text" placeholder="ej: Blanco">
+        <input type="hidden" id="tff-color" value="">
+        <div id="tff-color-chips" class="medidas-chips" style="flex-wrap:wrap;max-height:90px;overflow-y:auto;"></div>
       </div>
       <div class="fgrp-half">
         <div class="flabel">Tipo de Marco</div>
-        <input class="finput" id="tff-marco" type="text" placeholder="ej: Aluminio">
+        <input type="hidden" id="tff-marco" value="">
+        <div id="tff-marco-chips" class="medidas-chips" style="flex-wrap:wrap;max-height:90px;overflow-y:auto;"></div>
       </div>
     </div>
     <div class="sizes-section" style="margin-top:10px;">
       <div class="sizes-title">Medidas y Stock</div>
+      <div id="temp-medidas-chips-wrap" class="medidas-chips"></div>
       <div id="temp-sizes-container"></div>
       <div class="srow">
         <input class="sinput" id="tnew-medida" type="text" placeholder="00/00" maxlength="5" oninput="maskMedida(this)" onkeydown="medidaKeydown(event,this)">
@@ -628,10 +652,10 @@ var redoHistory = [];
 function pushUndo(label){
   undoHistory.push({
     label: label,
-    models: JSON.parse(JSON.stringify(models)),
-    colors: JSON.parse(JSON.stringify(colors)),
-    marcos: JSON.parse(JSON.stringify(marcos)),
-    tempModels: JSON.parse(JSON.stringify(tempModels))
+    models: cloneModelsLight(models),
+    colors: colors.slice(),
+    marcos: marcos.slice(),
+    tempModels: cloneModelsLight(tempModels)
   });
   if(undoHistory.length > UNDO_LIMIT) undoHistory.shift();
   redoHistory = [];
@@ -665,10 +689,10 @@ function performUndo(){
   var open=getOpenCards();
   redoHistory.push({
     label: undoHistory[undoHistory.length-1].label,
-    models: JSON.parse(JSON.stringify(models)),
-    colors: JSON.parse(JSON.stringify(colors)),
-    marcos: JSON.parse(JSON.stringify(marcos)),
-    tempModels: JSON.parse(JSON.stringify(tempModels))
+    models: cloneModelsLight(models),
+    colors: colors.slice(),
+    marcos: marcos.slice(),
+    tempModels: cloneModelsLight(tempModels)
   });
   if(redoHistory.length > UNDO_LIMIT) redoHistory.shift();
   var snap = undoHistory.pop();
@@ -690,10 +714,10 @@ function performRedo(){
   var open=getOpenCards();
   undoHistory.push({
     label: redoHistory[redoHistory.length-1].label,
-    models: JSON.parse(JSON.stringify(models)),
-    colors: JSON.parse(JSON.stringify(colors)),
-    marcos: JSON.parse(JSON.stringify(marcos)),
-    tempModels: JSON.parse(JSON.stringify(tempModels))
+    models: cloneModelsLight(models),
+    colors: colors.slice(),
+    marcos: marcos.slice(),
+    tempModels: cloneModelsLight(tempModels)
   });
   if(undoHistory.length > UNDO_LIMIT) undoHistory.shift();
   var snap = redoHistory.pop();
@@ -772,11 +796,11 @@ try {
   }
 } catch(e){ medidas = ['90/10','90/15','80/10','80/15','70/10','70/15','60/10','60/15']; }
 
-function saveModels(){ try{localStorage.setItem('puertas_models',JSON.stringify(models));}catch(e){} }
-function saveColors(){ try{localStorage.setItem('puertas_colors',JSON.stringify(colors));}catch(e){} }
-function saveMarcos(){ try{localStorage.setItem('puertas_marcos',JSON.stringify(marcos));}catch(e){} }
-function saveFabricas(){ try{localStorage.setItem('puertas_fabricas',JSON.stringify(fabricas));}catch(e){} }
-function saveMedidas(){ try{localStorage.setItem('puertas_medidas',JSON.stringify(medidas));}catch(e){} }
+function saveModels(){ lsSet('puertas_models',JSON.stringify(models)); }
+function saveColors(){ lsSet('puertas_colors',JSON.stringify(colors)); }
+function saveMarcos(){ lsSet('puertas_marcos',JSON.stringify(marcos)); }
+function saveFabricas(){ lsSet('puertas_fabricas',JSON.stringify(fabricas)); }
+function saveMedidas(){ lsSet('puertas_medidas',JSON.stringify(medidas)); }
 
 // ===== NAVIGATION =====
 function openForm(id){
@@ -788,14 +812,7 @@ function openForm(id){
   document.getElementById('ff-desc').value = '';
   rebuildMarcoSelect('');
   rebuildColorSelect('');
-  document.getElementById('fabrica-panel').className = 'color-panel';
-  document.getElementById('color-panel').className = 'color-panel';
-  document.getElementById('marco-panel').className = 'color-panel';
-  setPanelBtn('btn-toggle-fabrica', false);
-  setPanelBtn('btn-toggle-color', false);
-  setPanelBtn('btn-toggle-marco', false);
   var mdp=document.getElementById('medidas-panel'); if(mdp) mdp.className='color-panel';
-  document.getElementById('ff-new-color').value = '';
   document.getElementById('new-medida').value = '';
   document.getElementById('new-r').value = 0;
   document.getElementById('new-l').value = 0;
@@ -835,6 +852,64 @@ function esc(str){
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
+// ===== HELPERS (seguridad y utilidades) =====
+function downloadBlob(blob, filename){
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a'); a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},1000);
+}
+
+function lsSet(key, val){
+  try{ localStorage.setItem(key, val); return true; }
+  catch(e){
+    showToast('⚠ Almacenamiento lleno: los cambios NO se guardaron');
+    return false;
+  }
+}
+
+// Solo caracteres seguros en IDs (evita romper atributos onclick)
+function sanitizeId(id){
+  return String(id||'').replace(/[^a-zA-Z0-9_-]/g,'');
+}
+
+// Valida y sanitiza un modelo importado desde JSON externo
+function validateModel(m){
+  if(!m || typeof m!=='object') return null;
+  var out={};
+  out.id = sanitizeId(m.id) || String(Date.now())+'_'+Math.floor(Math.random()*10000);
+  out.fabrica     = typeof m.fabrica==='string'     ? m.fabrica.slice(0,100)     : '';
+  out.descripcion = typeof m.descripcion==='string' ? m.descripcion.slice(0,300) : '';
+  out.color       = typeof m.color==='string'       ? m.color.slice(0,100)       : '';
+  out.marco       = typeof m.marco==='string'       ? m.marco.slice(0,100)       : '';
+  out.photo = (typeof m.photo==='string' && m.photo.indexOf('data:image/')===0) ? m.photo : null;
+  out.createdAt = (typeof m.createdAt==='number') ? m.createdAt : Date.now();
+  out.sizes=[];
+  if(Array.isArray(m.sizes)){
+    for(var i=0;i<m.sizes.length;i++){
+      var s=m.sizes[i];
+      if(s && typeof s.medida==='string'){
+        out.sizes.push({medida:s.medida.slice(0,10), r:Math.max(0,parseInt(s.r)||0), l:Math.max(0,parseInt(s.l)||0)});
+      }
+    }
+  }
+  return out;
+}
+
+// Clona modelos compartiendo la referencia de la foto (strings son inmutables,
+// no se duplica memoria). El resto del objeto se clona profundo.
+function cloneModelsLight(arr){
+  var out=[];
+  for(var i=0;i<arr.length;i++){
+    var m=arr[i], copy={};
+    for(var k in m){ if(k!=='photo' && m.hasOwnProperty(k)) copy[k]=m[k]; }
+    var cloned=JSON.parse(JSON.stringify(copy));
+    cloned.photo = m.photo || null; // referencia compartida, sin copia
+    out.push(cloned);
+  }
+  return out;
+}
+
 function rebuildMarcoSelect(selected){
   var hidden = document.getElementById('ff-marco');
   if(hidden) hidden.value = selected||'';
@@ -862,44 +937,13 @@ function selectMarcoChip(val){
   renderMarcoChips(next);
 }
 
-function setPanelBtn(id, open){
-  var b=document.getElementById(id); if(!b)return;
-  b.style.background = open ? 'var(--accent)' : 'transparent';
-  b.style.color      = open ? '#fff'          : 'var(--accent)';
+// ===== FABRICAS =====
+function rebuildFabricaSelect(selected){
+  document.getElementById('ff-fabrica').value = selected||'';
+  renderFabricaChips(selected||'');
 }
 
-function toggleMarcoPanel(){
-  var p = document.getElementById('marco-panel');
-  var c = document.getElementById('color-panel');
-  var f = document.getElementById('fabrica-panel');
-  var md = document.getElementById('medidas-panel');
-  if(!p) return;
-  if(p.className === 'color-panel on'){
-    p.className = 'color-panel'; setPanelBtn('btn-toggle-marco', false);
-  } else {
-    c.className='color-panel';  setPanelBtn('btn-toggle-color', false);
-    if(f){f.className='color-panel'; setPanelBtn('btn-toggle-fabrica', false);}
-    if(md) md.className='color-panel';
-    p.className = 'color-panel on'; setPanelBtn('btn-toggle-marco', true);
-    renderMarcoManageList();
-  }
-}
-
-function addMarco(){
-  var name = document.getElementById('ff-new-marco').value.trim();
-  if(!name){showToast('Ingresa un nombre');return;}
-  for(var i=0;i<marcos.length;i++){if(marcos[i].toLowerCase()===name.toLowerCase()){showToast('Ya existe');return;}}
-  marcos.push(name);
-  saveMarcos();
-  document.getElementById('ff-new-marco').value = '';
-  document.getElementById('ff-new-marco').focus();
-  document.getElementById('ff-marco').value = name;
-  renderMarcoChips(name);
-  updateMarcoFilter();
-  renderMarcoManageList();
-  showToast('Marco "'+name+'" agregado');
-}
-
+// ===== COLORS =====
 function rebuildColorSelect(selected){
   var hidden = document.getElementById('ff-color');
   if(hidden) hidden.value = selected||'';
@@ -927,96 +971,6 @@ function selectColorChip(val){
   renderColorChips(next);
 }
 
-function toggleColorPanel(){
-  var p = document.getElementById('color-panel');
-  var m = document.getElementById('marco-panel');
-  var f = document.getElementById('fabrica-panel');
-  var md = document.getElementById('medidas-panel');
-  if(p.className === 'color-panel on'){
-    p.className = 'color-panel'; setPanelBtn('btn-toggle-color', false);
-  } else {
-    m.className='color-panel';  setPanelBtn('btn-toggle-marco', false);
-    if(f){f.className='color-panel'; setPanelBtn('btn-toggle-fabrica', false);}
-    if(md) md.className='color-panel';
-    p.className = 'color-panel on'; setPanelBtn('btn-toggle-color', true);
-    renderColorManageList();
-  }
-}
-
-function addColor(){
-  var name = document.getElementById('ff-new-color').value.trim();
-  if(!name){showToast('Ingresa un nombre');return;}
-  for(var i=0;i<colors.length;i++){if(colors[i].toLowerCase()===name.toLowerCase()){showToast('Ya existe');return;}}
-  colors.push(name);
-  saveColors();
-  document.getElementById('ff-new-color').value = '';
-  document.getElementById('ff-new-color').focus();
-  document.getElementById('ff-color').value = name;
-  renderColorChips(name);
-  updateColorFilter();
-  renderColorManageList();
-  showToast('Color "'+name+'" agregado');
-}
-
-// ===== MANAGE LISTS (delete colors/marcos) =====
-function renderColorManageList(){
-  var c=document.getElementById('color-manage-list'); if(!c)return;
-  if(colors.length===0){c.innerHTML='<div class="manage-empty">No hay colores agregados</div>';return;}
-  var html='';
-  for(var i=0;i<colors.length;i++){
-    html+='<div class="manage-item"><span>'+esc(colors[i])+'</span><button type="button" class="manage-del" onclick="deleteColor('+i+')">&#10005; Eliminar</button></div>';
-  }
-  c.innerHTML=html;
-}
-
-function deleteColor(idx){
-  if(idx<0||idx>=colors.length)return;
-  var name=colors[idx];
-  pushUndo('Eliminar color: '+name);
-  colors.splice(idx,1);
-  saveColors();
-  for(var i=0;i<models.length;i++){if(models[i].color===name) models[i].color='';}
-  saveModels();
-  var cur=document.getElementById('ff-color').value;
-  rebuildColorSelect(cur===name?'':cur);
-  updateColorFilter();
-  renderColorManageList();
-  renderList();
-  showToast('Color eliminado');
-}
-
-function renderMarcoManageList(){
-  var c=document.getElementById('marco-manage-list'); if(!c)return;
-  if(marcos.length===0){c.innerHTML='<div class="manage-empty">No hay tipos de marco agregados</div>';return;}
-  var html='';
-  for(var i=0;i<marcos.length;i++){
-    html+='<div class="manage-item"><span>'+esc(marcos[i])+'</span><button type="button" class="manage-del" onclick="deleteMarco('+i+')">&#10005; Eliminar</button></div>';
-  }
-  c.innerHTML=html;
-}
-
-function deleteMarco(idx){
-  if(idx<0||idx>=marcos.length)return;
-  var name=marcos[idx];
-  pushUndo('Eliminar marco: '+name);
-  marcos.splice(idx,1);
-  saveMarcos();
-  for(var i=0;i<models.length;i++){if(models[i].marco===name) models[i].marco='';}
-  saveModels();
-  var cur=document.getElementById('ff-marco').value;
-  rebuildMarcoSelect(cur===name?'':cur);
-  updateMarcoFilter();
-  renderMarcoManageList();
-  renderList();
-  showToast('Marco eliminado');
-}
-
-// ===== FABRICAS =====
-function rebuildFabricaSelect(selected){
-  document.getElementById('ff-fabrica').value = selected||'';
-  renderFabricaChips(selected||'');
-}
-
 function renderFabricaChips(selected){
   var wrap = document.getElementById('ff-fabrica-chips'); if(!wrap) return;
   if(fabricas.length===0){
@@ -1039,64 +993,6 @@ function selectFabricaChip(val){
   renderFabricaChips(next);
 }
 
-function toggleFabricaPanel(){
-  var p = document.getElementById('fabrica-panel');
-  var cp = document.getElementById('color-panel');
-  var mp = document.getElementById('marco-panel');
-  var mdp = document.getElementById('medidas-panel');
-  if(!p) return;
-  if(p.className === 'color-panel on'){
-    p.className = 'color-panel'; setPanelBtn('btn-toggle-fabrica', false);
-  } else {
-    cp.className='color-panel'; setPanelBtn('btn-toggle-color', false);
-    mp.className='color-panel'; setPanelBtn('btn-toggle-marco', false);
-    if(mdp) mdp.className='color-panel';
-    p.className = 'color-panel on'; setPanelBtn('btn-toggle-fabrica', true);
-    renderFabricaManageList();
-  }
-}
-
-function addFabrica(){
-  var name = document.getElementById('ff-new-fabrica').value.trim();
-  if(!name){showToast('Ingresa un nombre');return;}
-  for(var i=0;i<fabricas.length;i++){if(fabricas[i].toLowerCase()===name.toLowerCase()){showToast('Ya existe');return;}}
-  fabricas.push(name);
-  saveFabricas();
-  document.getElementById('ff-new-fabrica').value = '';
-  document.getElementById('ff-new-fabrica').focus();
-  document.getElementById('ff-fabrica').value = name;
-  renderFabricaChips(name);
-  updateFabricaFilter();
-  renderFabricaManageList();
-  showToast('Fábrica "'+name+'" agregada');
-}
-
-function renderFabricaManageList(){
-  var c=document.getElementById('fabrica-manage-list'); if(!c)return;
-  if(fabricas.length===0){c.innerHTML='<div class="manage-empty">No hay fábricas agregadas</div>';return;}
-  var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">';
-  for(var i=0;i<fabricas.length;i++){
-    html+='<div class="manage-item"><span>'+esc(fabricas[i])+'</span><button type="button" class="manage-del" onclick="deleteFabrica('+i+')">&#10005;</button></div>';
-  }
-  html+='</div>';
-  c.innerHTML=html;
-}
-
-function deleteFabrica(idx){
-  if(idx<0||idx>=fabricas.length)return;
-  var name=fabricas[idx];
-  pushUndo('Eliminar fábrica: '+name);
-  fabricas.splice(idx,1);
-  saveFabricas();
-  for(var i=0;i<models.length;i++){if(models[i].fabrica===name) models[i].fabrica='';}
-  saveModels();
-  var cur=document.getElementById('ff-fabrica').value;
-  rebuildFabricaSelect(cur===name?'':cur);
-  updateFabricaFilter();
-  renderFabricaManageList();
-  renderList();
-  showToast('Fábrica eliminada');
-}
 
 function updateFabricaFilter(){
   var sel=document.getElementById('f-fabrica-filter'); if(!sel) return;
@@ -1283,8 +1179,14 @@ function addSize(){
 }
 
 // ===== PHOTO FORM =====
+var MAX_PHOTO_BYTES = 2*1024*1024; // 2MB
 function handlePhoto(e){
   var f=e.target.files[0]; if(!f)return;
+  if(f.size > MAX_PHOTO_BYTES){
+    showToast('⚠ Foto demasiado grande (máx 2MB)');
+    e.target.value='';
+    return;
+  }
   var r=new FileReader(); r.onload=function(ev){formPhoto=ev.target.result;renderPhotoPreview();}; r.readAsDataURL(f);
 }
 function renderPhotoPreview(){
@@ -1301,7 +1203,7 @@ function removePhoto(){
 // ===== SAVE =====
 function saveModel(){
   var m = {
-    id: editingId||String(Date.now()),
+    id: sanitizeId(editingId)||String(Date.now()),
     fabrica:     document.getElementById('ff-fabrica').value.trim(),
     descripcion: document.getElementById('ff-desc').value.trim(),
     marco:       document.getElementById('ff-marco').value,
@@ -1864,7 +1766,7 @@ function renderTable(filtered){
     +'<th></th>'
     +'</tr></thead><tbody>';
 
-  var groups=groupModels(filtered);
+  var groups=arguments.length>1&&arguments[1]?arguments[1]:groupModels(filtered);
   var globalIdx=0;
   for(var g=0;g<groups.length;g++){
     var grp=groups[g];
@@ -1963,7 +1865,7 @@ function renderMosaic(filtered){
     list.innerHTML='<div class="empty-state"><div class="empty-icon">&#128247;</div><p>No hay resultados</p></div>';
     return;
   }
-  var groups = groupModels(filtered);
+  var groups = arguments.length>1&&arguments[1]?arguments[1]:groupModels(filtered);
   var html='<div class="mosaic-grid'+(mosaicSmall?' mosaic-small':'')+'">';
   for(var g=0;g<groups.length;g++){
     var grp=groups[g];
@@ -2044,8 +1946,9 @@ function renderList(){
   renderSummary(); renderTotals(filtered);
   noStockExpanded=false;
 
-  if(viewMode==='table'){ renderTable(filtered); updateResetBtn(); return; }
-  if(viewMode==='mosaic'){ renderMosaic(filtered); updateResetBtn(); return; }
+  var groups=groupModels(filtered);
+  if(viewMode==='table'){ renderTable(filtered, groups); updateResetBtn(); return; }
+  if(viewMode==='mosaic'){ renderMosaic(filtered, groups); updateResetBtn(); return; }
 
   var list=document.getElementById('door-list');
   if(n===0){
@@ -2054,7 +1957,6 @@ function renderList(){
   }
 
   var html='';
-  var groups=groupModels(filtered);
   for(var g=0;g<groups.length;g++){
     var grp=groups[g];
     if(grp.key!==null){
@@ -2170,25 +2072,10 @@ function updateSelLabel(){
   var total=checks.length;
   if(n>0){
     lbl.innerHTML=total+' modelo'+(total!==1?'s':'')+' &nbsp;<span style="color:var(--accent);font-weight:600">'+n+' seleccionado'+(n!==1?'s':'')+'</span>';
-    if(btn){
-      btn.disabled=false;
-      btn.style.borderColor='#e05555';
-      btn.style.color='#e05555';
-      btn.style.cursor='pointer';
-      btn.onmouseover=function(){this.style.background='#e05555';this.style.color='#fff';};
-      btn.onmouseout=function(){this.style.background='transparent';this.style.color='#e05555';};
-    }
+    if(btn){ btn.disabled=false; btn.classList.add('pill-danger'); }
   } else {
     lbl.textContent=total+' modelo'+(total!==1?'s':'');
-    if(btn){
-      btn.disabled=true;
-      btn.style.borderColor='var(--border)';
-      btn.style.color='var(--dim)';
-      btn.style.cursor='default';
-      btn.style.background='transparent';
-      btn.onmouseover=null;
-      btn.onmouseout=null;
-    }
+    if(btn){ btn.disabled=true; btn.classList.remove('pill-danger'); btn.style.background='transparent'; }
   }
 }
 
@@ -2228,10 +2115,7 @@ function exportJSON(){
     var exportMarcos=marcos.filter(function(m){return usedMarcos[m];});
     var payload={models:data, colors:exportColors, marcos:exportMarcos};
     var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-    var url=URL.createObjectURL(blob);
-    var a=document.createElement('a'); a.href=url; a.download='catalogo-puertas-'+new Date().toISOString().slice(0,10)+'.json';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    setTimeout(function(){URL.revokeObjectURL(url);},1000);
+    downloadBlob(blob,'catalogo-puertas-'+new Date().toISOString().slice(0,10)+'.json');
     showToast('JSON exportado ('+data.length+' modelos)');
   }catch(e){showToast('Error al exportar');}
 }
@@ -2255,9 +2139,10 @@ function importJSON(e){
       pushUndo('Importar JSON');
       var existIds={};
       for(var i=0;i<models.length;i++) existIds[models[i].id]=i;
-      var added=0, updated=0;
+      var added=0, updated=0, skipped=0;
       for(var j=0;j<imported.length;j++){
-        var imp=imported[j];
+        var imp=validateModel(imported[j]);
+        if(!imp){ skipped++; continue; }
         if(existIds[imp.id]!==undefined){
           models[existIds[imp.id]]=imp; // update existing
           updated++;
@@ -2266,12 +2151,14 @@ function importJSON(e){
           added++;
         }
       }
-      // Merge colors and marcos without duplicates
+      // Merge colors and marcos without duplicates (solo strings válidos)
       for(var ci=0;ci<importedColors.length;ci++){
-        if(colors.indexOf(importedColors[ci])===-1) colors.push(importedColors[ci]);
+        var cv=importedColors[ci];
+        if(typeof cv==='string' && cv && colors.indexOf(cv)===-1) colors.push(cv.slice(0,100));
       }
       for(var mi=0;mi<importedMarcos.length;mi++){
-        if(marcos.indexOf(importedMarcos[mi])===-1) marcos.push(importedMarcos[mi]);
+        var mv=importedMarcos[mi];
+        if(typeof mv==='string' && mv && marcos.indexOf(mv)===-1) marcos.push(mv.slice(0,100));
       }
       saveModels(); saveColors(); saveMarcos();
       updateFilters(); renderList();
@@ -2301,10 +2188,7 @@ function exportCSV(){
     var csv=rows.map(function(r){return r.map(function(c){var s=String(c);return s.indexOf(',')!==-1||s.indexOf('"')!==-1||s.indexOf('\n')!==-1?'"'+s.replace(/"/g,'""')+'"':s;}).join(',');}).join('\r\n');
     var bom='\uFEFF'; // UTF-8 BOM for Excel
     var blob=new Blob([bom+csv],{type:'text/csv;charset=utf-8;'});
-    var url=URL.createObjectURL(blob);
-    var a=document.createElement('a'); a.href=url; a.download='catalogo-puertas-'+new Date().toISOString().slice(0,10)+'.csv';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    setTimeout(function(){URL.revokeObjectURL(url);},1000);
+    downloadBlob(blob,'catalogo-puertas-'+new Date().toISOString().slice(0,10)+'.csv');
     showToast('CSV exportado ('+data.length+' modelos)');
   }catch(e){showToast('Error al exportar CSV');}
 }
@@ -2325,7 +2209,7 @@ function exportPDF(){
     for(var i=0;i<grp.models.length;i++){
       var m=grp.models[i];
       var sizesHtml='';
-      for(var s=0;s<(m.sizes||[]).length;s++){var sz=m.sizes[s];sizesHtml+='<div style="white-space:nowrap;margin-bottom:2px;">'+esc(sz.medida)+'&nbsp;&nbsp;D:'+sz.r+'&nbsp;&nbsp;I:'+sz.l+'</div>';}
+      for(var s=0;s<(m.sizes||[]).length;s++){var sz=m.sizes[s];sizesHtml+='<div style="white-space:nowrap;margin-bottom:2px;">'+esc(sz.medida)+'&nbsp;&nbsp;D:'+(parseInt(sz.r)||0)+'&nbsp;&nbsp;I:'+(parseInt(sz.l)||0)+'</div>';}
       var rowClass=(i%2===1)?'even':'';
       rows+='<tr class="'+rowClass+'"><td>'+esc(m.fabrica||'-')+'</td><td>'+esc(m.descripcion||'-')+'</td><td>'+esc(m.color||'-')+'</td><td>'+esc(m.marco||'-')+'</td><td>'+(sizesHtml||'-')+'</td></tr>';
     }
@@ -2348,7 +2232,7 @@ function exportPDF(){
 
   var win=window.open('','_blank');
   if(win){win.document.write(html);win.document.close();}
-  else{var blob=new Blob([html],{type:'text/html'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='catalogo.html';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(url);},1000);}
+  else{downloadBlob(new Blob([html],{type:'text/html'}),'catalogo.html');}
 }
 
 // ===== TEMPORAL STATE =====
@@ -2360,7 +2244,7 @@ var discardTempPending = false;
 
 try { var ts = localStorage.getItem('puertas_temp_models'); if(ts) tempModels = JSON.parse(ts); } catch(e){ tempModels=[]; }
 
-function saveTempModels(){ try{localStorage.setItem('puertas_temp_models', JSON.stringify(tempModels));}catch(e){} }
+function saveTempModels(){ lsSet('puertas_temp_models', JSON.stringify(tempModels)); }
 
 function pushTempUndo(label){
   pushUndo(label);
@@ -2464,10 +2348,86 @@ function openTempForm(id){
       for(var i=0;i<(m.sizes||[]).length;i++) tempFormSizes.push({medida:m.sizes[i].medida,r:m.sizes[i].r,l:m.sizes[i].l});
     }
   }
+  renderTempFabricaChips(document.getElementById('tff-fabrica').value);
+  renderTempColorChips(document.getElementById('tff-color').value);
+  renderTempMarcoChips(document.getElementById('tff-marco').value);
   renderTempSizesForm();
+  renderTempMedidasChips();
   document.getElementById('page-temporal').style.display='none';
   document.getElementById('page-temp-form').style.display='block';
   window.scrollTo(0,0);
+}
+
+// ===== TEMP FORM CHIPS =====
+function renderTempFabricaChips(selected){
+  var wrap=document.getElementById('tff-fabrica-chips'); if(!wrap)return;
+  if(fabricas.length===0){wrap.innerHTML='<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;color:var(--dim);">Sin fábricas — usá + Agregar</span>';return;}
+  var html='';
+  for(var i=0;i<fabricas.length;i++){
+    var f=fabricas[i],sel=(f===selected);
+    html+='<button type="button" class="medida-chip'+(sel?' selected':'')+'" onclick="selectTempFabrica(\''+esc(f)+'\')">'+esc(f)+'</button>';
+  }
+  wrap.innerHTML=html;
+}
+function selectTempFabrica(val){
+  var cur=document.getElementById('tff-fabrica').value;
+  var next=(cur===val)?'':val;
+  document.getElementById('tff-fabrica').value=next;
+  renderTempFabricaChips(next);
+}
+
+function renderTempColorChips(selected){
+  var wrap=document.getElementById('tff-color-chips'); if(!wrap)return;
+  if(colors.length===0){wrap.innerHTML='<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;color:var(--dim);">Sin colores</span>';return;}
+  var html='';
+  for(var i=0;i<colors.length;i++){
+    var c=colors[i],sel=(c===selected);
+    html+='<button type="button" class="medida-chip'+(sel?' selected':'')+'" onclick="selectTempColor(\''+esc(c)+'\')">'+esc(c)+'</button>';
+  }
+  wrap.innerHTML=html;
+}
+function selectTempColor(val){
+  var cur=document.getElementById('tff-color').value;
+  var next=(cur===val)?'':val;
+  document.getElementById('tff-color').value=next;
+  renderTempColorChips(next);
+}
+
+function renderTempMarcoChips(selected){
+  var wrap=document.getElementById('tff-marco-chips'); if(!wrap)return;
+  if(marcos.length===0){wrap.innerHTML='<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;color:var(--dim);">Sin marcos</span>';return;}
+  var html='';
+  for(var i=0;i<marcos.length;i++){
+    var m=marcos[i],sel=(m===selected);
+    html+='<button type="button" class="medida-chip'+(sel?' selected':'')+'" onclick="selectTempMarco(\''+esc(m)+'\')">'+esc(m)+'</button>';
+  }
+  wrap.innerHTML=html;
+}
+function selectTempMarco(val){
+  var cur=document.getElementById('tff-marco').value;
+  var next=(cur===val)?'':val;
+  document.getElementById('tff-marco').value=next;
+  renderTempMarcoChips(next);
+}
+
+function renderTempMedidasChips(){
+  var wrap=document.getElementById('temp-medidas-chips-wrap'); if(!wrap)return;
+  var selectedSet={};
+  for(var i=0;i<tempFormSizes.length;i++) selectedSet[tempFormSizes[i].medida]=true;
+  var html='';
+  for(var j=0;j<medidas.length;j++){
+    var m=medidas[j],sel=selectedSet[m]?'selected':'';
+    html+='<button type="button" class="medida-chip '+sel+'" onclick="toggleTempMedidaChip(\''+esc(m)+'\')">'+esc(m)+'</button>';
+  }
+  wrap.innerHTML=html;
+}
+function toggleTempMedidaChip(medida){
+  var idx=-1;
+  for(var i=0;i<tempFormSizes.length;i++){if(tempFormSizes[i].medida===medida){idx=i;break;}}
+  if(idx>=0) tempFormSizes.splice(idx,1);
+  else{ tempFormSizes.push({medida:medida,r:0,l:0}); tempFormSizes=sortSizes(tempFormSizes); }
+  renderTempSizesForm();
+  renderTempMedidasChips();
 }
 
 function closeTempForm(){
@@ -2494,7 +2454,7 @@ function renderTempSizesForm(){
       var lLbl=document.createElement('span'); lLbl.className='stinput-lbl lbl-l'; lLbl.textContent='I';
       var li=document.createElement('input'); li.className='stinput-bare'; li.type='number'; li.value=tempFormSizes[idx].l; li.min=0; li.oninput=function(){tempFormSizes[idx].l=parseInt(this.value)||0;};
       lWrap.appendChild(lLbl); lWrap.appendChild(li);
-      var rb=document.createElement('button'); rb.className='rmbtn'; rb.textContent='x'; rb.type='button'; rb.onclick=function(){tempFormSizes.splice(idx,1);renderTempSizesForm();};
+      var rb=document.createElement('button'); rb.className='rmbtn'; rb.textContent='x'; rb.type='button'; rb.onclick=function(){tempFormSizes.splice(idx,1);renderTempSizesForm();renderTempMedidasChips();};
       row.appendChild(mi); row.appendChild(rWrap); row.appendChild(lWrap); row.appendChild(rb);
       c.appendChild(row);
     })(i);
@@ -2513,6 +2473,7 @@ function addTempSize(){
   document.getElementById('tnew-r').value=0;
   document.getElementById('tnew-l').value=0;
   renderTempSizesForm();
+  renderTempMedidasChips();
 }
 
 function saveTempModel(){
@@ -2799,11 +2760,7 @@ function setTempViewMode(mode){
 
 function exportTempJSON(){
   var data=JSON.stringify({models:tempModels},null,2);
-  var blob=new Blob([data],{type:'application/json'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a');a.href=url;a.download='catalogo-temporal.json';
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  setTimeout(function(){URL.revokeObjectURL(url);},1000);
+  downloadBlob(new Blob([data],{type:'application/json'}),'catalogo-temporal.json');
 }
 
 function importTempJSON(e){
@@ -2815,11 +2772,15 @@ function importTempJSON(e){
       var imported=data.models||data;
       if(!Array.isArray(imported)){showTempToast('Formato inválido');return;}
       pushTempUndo('Importar JSON temporal');
-      for(var j=0;j<imported.length;j++) tempModels.push(imported[j]);
+      var added=0;
+      for(var j=0;j<imported.length;j++){
+        var v=validateModel(imported[j]);
+        if(v){ tempModels.push(v); added++; }
+      }
       saveTempModels(); renderTempList();
       var btn=document.getElementById('btn-temporal');
       if(btn) btn.textContent='⏱ Temporal ('+tempModels.length+')';
-      showTempToast('Importado: '+imported.length+' modelos');
+      showTempToast('Importado: '+added+' modelos');
     } catch(err){showTempToast('Error al importar');}
   };
   reader.readAsText(file);
@@ -2831,13 +2792,13 @@ function exportTempPDF(){
   for(var i=0;i<tempModels.length;i++){
     var m=tempModels[i];
     var sizesHtml='';
-    for(var s=0;s<(m.sizes||[]).length;s++){var sz=m.sizes[s];sizesHtml+='<div>'+esc(sz.medida)+'&nbsp;D:'+sz.r+'&nbsp;I:'+sz.l+'</div>';}
+    for(var s=0;s<(m.sizes||[]).length;s++){var sz=m.sizes[s];sizesHtml+='<div>'+esc(sz.medida)+'&nbsp;D:'+(parseInt(sz.r)||0)+'&nbsp;I:'+(parseInt(sz.l)||0)+'</div>';}
     rows+='<tr><td>'+esc(m.fabrica||'-')+'</td><td>'+esc(m.descripcion||'-')+'</td><td>'+esc(m.color||'-')+'</td><td>'+esc(m.marco||'-')+'</td><td>'+(sizesHtml||'-')+'</td></tr>';
   }
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Temporal</title><style>body{font-family:Arial,sans-serif;padding:20px;font-size:12px;}h1{color:#7abf9e;font-size:16px;margin-bottom:14px;}table{width:100%;border-collapse:collapse;}th{background:#7abf9e;color:#fff;padding:6px;text-align:left;font-size:11px;}td{padding:5px 6px;border-bottom:1px solid #eee;vertical-align:top;}tr:nth-child(even) td{background:#f5fbf7;}</style></head><body><h1>Catálogo Temporal — '+tempModels.length+' modelo'+(tempModels.length!==1?'s':'')+'</h1><table><thead><tr><th>Fabrica</th><th>Descripcion</th><th>Color</th><th>Marco</th><th>Medidas</th></tr></thead><tbody>'+rows+'</tbody></table></body></html>';
   var win=window.open('','_blank');
   if(win){win.document.write(html);win.document.close();}
-  else{var blob=new Blob([html],{type:'text/html'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='temporal.html';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(url);},1000);}
+  else{downloadBlob(new Blob([html],{type:'text/html'}),'temporal.html');}
 }
 
 function exportTempCSV(){
@@ -2854,16 +2815,12 @@ function exportTempCSV(){
     }
   }
   var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
-  var blob=new Blob([csv],{type:'text/csv'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a');a.href=url;a.download='catalogo-temporal.csv';
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  setTimeout(function(){URL.revokeObjectURL(url);},1000);
+  downloadBlob(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}),'catalogo-temporal.csv');
 }
 function toggleTheme(){
   darkMode=!darkMode;
   document.body.classList.toggle('light',!darkMode);
-  try{localStorage.setItem('puertas_theme',darkMode?'dark':'light');}catch(e){}
+  try{localStorage.setItem('puertas_theme',darkMode?'dark':'light');}catch(e){/* tema: no crítico */}
 }
 
 // ===== TOAST =====
@@ -2871,6 +2828,92 @@ function showToast(msg){
   var t=document.getElementById('toast');
   t.textContent=msg; t.className='toast show';
   setTimeout(function(){t.className='toast';},2500);
+}
+
+// ===== GLOBAL PANEL =====
+function openGlobalPanel(){
+  var o=document.getElementById('global-panel-overlay');
+  o.style.display='flex';
+  document.body.style.overflow='hidden';
+  gpRenderFabricas(); gpRenderColors(); gpRenderMarcos();
+  setTimeout(function(){ document.getElementById('gp-new-fabrica').focus(); },100);
+}
+
+function closeGlobalPanel(e){
+  if(e && e.target!==document.getElementById('global-panel-overlay')) return;
+  document.getElementById('global-panel-overlay').style.display='none';
+  document.body.style.overflow='';
+  // Refrescar chips del formulario principal si está abierto
+  var cur_fab=document.getElementById('ff-fabrica'); if(cur_fab) renderFabricaChips(cur_fab.value);
+  var cur_col=document.getElementById('ff-color');   if(cur_col) renderColorChips(cur_col.value);
+  var cur_mar=document.getElementById('ff-marco');   if(cur_mar) renderMarcoChips(cur_mar.value);
+  // Refrescar chips del formulario temporal si está abierto
+  var tf=document.getElementById('tff-fabrica'); if(tf) renderTempFabricaChips(tf.value);
+  var tc=document.getElementById('tff-color');   if(tc) renderTempColorChips(tc.value);
+  var tm=document.getElementById('tff-marco');   if(tm) renderTempMarcoChips(tm.value);
+}
+
+function gpRenderFabricas(){
+  var c=document.getElementById('gp-fabrica-list'); if(!c)return;
+  if(fabricas.length===0){c.innerHTML='<div style="grid-column:1/-1;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;color:var(--dim);">Sin fábricas cargadas</div>';return;}
+  var h=''; for(var i=0;i<fabricas.length;i++) h+='<div class="gp-item"><span>'+esc(fabricas[i])+'</span><button class="gp-item-del" onclick="gpDelFabrica('+i+')">✕</button></div>';
+  c.innerHTML=h;
+}
+function gpRenderColors(){
+  var c=document.getElementById('gp-color-list'); if(!c)return;
+  if(colors.length===0){c.innerHTML='<div style="grid-column:1/-1;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;color:var(--dim);">Sin colores cargados</div>';return;}
+  var h=''; for(var i=0;i<colors.length;i++) h+='<div class="gp-item"><span>'+esc(colors[i])+'</span><button class="gp-item-del" onclick="gpDelColor('+i+')">✕</button></div>';
+  c.innerHTML=h;
+}
+function gpRenderMarcos(){
+  var c=document.getElementById('gp-marco-list'); if(!c)return;
+  if(marcos.length===0){c.innerHTML='<div style="grid-column:1/-1;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;color:var(--dim);">Sin marcos cargados</div>';return;}
+  var h=''; for(var i=0;i<marcos.length;i++) h+='<div class="gp-item"><span>'+esc(marcos[i])+'</span><button class="gp-item-del" onclick="gpDelMarco('+i+')">✕</button></div>';
+  c.innerHTML=h;
+}
+
+function gpAddFabrica(){
+  var inp=document.getElementById('gp-new-fabrica'), name=inp.value.trim();
+  if(!name) return;
+  for(var i=0;i<fabricas.length;i++){if(fabricas[i].toLowerCase()===name.toLowerCase()){showToast('Ya existe');return;}}
+  fabricas.push(name); saveFabricas(); inp.value=''; inp.focus();
+  gpRenderFabricas(); updateFabricaFilter();
+  showToast('Fábrica "'+name+'" agregada');
+}
+function gpAddColor(){
+  var inp=document.getElementById('gp-new-color'), name=inp.value.trim();
+  if(!name) return;
+  for(var i=0;i<colors.length;i++){if(colors[i].toLowerCase()===name.toLowerCase()){showToast('Ya existe');return;}}
+  colors.push(name); saveColors(); inp.value=''; inp.focus();
+  gpRenderColors(); updateColorFilter();
+  showToast('Color "'+name+'" agregado');
+}
+function gpAddMarco(){
+  var inp=document.getElementById('gp-new-marco'), name=inp.value.trim();
+  if(!name) return;
+  for(var i=0;i<marcos.length;i++){if(marcos[i].toLowerCase()===name.toLowerCase()){showToast('Ya existe');return;}}
+  marcos.push(name); saveMarcos(); inp.value=''; inp.focus();
+  gpRenderMarcos(); updateMarcoFilter();
+  showToast('Marco "'+name+'" agregado');
+}
+
+function gpDelFabrica(idx){
+  var name=fabricas[idx]; fabricas.splice(idx,1); saveFabricas();
+  for(var i=0;i<models.length;i++){if(models[i].fabrica===name) models[i].fabrica='';}
+  saveModels(); gpRenderFabricas(); updateFabricaFilter(); renderList();
+  showToast('Fábrica eliminada');
+}
+function gpDelColor(idx){
+  var name=colors[idx]; colors.splice(idx,1); saveColors();
+  for(var i=0;i<models.length;i++){if(models[i].color===name) models[i].color='';}
+  saveModels(); gpRenderColors(); updateColorFilter(); renderList();
+  showToast('Color eliminado');
+}
+function gpDelMarco(idx){
+  var name=marcos[idx]; marcos.splice(idx,1); saveMarcos();
+  for(var i=0;i<models.length;i++){if(models[i].marco===name) models[i].marco='';}
+  saveModels(); gpRenderMarcos(); updateMarcoFilter(); renderList();
+  showToast('Marco eliminado');
 }
 
 // ===== INIT =====
