@@ -251,6 +251,12 @@ select.finput{cursor:pointer;}
 .mosaic-modal-close{position:absolute;top:12px;right:14px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-size:16px;cursor:pointer;border-radius:4px;padding:3px 9px;font-family:'Barlow Condensed',sans-serif;font-weight:700;}
 .mosaic-modal-close:hover{border-color:var(--accent);color:var(--accent);}
 
+.mosaic-grid.mosaic-small{grid-template-columns:1fr 1fr 1fr;}
+.mosaic-grid.mosaic-small .mosaic-desc{font-size:10px;}
+.mosaic-grid.mosaic-small .mosaic-fab{font-size:9px;}
+.mosaic-grid.mosaic-small .mosaic-tag{font-size:9px;}
+.mosaic-grid.mosaic-small .mosaic-info{padding:4px 5px 5px;gap:2px;}
+.mosaic-grid.mosaic-small .mosaic-no-img{font-size:20px;}
 </style>
 </head>
 <body>
@@ -259,7 +265,7 @@ select.finput{cursor:pointer;}
     <div class="topbar">
       <div class="topbar-inner">
         <div style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;">
-          <a href="index.html" class="btn btn-ghost" title="Volver al menú" style="text-decoration:none;">⌂</a>
+          <a href="index.html" class="btn btn-ghost" style="text-decoration:none;">⌂</a>
           <div class="topbar-title">Catalogo de Puertas</div>
           <button class="btn btn-accent" onclick="openForm(null)">+ Agregar</button>
           <button class="btn btn-outline" onclick="openTemporal()" id="btn-temporal" style="border-color:#7abf9e;color:#7abf9e;">⏱ Temporal</button>
@@ -317,6 +323,7 @@ select.finput{cursor:pointer;}
       </div>
       <div style="display:flex;gap:5px;margin-top:7px;align-items:center;flex-wrap:wrap;position:relative;">
         <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Filtrar</span>
+        <button class="filter-tab active" id="filter-clear-tab" onclick="resetFilters()" title="Limpiar filtros">✕</button>
         <div class="fchip-wrap">
           <button class="fchip" id="fchip-fabrica" onclick="toggleFchip('fabrica')">Fábrica <span class="fchip-arrow">▼</span></button>
           <div class="fchip-drop" id="fchip-drop-fabrica"><div class="fchip-opts" id="fchip-opts-fabrica"></div></div>
@@ -334,13 +341,12 @@ select.finput{cursor:pointer;}
           <div class="fchip-drop" id="fchip-drop-medida"><div class="fchip-opts" id="fchip-opts-medida"></div></div>
         </div>
         <!-- Filtro solo-con-foto: visible solo en cards y mosaico -->
-        <button id="filter-photo-btn" class="fchip" onclick="toggleFilterPhoto()" title="Mostrar solo puertas con foto" style="display:none;">Con foto</button>
+        <button id="filter-photo-btn" class="fchip" onclick="toggleFilterPhoto()" title="Mostrar solo puertas con foto" style="display:none;">Foto</button>
         <!-- Hidden selects used by getFiltered() -->
         <select id="f-fabrica-filter" style="display:none;"><option value="">Todas</option></select>
         <select id="f-marco-filter" style="display:none;"><option value="">Todos</option></select>
         <select id="f-color-filter" style="display:none;"><option value="">Todos</option></select>
         <select id="f-medida-filter" style="display:none;"><option value="">Todas</option></select>
-        <button onclick="resetFilters()" id="reset-filters-btn" style="display:none;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)';" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--dim)';">&#10005; Limpiar</button>
       </div>
     </div>
 
@@ -351,6 +357,7 @@ select.finput{cursor:pointer;}
         <button onclick="collapseAll()" class="inline-btn">Contraer todo</button>
         <button id="photo-toggle-btn" onclick="togglePhotoDisplay()" class="inline-btn">Con fotos</button>
       </span>
+      <button id="mosaic-size-btn" onclick="toggleMosaicSize()" class="inline-btn" style="display:none;" title="Cambiar tamaño de mosaico">⊟ Chico</button>
       <div style="margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0;">
         <button id="del-sel-btn" onclick="deleteSelected()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:default;white-space:nowrap;transition:all .15s;" disabled>&#10005; Eliminar seleccionados</button>
         <button class="filter-tab" id="sel-all-btn" onclick="toggleSelectAll(this)">Sel. todo</button>
@@ -1168,7 +1175,7 @@ function getFiltered(){
     if(mf && (m.marco||'')!==mf) continue;
     if(cf && (m.color||'')!==cf) continue;
     if(medf){var found=false;for(var j=0;j<(m.sizes||[]).length;j++){if(m.sizes[j].medida===medf){found=true;break;}} if(!found)continue;}
-    if(filterOnlyWithPhoto && !m.photo) continue;
+    if(filterOnlyWithPhoto && viewMode!=='table' && !m.photo) continue;
     out.push(m);
   }
   if(currentSort==='fabrica') out.sort(function(a,b){return(a.fabrica||'').localeCompare(b.fabrica||'');});
@@ -1359,16 +1366,15 @@ function resetFilters(){
 }
 
 function updateResetBtn(){
-  var btn=document.getElementById('reset-filters-btn'); if(!btn)return;
-  var q=(document.getElementById('search-input').value||'').trim();
+  var photoActive = (viewMode==='cards'||viewMode==='mosaic') ? filterOnlyWithPhoto : false;
   var ff=(document.getElementById('f-fabrica-filter')||{}).value||'';
   var mf=(document.getElementById('f-marco-filter')||{}).value||'';
   var cf=(document.getElementById('f-color-filter')||{}).value||'';
   var medf=(document.getElementById('f-medida-filter')||{}).value||'';
-  var active=q||ff||mf||cf||medf||filterOnlyWithPhoto;
-  btn.style.display=active?'block':'none';
-  btn.style.borderColor=active?'var(--accent)':'var(--border)';
-  btn.style.color=active?'var(--accent)':'var(--dim)';
+  var anyActive = !!(ff||mf||cf||medf||photoActive);
+  // La cruz es active cuando NO hay filtros (igual que agrupar/ordenar)
+  var clearTab=document.getElementById('filter-clear-tab');
+  if(clearTab) clearTab.className = anyActive ? 'filter-tab' : 'filter-tab active';
 }
 
 // ===== TOGGLE FILTERS =====
@@ -1436,6 +1442,14 @@ function toggleFilters(){ /* legacy no-op */ }
 
 var showPhotos = true;
 var filterOnlyWithPhoto = false;
+var mosaicSmall = false;
+
+function toggleMosaicSize(){
+  mosaicSmall = !mosaicSmall;
+  var btn = document.getElementById('mosaic-size-btn');
+  if(btn) btn.textContent = mosaicSmall ? '⊟ Grande' : '⊟ Chico';
+  renderList();
+}
 
 function toggleFilterPhoto(){
   filterOnlyWithPhoto = !filterOnlyWithPhoto;
@@ -1523,6 +1537,9 @@ function setViewMode(mode){
   // Botón "Con foto": visible solo en cards y mosaico
   var fpb = document.getElementById('filter-photo-btn');
   if(fpb) fpb.style.display = (mode==='cards' || mode==='mosaic') ? '' : 'none';
+  // Botón tamaño mosaico: visible solo en mosaico
+  var msb = document.getElementById('mosaic-size-btn');
+  if(msb) msb.style.display = mode==='mosaic' ? '' : 'none';
   renderList();
 }
 
@@ -1646,7 +1663,7 @@ function renderMosaic(filtered){
     return;
   }
   var groups = groupModels(filtered);
-  var html='<div class="mosaic-grid">';
+  var html='<div class="mosaic-grid'+(mosaicSmall?' mosaic-small':'')+'">';
   for(var g=0;g<groups.length;g++){
     var grp=groups[g];
     if(grp.key!==null){
@@ -2569,9 +2586,11 @@ if(viewMode==='table'){
   document.getElementById('vt-cards').className='';
   document.getElementById('vt-mosaic').className='active';
   document.getElementById('card-only-btns').style.display='none';
-  // mostrar botón foto en mosaico
+  // mostrar botón foto y tamaño en mosaico
   var _fpb2=document.getElementById('filter-photo-btn');
   if(_fpb2) _fpb2.style.display='';
+  var _msb=document.getElementById('mosaic-size-btn');
+  if(_msb) _msb.style.display='';
 } else {
   // cards: mostrar botón foto
   var _fpb3=document.getElementById('filter-photo-btn');
