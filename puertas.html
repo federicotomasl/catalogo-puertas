@@ -255,6 +255,17 @@ select.finput{cursor:pointer;}
 .mosaic-modal-close{position:absolute;top:12px;right:14px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-size:16px;cursor:pointer;border-radius:4px;padding:3px 9px;font-family:'Barlow Condensed',sans-serif;font-weight:700;}
 .mosaic-modal-close:hover{border-color:var(--accent);color:var(--accent);}
 
+/* MEDIDAS CHIPS */
+.medidas-chips{display:flex;flex-wrap:nowrap;gap:4px;margin-bottom:8px;overflow-x:auto;}
+.medida-chip{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;padding:3px 7px;border-radius:4px;border:1px solid var(--border);background:var(--bg3);color:var(--muted);cursor:pointer;transition:all .15s;letter-spacing:0.04em;white-space:nowrap;flex-shrink:0;}
+.medida-chip:hover{border-color:var(--accent);color:var(--accent);}
+.medida-chip.selected{background:var(--accent);border-color:var(--accent);color:#fff;}
+.medida-chip.custom-chip{border-style:dashed;}
+
+/* FABRICA DROPDOWN CUSTOM */
+.fabrica-opt{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;padding:5px 8px;border-radius:4px;border:none;background:transparent;color:var(--muted);cursor:pointer;text-align:left;transition:all .12s;width:100%;}
+.fabrica-opt:hover{background:var(--bg3);color:var(--text);}
+.fabrica-opt.fabrica-opt-sel{background:var(--accent);color:#fff;}
 .mosaic-grid.mosaic-small{grid-template-columns:1fr 1fr 1fr;}
 .mosaic-grid.mosaic-small .mosaic-desc{font-size:10px;}
 .mosaic-grid.mosaic-small .mosaic-fab{font-size:9px;}
@@ -379,6 +390,7 @@ select.finput{cursor:pointer;}
       <div class="topbar-inner" style="flex-direction:row;justify-content:space-between;">
         <div class="topbar-title" id="form-title-bar">Nuevo Modelo</div>
         <div class="topbar-actions">
+          <button class="btn btn-ghost" onclick="toggleTheme()">&#9788;</button>
           <button class="btn btn-ghost" onclick="closeForm()">&#8592; Volver</button>
         </div>
       </div>
@@ -387,7 +399,17 @@ select.finput{cursor:pointer;}
     <div class="form-wrap">
       <div class="fgrp">
         <div class="flabel">Fabrica</div>
-        <input class="finput" id="ff-fabrica" type="text" placeholder="ej: Aluar">
+        <input type="hidden" id="ff-fabrica" value="">
+        <div id="ff-fabrica-chips" class="medidas-chips" style="flex-wrap:wrap;"></div>
+        <button type="button" id="btn-toggle-fabrica" onclick="toggleFabricaPanel()" style="margin-top:4px;width:100%;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;">+ Agregar fábrica</button>
+      </div>
+      <div class="color-panel" id="fabrica-panel" style="margin-bottom:12px;">
+        <div class="flabel">Nombre de la fábrica</div>
+        <div class="add-color-row">
+          <input class="finput" id="ff-new-fabrica" type="text" placeholder="ej: Aluar, Hermat..." style="flex:1;" onkeydown="if(event.keyCode===13){event.preventDefault();addFabrica();}">
+          <button type="button" onclick="addFabrica()" style="padding:0 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Agregar</button>
+        </div>
+        <div class="manage-list" id="fabrica-manage-list"></div>
       </div>
 
       <div class="fgrp">
@@ -399,24 +421,22 @@ select.finput{cursor:pointer;}
       <div class="frow" style="align-items:flex-start;margin-bottom:0;">
         <div class="fgrp-half">
           <div class="flabel">Color de Puerta</div>
-          <select class="finput" id="ff-color">
-            <option value="">Sin especificar</option>
-          </select>
-          <button type="button" onclick="toggleColorPanel()" style="margin-top:6px;width:100%;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;">+ Agregar color</button>
+          <input type="hidden" id="ff-color" value="">
+          <div id="ff-color-chips" class="medidas-chips" style="flex-wrap:wrap;max-height:90px;overflow-y:auto;"></div>
+          <button type="button" id="btn-toggle-color" onclick="toggleColorPanel()" style="margin-top:4px;width:100%;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;">+ Agregar color</button>
         </div>
         <div class="fgrp-half">
           <div class="flabel">Tipo de Marco</div>
-          <select class="finput" id="ff-marco">
-            <option value="">Sin especificar</option>
-          </select>
-          <button type="button" onclick="toggleMarcoPanel()" style="margin-top:6px;width:100%;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;">+ Agregar marco</button>
+          <input type="hidden" id="ff-marco" value="">
+          <div id="ff-marco-chips" class="medidas-chips" style="flex-wrap:wrap;max-height:90px;overflow-y:auto;"></div>
+          <button type="button" id="btn-toggle-marco" onclick="toggleMarcoPanel()" style="margin-top:4px;width:100%;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;">+ Agregar marco</button>
         </div>
       </div>
       <!-- Panels below the row, full width -->
       <div class="color-panel" id="color-panel" style="margin-bottom:12px;">
         <div class="flabel">Nombre del color</div>
         <div class="add-color-row">
-          <input class="finput" id="ff-new-color" type="text" placeholder="ej: Blanco, Roble..." style="flex:1;">
+          <input class="finput" id="ff-new-color" type="text" placeholder="ej: Blanco, Roble..." style="flex:1;" onkeydown="if(event.keyCode===13){event.preventDefault();addColor();}">
           <button type="button" onclick="addColor()" style="padding:0 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Agregar</button>
         </div>
         <div class="manage-list" id="color-manage-list"></div>
@@ -424,7 +444,7 @@ select.finput{cursor:pointer;}
       <div class="color-panel" id="marco-panel" style="margin-bottom:12px;">
         <div class="flabel">Nombre del tipo de marco</div>
         <div class="add-color-row">
-          <input class="finput" id="ff-new-marco" type="text" placeholder="ej: Madera, Aluminio..." style="flex:1;">
+          <input class="finput" id="ff-new-marco" type="text" placeholder="ej: Madera, Aluminio..." style="flex:1;" onkeydown="if(event.keyCode===13){event.preventDefault();addMarco();}">
           <button type="button" onclick="addMarco()" style="padding:0 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Agregar</button>
         </div>
         <div class="manage-list" id="marco-manage-list"></div>
@@ -432,6 +452,7 @@ select.finput{cursor:pointer;}
 
       <div class="sizes-section">
         <div class="sizes-title">Medidas y Stock</div>
+        <div id="medidas-chips-wrap" class="medidas-chips"></div>
         <div id="sizes-container"></div>
         <div class="srow">
           <input class="sinput" id="new-medida" type="text" placeholder="00/00" maxlength="5" oninput="maskMedida(this)" onkeydown="medidaKeydown(event,this)">
@@ -444,6 +465,15 @@ select.finput{cursor:pointer;}
             <input class="stinput-bare" id="new-l" type="number" value="0" min="0">
           </div>
           <button class="addbtn" onclick="addSize()">+</button>
+        </div>
+        <button type="button" onclick="toggleMedidasPanel()" style="margin-top:6px;width:100%;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--border);color:var(--muted);background:transparent;border-radius:4px;cursor:pointer;">+ Agregar medida a la lista</button>
+        <div class="color-panel" id="medidas-panel" style="margin-top:6px;margin-bottom:0;">
+          <div class="flabel">Nueva medida estándar</div>
+          <div class="add-color-row">
+            <input class="finput" id="ff-new-medida" type="text" placeholder="00/00" maxlength="5" oninput="maskMedida(this)" onkeydown="medidaKeydown(event,this)" style="flex:1;">
+            <button type="button" onclick="addMedidaStd()" style="padding:0 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Agregar</button>
+          </div>
+          <div class="manage-list" id="medidas-manage-list"></div>
         </div>
       </div>
 
@@ -528,7 +558,10 @@ select.finput{cursor:pointer;}
   <div class="topbar">
     <div class="topbar-inner" style="flex-direction:row;justify-content:space-between;">
       <div class="topbar-title" id="temp-form-title-bar" style="color:#7abf9e;">Nuevo Modelo Temporal</div>
-      <button class="btn btn-ghost" onclick="closeTempForm()">← Volver</button>
+      <div style="display:flex;gap:5px;">
+        <button class="btn btn-ghost" onclick="toggleTheme()">&#9788;</button>
+        <button class="btn btn-ghost" onclick="closeTempForm()">← Volver</button>
+      </div>
     </div>
   </div>
   <div class="form-wrap">
@@ -575,6 +608,8 @@ select.finput{cursor:pointer;}
 var models = [];
 var colors = [];
 var marcos = [];
+var fabricas = [];
+var medidas = [];
 var editingId = null;
 var currentSort = 'original';
 var formSizes = [];
@@ -721,10 +756,27 @@ try {
 } catch(e){ marcos = []; }
 try { var t = localStorage.getItem('puertas_theme'); if(t==='light'){darkMode=false;document.body.classList.add('light');} } catch(e){}
 try { var vm = localStorage.getItem('puertas_viewmode'); if(vm==='table') viewMode='table'; } catch(e){}
+try {
+  var fraw = localStorage.getItem('puertas_fabricas');
+  if(fraw) fabricas = JSON.parse(fraw);
+} catch(e){ fabricas = []; }
+// Precargar medidas estándar una única vez
+try {
+  if(!localStorage.getItem('puertas_medidas_seeded')){
+    medidas = ['90/10','90/15','80/10','80/15','70/10','70/15','60/10','60/15'];
+    localStorage.setItem('puertas_medidas', JSON.stringify(medidas));
+    localStorage.setItem('puertas_medidas_seeded','1');
+  } else {
+    var mraw = localStorage.getItem('puertas_medidas');
+    if(mraw) medidas = JSON.parse(mraw);
+  }
+} catch(e){ medidas = ['90/10','90/15','80/10','80/15','70/10','70/15','60/10','60/15']; }
 
 function saveModels(){ try{localStorage.setItem('puertas_models',JSON.stringify(models));}catch(e){} }
 function saveColors(){ try{localStorage.setItem('puertas_colors',JSON.stringify(colors));}catch(e){} }
 function saveMarcos(){ try{localStorage.setItem('puertas_marcos',JSON.stringify(marcos));}catch(e){} }
+function saveFabricas(){ try{localStorage.setItem('puertas_fabricas',JSON.stringify(fabricas));}catch(e){} }
+function saveMedidas(){ try{localStorage.setItem('puertas_medidas',JSON.stringify(medidas));}catch(e){} }
 
 // ===== NAVIGATION =====
 function openForm(id){
@@ -732,11 +784,17 @@ function openForm(id){
   formSizes = [];
   formPhoto = null;
 
-  document.getElementById('ff-fabrica').value = '';
+  rebuildFabricaSelect('');
   document.getElementById('ff-desc').value = '';
   rebuildMarcoSelect('');
+  rebuildColorSelect('');
+  document.getElementById('fabrica-panel').className = 'color-panel';
   document.getElementById('color-panel').className = 'color-panel';
   document.getElementById('marco-panel').className = 'color-panel';
+  setPanelBtn('btn-toggle-fabrica', false);
+  setPanelBtn('btn-toggle-color', false);
+  setPanelBtn('btn-toggle-marco', false);
+  var mdp=document.getElementById('medidas-panel'); if(mdp) mdp.className='color-panel';
   document.getElementById('ff-new-color').value = '';
   document.getElementById('new-medida').value = '';
   document.getElementById('new-r').value = 0;
@@ -744,12 +802,10 @@ function openForm(id){
   document.getElementById('form-title-bar').textContent = id ? 'Editar Modelo' : 'Nuevo Modelo';
   document.getElementById('btn-save').textContent = id ? 'Guardar Cambios' : 'Guardar Modelo';
 
-  rebuildColorSelect('');
-
   if(id){
     var m = getModel(id);
     if(m){
-      document.getElementById('ff-fabrica').value = m.fabrica||'';
+      rebuildFabricaSelect(m.fabrica||'');
       document.getElementById('ff-desc').value    = m.descripcion||'';
       rebuildMarcoSelect(m.marco||'');
       rebuildColorSelect(m.color||'');
@@ -758,6 +814,7 @@ function openForm(id){
     }
   }
   renderSizesForm();
+  renderMedidasChips();
   renderPhotoPreview();
   document.getElementById('page-catalog').style.display='none';
   document.getElementById('page-form').style.display='block';
@@ -779,21 +836,53 @@ function esc(str){
 }
 
 function rebuildMarcoSelect(selected){
-  var sel = document.getElementById('ff-marco');
-  if(!sel) return;
-  var html = '<option value="">Sin especificar</option>';
-  for(var i=0;i<marcos.length;i++){
-    var em=esc(marcos[i]);html += '<option value="'+em+'"'+(marcos[i]===selected?' selected':'')+'>'+em+'</option>';
+  var hidden = document.getElementById('ff-marco');
+  if(hidden) hidden.value = selected||'';
+  renderMarcoChips(selected||'');
+}
+
+function renderMarcoChips(selected){
+  var wrap = document.getElementById('ff-marco-chips'); if(!wrap) return;
+  if(marcos.length===0){
+    wrap.innerHTML='<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;color:var(--dim);">Sin marcos</span>';
+    return;
   }
-  sel.innerHTML = html;
+  var html='';
+  for(var i=0;i<marcos.length;i++){
+    var m=marcos[i], sel=(m===selected);
+    html+='<button type="button" class="medida-chip'+(sel?' selected':'')+'" onclick="selectMarcoChip(\''+esc(m)+'\')">'+esc(m)+'</button>';
+  }
+  wrap.innerHTML=html;
+}
+
+function selectMarcoChip(val){
+  var cur=document.getElementById('ff-marco').value;
+  var next=(cur===val)?'':val;
+  document.getElementById('ff-marco').value=next;
+  renderMarcoChips(next);
+}
+
+function setPanelBtn(id, open){
+  var b=document.getElementById(id); if(!b)return;
+  b.style.background = open ? 'var(--accent)' : 'transparent';
+  b.style.color      = open ? '#fff'          : 'var(--accent)';
 }
 
 function toggleMarcoPanel(){
   var p = document.getElementById('marco-panel');
   var c = document.getElementById('color-panel');
+  var f = document.getElementById('fabrica-panel');
+  var md = document.getElementById('medidas-panel');
   if(!p) return;
-  if(p.className === 'color-panel on') { p.className = 'color-panel'; }
-  else { c.className = 'color-panel'; p.className = 'color-panel on'; renderMarcoManageList(); }
+  if(p.className === 'color-panel on'){
+    p.className = 'color-panel'; setPanelBtn('btn-toggle-marco', false);
+  } else {
+    c.className='color-panel';  setPanelBtn('btn-toggle-color', false);
+    if(f){f.className='color-panel'; setPanelBtn('btn-toggle-fabrica', false);}
+    if(md) md.className='color-panel';
+    p.className = 'color-panel on'; setPanelBtn('btn-toggle-marco', true);
+    renderMarcoManageList();
+  }
 }
 
 function addMarco(){
@@ -803,28 +892,55 @@ function addMarco(){
   marcos.push(name);
   saveMarcos();
   document.getElementById('ff-new-marco').value = '';
-  document.getElementById('marco-panel').className = 'color-panel';
-  rebuildMarcoSelect(name);
+  document.getElementById('ff-new-marco').focus();
   document.getElementById('ff-marco').value = name;
+  renderMarcoChips(name);
   updateMarcoFilter();
   renderMarcoManageList();
   showToast('Marco "'+name+'" agregado');
 }
 
 function rebuildColorSelect(selected){
-  var sel = document.getElementById('ff-color');
-  var html = '<option value="">Sin especificar</option>';
-  for(var i=0;i<colors.length;i++){
-    var ec=esc(colors[i]);html += '<option value="'+ec+'"'+(colors[i]===selected?' selected':'')+'>'+ec+'</option>';
+  var hidden = document.getElementById('ff-color');
+  if(hidden) hidden.value = selected||'';
+  renderColorChips(selected||'');
+}
+
+function renderColorChips(selected){
+  var wrap = document.getElementById('ff-color-chips'); if(!wrap) return;
+  if(colors.length===0){
+    wrap.innerHTML='<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;color:var(--dim);">Sin colores</span>';
+    return;
   }
-  sel.innerHTML = html;
+  var html='';
+  for(var i=0;i<colors.length;i++){
+    var c=colors[i], sel=(c===selected);
+    html+='<button type="button" class="medida-chip'+(sel?' selected':'')+'" onclick="selectColorChip(\''+esc(c)+'\')">'+esc(c)+'</button>';
+  }
+  wrap.innerHTML=html;
+}
+
+function selectColorChip(val){
+  var cur=document.getElementById('ff-color').value;
+  var next=(cur===val)?'':val;
+  document.getElementById('ff-color').value=next;
+  renderColorChips(next);
 }
 
 function toggleColorPanel(){
   var p = document.getElementById('color-panel');
   var m = document.getElementById('marco-panel');
-  if(p.className === 'color-panel on') { p.className = 'color-panel'; }
-  else { m.className = 'color-panel'; p.className = 'color-panel on'; renderColorManageList(); }
+  var f = document.getElementById('fabrica-panel');
+  var md = document.getElementById('medidas-panel');
+  if(p.className === 'color-panel on'){
+    p.className = 'color-panel'; setPanelBtn('btn-toggle-color', false);
+  } else {
+    m.className='color-panel';  setPanelBtn('btn-toggle-marco', false);
+    if(f){f.className='color-panel'; setPanelBtn('btn-toggle-fabrica', false);}
+    if(md) md.className='color-panel';
+    p.className = 'color-panel on'; setPanelBtn('btn-toggle-color', true);
+    renderColorManageList();
+  }
 }
 
 function addColor(){
@@ -834,10 +950,9 @@ function addColor(){
   colors.push(name);
   saveColors();
   document.getElementById('ff-new-color').value = '';
-  document.getElementById('color-panel').className = 'color-panel';
-  document.getElementById('marco-panel').className = 'color-panel';
-  rebuildColorSelect(name);
+  document.getElementById('ff-new-color').focus();
   document.getElementById('ff-color').value = name;
+  renderColorChips(name);
   updateColorFilter();
   renderColorManageList();
   showToast('Color "'+name+'" agregado');
@@ -862,9 +977,8 @@ function deleteColor(idx){
   saveColors();
   for(var i=0;i<models.length;i++){if(models[i].color===name) models[i].color='';}
   saveModels();
-  var sel=document.getElementById('ff-color');
-  if(sel && sel.value===name) rebuildColorSelect('');
-  else rebuildColorSelect(sel?sel.value:'');
+  var cur=document.getElementById('ff-color').value;
+  rebuildColorSelect(cur===name?'':cur);
   updateColorFilter();
   renderColorManageList();
   renderList();
@@ -889,13 +1003,193 @@ function deleteMarco(idx){
   saveMarcos();
   for(var i=0;i<models.length;i++){if(models[i].marco===name) models[i].marco='';}
   saveModels();
-  var sel=document.getElementById('ff-marco');
-  if(sel && sel.value===name) rebuildMarcoSelect('');
-  else rebuildMarcoSelect(sel?sel.value:'');
+  var cur=document.getElementById('ff-marco').value;
+  rebuildMarcoSelect(cur===name?'':cur);
   updateMarcoFilter();
   renderMarcoManageList();
   renderList();
   showToast('Marco eliminado');
+}
+
+// ===== FABRICAS =====
+function rebuildFabricaSelect(selected){
+  document.getElementById('ff-fabrica').value = selected||'';
+  renderFabricaChips(selected||'');
+}
+
+function renderFabricaChips(selected){
+  var wrap = document.getElementById('ff-fabrica-chips'); if(!wrap) return;
+  if(fabricas.length===0){
+    wrap.innerHTML='<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;color:var(--dim);">Sin fábricas — agregá una abajo</span>';
+    return;
+  }
+  var html='';
+  for(var i=0;i<fabricas.length;i++){
+    var f=fabricas[i], sel=(f===selected);
+    html+='<button type="button" class="medida-chip'+(sel?' selected':'')+'" onclick="selectFabricaChip(\''+esc(f)+'\')">'+esc(f)+'</button>';
+  }
+  wrap.innerHTML=html;
+}
+
+function selectFabricaChip(val){
+  var cur = document.getElementById('ff-fabrica').value;
+  // Clic en el ya seleccionado → deselecciona
+  var next = (cur===val) ? '' : val;
+  document.getElementById('ff-fabrica').value = next;
+  renderFabricaChips(next);
+}
+
+function toggleFabricaPanel(){
+  var p = document.getElementById('fabrica-panel');
+  var cp = document.getElementById('color-panel');
+  var mp = document.getElementById('marco-panel');
+  var mdp = document.getElementById('medidas-panel');
+  if(!p) return;
+  if(p.className === 'color-panel on'){
+    p.className = 'color-panel'; setPanelBtn('btn-toggle-fabrica', false);
+  } else {
+    cp.className='color-panel'; setPanelBtn('btn-toggle-color', false);
+    mp.className='color-panel'; setPanelBtn('btn-toggle-marco', false);
+    if(mdp) mdp.className='color-panel';
+    p.className = 'color-panel on'; setPanelBtn('btn-toggle-fabrica', true);
+    renderFabricaManageList();
+  }
+}
+
+function addFabrica(){
+  var name = document.getElementById('ff-new-fabrica').value.trim();
+  if(!name){showToast('Ingresa un nombre');return;}
+  for(var i=0;i<fabricas.length;i++){if(fabricas[i].toLowerCase()===name.toLowerCase()){showToast('Ya existe');return;}}
+  fabricas.push(name);
+  saveFabricas();
+  document.getElementById('ff-new-fabrica').value = '';
+  document.getElementById('ff-new-fabrica').focus();
+  document.getElementById('ff-fabrica').value = name;
+  renderFabricaChips(name);
+  updateFabricaFilter();
+  renderFabricaManageList();
+  showToast('Fábrica "'+name+'" agregada');
+}
+
+function renderFabricaManageList(){
+  var c=document.getElementById('fabrica-manage-list'); if(!c)return;
+  if(fabricas.length===0){c.innerHTML='<div class="manage-empty">No hay fábricas agregadas</div>';return;}
+  var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">';
+  for(var i=0;i<fabricas.length;i++){
+    html+='<div class="manage-item"><span>'+esc(fabricas[i])+'</span><button type="button" class="manage-del" onclick="deleteFabrica('+i+')">&#10005;</button></div>';
+  }
+  html+='</div>';
+  c.innerHTML=html;
+}
+
+function deleteFabrica(idx){
+  if(idx<0||idx>=fabricas.length)return;
+  var name=fabricas[idx];
+  pushUndo('Eliminar fábrica: '+name);
+  fabricas.splice(idx,1);
+  saveFabricas();
+  for(var i=0;i<models.length;i++){if(models[i].fabrica===name) models[i].fabrica='';}
+  saveModels();
+  var cur=document.getElementById('ff-fabrica').value;
+  rebuildFabricaSelect(cur===name?'':cur);
+  updateFabricaFilter();
+  renderFabricaManageList();
+  renderList();
+  showToast('Fábrica eliminada');
+}
+
+function updateFabricaFilter(){
+  var sel=document.getElementById('f-fabrica-filter'); if(!sel) return;
+  var cur=sel.value;
+  sel.innerHTML='<option value="">Todas</option>';
+  var fab={};
+  for(var i=0;i<models.length;i++){var f=models[i].fabrica||'';if(f)fab[f]=true;}
+  var keys=Object.keys(fab).sort();
+  for(var j=0;j<keys.length;j++) sel.innerHTML+='<option value="'+esc(keys[j])+'"'+(keys[j]===cur?' selected':'')+'>'+esc(keys[j])+'</option>';
+  renderFchipOpts('fabrica',keys,cur,'Todas las fábricas');
+}
+
+// ===== MEDIDAS ESTÁNDAR =====
+function renderMedidasChips(){
+  var wrap = document.getElementById('medidas-chips-wrap'); if(!wrap) return;
+  var selectedSet = {};
+  for(var i=0;i<formSizes.length;i++) selectedSet[formSizes[i].medida]=true;
+  var html='';
+  for(var j=0;j<medidas.length;j++){
+    var m=medidas[j], sel=selectedSet[m]?'selected':'';
+    html+='<button type="button" class="medida-chip '+sel+'" onclick="toggleMedidaChip(\''+esc(m)+'\')">'+esc(m)+'</button>';
+  }
+  wrap.innerHTML=html;
+}
+
+function toggleMedidaChip(medida){
+  // Si ya está en formSizes, removerla; si no, agregarla con stock 0/0
+  var idx=-1;
+  for(var i=0;i<formSizes.length;i++){if(formSizes[i].medida===medida){idx=i;break;}}
+  if(idx>=0){
+    formSizes.splice(idx,1);
+  } else {
+    formSizes.push({medida:medida, r:0, l:0});
+    sortFormSizes();
+  }
+  renderSizesForm();
+  renderMedidasChips();
+}
+
+function sortFormSizes(){
+  formSizes.sort(function(a,b){
+    var pa=a.medida.split('/'), pb=b.medida.split('/');
+    var a1=parseInt(pa[0])||0, a2=parseInt(pa[1])||0;
+    var b1=parseInt(pb[0])||0, b2=parseInt(pb[1])||0;
+    if(b1!==a1) return b1-a1;
+    return a2-b2;
+  });
+}
+
+function toggleMedidasPanel(){
+  var p = document.getElementById('medidas-panel');
+  var fp = document.getElementById('fabrica-panel');
+  var cp = document.getElementById('color-panel');
+  var mp = document.getElementById('marco-panel');
+  if(!p) return;
+  if(p.className === 'color-panel on'){ p.className = 'color-panel'; }
+  else {
+    fp.className='color-panel'; cp.className='color-panel'; mp.className='color-panel';
+    p.className = 'color-panel on'; renderMedidasManageList();
+  }
+}
+
+function addMedidaStd(){
+  var inp = document.getElementById('ff-new-medida');
+  var val = (inp.value||'').trim();
+  if(!val || val.length < 3){showToast('Medida inválida');return;}
+  for(var i=0;i<medidas.length;i++){if(medidas[i]===val){showToast('Ya existe');return;}}
+  medidas.push(val);
+  saveMedidas();
+  inp.value='';
+  renderMedidasManageList();
+  renderMedidasChips();
+  showToast('Medida "'+val+'" agregada a la lista');
+}
+
+function renderMedidasManageList(){
+  var c=document.getElementById('medidas-manage-list'); if(!c)return;
+  if(medidas.length===0){c.innerHTML='<div class="manage-empty">No hay medidas en la lista</div>';return;}
+  var html='';
+  for(var i=0;i<medidas.length;i++){
+    html+='<div class="manage-item"><span>'+esc(medidas[i])+'</span><button type="button" class="manage-del" onclick="deleteMedidaStd('+i+')">&#10005; Eliminar</button></div>';
+  }
+  c.innerHTML=html;
+}
+
+function deleteMedidaStd(idx){
+  if(idx<0||idx>=medidas.length)return;
+  var name=medidas[idx];
+  medidas.splice(idx,1);
+  saveMedidas();
+  renderMedidasManageList();
+  renderMedidasChips();
+  showToast('Medida "'+name+'" eliminada de la lista');
 }
 
 // ===== MEDIDA MASK (NN/NN) — slash always present =====
@@ -953,7 +1247,7 @@ function renderSizesForm(){
       var li = document.createElement('input'); li.className='stinput-bare'; li.type='number'; li.value=formSizes[idx].l; li.min=0; li.oninput=function(){formSizes[idx].l=parseInt(this.value)||0;};
       lWrap.appendChild(lLbl); lWrap.appendChild(li);
 
-      var rb = document.createElement('button'); rb.className='rmbtn'; rb.textContent='x'; rb.type='button'; rb.onclick=function(){formSizes.splice(idx,1);renderSizesForm();};
+      var rb = document.createElement('button'); rb.className='rmbtn'; rb.textContent='x'; rb.type='button'; rb.onclick=function(){formSizes.splice(idx,1);renderSizesForm();renderMedidasChips();};
 
       row.appendChild(mi); row.appendChild(rWrap); row.appendChild(lWrap); row.appendChild(rb);
       c.appendChild(row);
@@ -985,6 +1279,7 @@ function addSize(){
   document.getElementById('new-r').value=0;
   document.getElementById('new-l').value=0;
   renderSizesForm();
+  renderMedidasChips();
 }
 
 // ===== PHOTO FORM =====
