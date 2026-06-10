@@ -2113,7 +2113,7 @@ function exportJSON(){
     }
     var exportColors=colors.filter(function(c){return usedColors[c];});
     var exportMarcos=marcos.filter(function(m){return usedMarcos[m];});
-    var payload={models:data, colors:exportColors, marcos:exportMarcos};
+    var payload={models:data, colors:exportColors, marcos:exportMarcos, fabricas:fabricas};
     var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
     downloadBlob(blob,'catalogo-puertas-'+new Date().toISOString().slice(0,10)+'.json');
     showToast('JSON exportado ('+data.length+' modelos)');
@@ -2127,13 +2127,14 @@ function importJSON(e){
     try{
       var raw=JSON.parse(ev.target.result);
       // Support both old format (array) and new format ({models, colors, marcos})
-      var imported, importedColors=[], importedMarcos=[];
+      var importedColors=[], importedMarcos=[], importedFabricas=[];
       if(Array.isArray(raw)){
         imported=raw;
       } else {
         imported=raw.models||[];
         importedColors=raw.colors||[];
         importedMarcos=raw.marcos||[];
+        importedFabricas=raw.fabricas||[];
       }
       if(!Array.isArray(imported))throw new Error();
       pushUndo('Importar JSON');
@@ -2160,7 +2161,11 @@ function importJSON(e){
         var mv=importedMarcos[mi];
         if(typeof mv==='string' && mv && marcos.indexOf(mv)===-1) marcos.push(mv.slice(0,100));
       }
-      saveModels(); saveColors(); saveMarcos();
+      for(var fi=0;fi<importedFabricas.length;fi++){
+        var fv=importedFabricas[fi];
+        if(typeof fv==='string' && fv && fabricas.indexOf(fv)===-1) fabricas.push(fv.slice(0,100));
+      }
+      saveModels(); saveColors(); saveMarcos(); saveFabricas();
       updateFilters(); renderList();
       showToast('Importado: '+added+' nuevo'+(added!==1?'s':'')+', '+updated+' actualizado'+(updated!==1?'s':''));
     }catch(err){showToast('JSON invalido');}
