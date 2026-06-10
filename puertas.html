@@ -235,6 +235,10 @@ select.finput{cursor:pointer;}
 .mosaic-desc{font-family:'Barlow',sans-serif;font-size:12px;font-weight:500;color:var(--text);line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
 .mosaic-fab{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mosaic-tags{display:flex;gap:3px;flex-wrap:wrap;}
+.mosaic-meta{display:flex;align-items:center;gap:3px;flex-wrap:nowrap;overflow:hidden;}
+.mosaic-meta-item{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mosaic-meta-fab{color:var(--muted);}
+.mosaic-meta-sep{font-size:9px;color:var(--dim);flex-shrink:0;}
 .mosaic-tag{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;padding:1px 5px;border-radius:3px;background:var(--tbg);border:1px solid var(--tbd);color:var(--muted);}
 .mosaic-group-sep{grid-column:1/-1;display:flex;align-items:center;gap:8px;padding:6px 2px 2px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
 .mosaic-group-line{flex:1;height:1px;background:var(--border);}
@@ -254,6 +258,8 @@ select.finput{cursor:pointer;}
 .mosaic-grid.mosaic-small{grid-template-columns:1fr 1fr 1fr;}
 .mosaic-grid.mosaic-small .mosaic-desc{font-size:10px;}
 .mosaic-grid.mosaic-small .mosaic-fab{font-size:9px;}
+.mosaic-grid.mosaic-small .mosaic-meta{font-size:9px;}
+.mosaic-grid.mosaic-small .mosaic-meta-item{font-size:9px;}
 .mosaic-grid.mosaic-small .mosaic-tag{font-size:9px;}
 .mosaic-grid.mosaic-small .mosaic-info{padding:4px 5px 5px;gap:2px;}
 .mosaic-grid.mosaic-small .mosaic-no-img{font-size:20px;}
@@ -1678,17 +1684,16 @@ function renderMosaic(filtered){
         ? '<img src="'+m.photo+'" loading="lazy" alt="'+esc(m.descripcion||m.fabrica||'')+'">'
         : '<span class="mosaic-no-img">&#128682;</span>';
       var descHtml=m.descripcion?esc(m.descripcion):(m.fabrica?esc(m.fabrica):'Sin descripción');
-      var fabHtml=m.fabrica&&m.descripcion?'<div class="mosaic-fab">'+esc(m.fabrica)+'</div>':'';
-      var tags='';
-      if(m.color) tags+='<span class="mosaic-tag">'+esc(m.color)+'</span>';
-      if(m.marco) tags+='<span class="mosaic-tag">'+esc(m.marco)+'</span>';
-      var tagsHtml=tags?'<div class="mosaic-tags">'+tags+'</div>':'';
+      var meta=[];
+      if(m.fabrica&&m.descripcion) meta.push('<span class="mosaic-meta-item mosaic-meta-fab">'+esc(m.fabrica)+'</span>');
+      if(m.color)  meta.push('<span class="mosaic-meta-item">'+esc(m.color)+'</span>');
+      if(m.marco)  meta.push('<span class="mosaic-meta-item">'+esc(m.marco)+'</span>');
+      var metaHtml=meta.length?'<div class="mosaic-meta">'+meta.join('<span class="mosaic-meta-sep">·</span>')+'</div>':'';
       html+='<div class="mosaic-card'+(hasPhoto?'':' no-photo')+'" onclick="openMosaicModal(\''+mid+'\')">'
         +'<div class="mosaic-img-wrap">'+imgHtml+'</div>'
         +'<div class="mosaic-info">'
         +'<div class="mosaic-desc">'+descHtml+'</div>'
-        +fabHtml
-        +tagsHtml
+        +metaHtml
         +'</div>'
         +'</div>';
     }
