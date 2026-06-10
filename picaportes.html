@@ -438,7 +438,7 @@ function togglePhoto(id){
   if(!expand)return;
   var open=expand.className==='photo-expand open';
   expand.className=open?'photo-expand':'photo-expand open';
-  if(btn){btn.className=open?'photo-btn':'photo-btn open';btn.textContent=open?'Foto':'▲ Foto';}
+  if(btn){btn.className=open?'photo-btn':'photo-btn open';btn.textContent=open?'▼ Foto':'▲ Foto';}
 }
 
 // ===== RESET STOCK =====
@@ -541,7 +541,7 @@ function renderList(){
     }
 
     // Actions cell
-    var photoBtn=m.photo?'<button class="photo-btn" id="phbtn-'+mid+'" onclick="togglePhoto(\''+mid+'\')">Foto</button>':'';
+    var photoBtn=m.photo?'<button class="photo-btn" id="phbtn-'+mid+'" onclick="togglePhoto(\''+mid+'\')">▼ Foto</button>':'';
     var actCell='<div style="display:flex;gap:3px;align-items:center;flex-wrap:nowrap;">'
       +photoBtn
       +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')">Editar</button>'
