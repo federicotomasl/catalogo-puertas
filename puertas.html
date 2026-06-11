@@ -72,6 +72,26 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .door-header-row1{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
 .door-desc-row{font-size:13px;color:var(--text);font-style:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .ftag{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;padding:1px 6px;border-radius:3px;background:var(--tbg);border:1px solid var(--tbd);color:var(--muted);flex-shrink:0;}
+/* Fábrica + Línea: naranja */
+.ftag-fab{background:rgba(212,113,31,0.12);border-color:rgba(212,113,31,0.4);color:#d4921f;}
+/* Marco: azul */
+.ftag-marco{background:rgba(80,120,200,0.12);border-color:rgba(80,120,200,0.4);color:#7a9dc8;}
+/* Color: verde */
+.ftag-color{background:rgba(90,160,100,0.12);border-color:rgba(90,160,100,0.4);color:#7abf9e;}
+/* tabla tags */
+.tbl-ftag{font-size:9px;font-weight:600;padding:1px 4px;border-radius:2px;background:var(--tbg);border:1px solid var(--tbd);color:var(--muted);white-space:nowrap;display:inline-block;}
+.tbl-ftag-fab{background:rgba(212,113,31,0.12);border-color:rgba(212,113,31,0.4);color:#d4921f;}
+.tbl-ftag-marco{background:rgba(80,120,200,0.12);border-color:rgba(80,120,200,0.4);color:#7a9dc8;}
+.tbl-ftag-color{background:rgba(90,160,100,0.12);border-color:rgba(90,160,100,0.4);color:#7abf9e;}
+/* subpanel de líneas en panel flotante */
+.gp-lineas-panel{display:none;margin-top:6px;padding:8px;background:var(--bg3);border-radius:4px;border:1px solid var(--border);}
+.gp-lineas-panel.open{display:block;}
+.gp-fab-row{display:flex;align-items:center;justify-content:space-between;padding:5px 6px;border-radius:4px;background:var(--bg3);}
+.gp-fab-name{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.gp-fab-toggle{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.gp-fab-toggle:hover,.gp-fab-toggle.open{border-color:var(--accent);color:var(--accent);}
+.gp-fab-del{background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:11px;padding:0 0 0 4px;line-height:1;flex-shrink:0;}
+.gp-fab-del:hover{color:#e05555;}
 
 .door-name{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;color:var(--text);flex-shrink:0;}
 .cnt-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--dim);flex-shrink:0;}
@@ -187,7 +207,6 @@ select.finput{cursor:pointer;}
 .tbl td:last-child{border-right:none;}
 .tbl td.td-muted{color:var(--muted);font-size:11px;}
 .tbl td.td-medida{font-weight:700;white-space:nowrap;color:var(--text);}
-.tbl-ftag{font-size:9px;font-weight:600;padding:1px 4px;border-radius:2px;background:var(--tbg);border:1px solid var(--tbd);color:var(--muted);white-space:nowrap;display:inline-block;}
 .tbl-qbtns{display:inline-flex;align-items:center;gap:1px;}
 .tbl-qbtn{background:var(--bg3);border:1px solid var(--border);border-radius:2px;color:var(--muted);cursor:pointer;font-size:11px;font-weight:700;width:17px;height:17px;display:inline-flex;align-items:center;justify-content:center;padding:0;line-height:1;}
 .tbl-qbtn:active{background:var(--accent);color:#fff;border-color:var(--accent);}
@@ -401,6 +420,12 @@ select.finput{cursor:pointer;}
         <input type="hidden" id="ff-fabrica" value="">
         <div id="ff-fabrica-chips" class="medidas-chips" style="flex-wrap:wrap;"></div>
       </div>
+      <!-- Línea: solo aparece si la fábrica seleccionada tiene líneas definidas -->
+      <div class="fgrp" id="ff-linea-wrap" style="display:none;">
+        <div class="flabel">Línea</div>
+        <input type="hidden" id="ff-linea" value="">
+        <div id="ff-linea-chips" class="medidas-chips" style="flex-wrap:wrap;"></div>
+      </div>
 
       <div class="fgrp">
         <div class="flabel">Descripcion</div>
@@ -461,7 +486,7 @@ select.finput{cursor:pointer;}
           <input class="finput" id="gp-new-fabrica" type="text" placeholder="Nueva fábrica..." style="flex:1;" onkeydown="if(event.keyCode===13){event.preventDefault();gpAddFabrica();}">
           <button type="button" onclick="gpAddFabrica()" class="btn-panel-add">+ Agregar</button>
         </div>
-        <div id="gp-fabrica-list" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:3px;"></div>
+        <div id="gp-fabrica-list"></div>
       </div>
 
       <div style="height:1px;background:var(--border);"></div>
@@ -581,6 +606,11 @@ select.finput{cursor:pointer;}
       <input type="hidden" id="tff-fabrica" value="">
       <div id="tff-fabrica-chips" class="medidas-chips" style="flex-wrap:wrap;"></div>
     </div>
+    <div class="fgrp" id="tff-linea-wrap" style="display:none;">
+      <div class="flabel">Línea</div>
+      <input type="hidden" id="tff-linea" value="">
+      <div id="tff-linea-chips" class="medidas-chips" style="flex-wrap:wrap;"></div>
+    </div>
     <div class="fgrp">
       <div class="flabel">Descripcion</div>
       <input class="finput" id="tff-desc" type="text" placeholder="Descripcion breve...">
@@ -613,6 +643,7 @@ var colors = [];
 var marcos = [];
 var fabricas = [];
 var medidas = [];
+var lineas = {}; // { "NombreFabrica": ["Línea A", "Línea B", ...] }
 var editingId = null;
 var currentSort = 'original';
 var formSizes = [];
@@ -763,6 +794,10 @@ try {
   var fraw = localStorage.getItem('puertas_fabricas');
   if(fraw) fabricas = JSON.parse(fraw);
 } catch(e){ fabricas = []; }
+try {
+  var lraw = localStorage.getItem('puertas_lineas');
+  if(lraw) lineas = JSON.parse(lraw);
+} catch(e){ lineas = {}; }
 // Precargar medidas estándar una única vez
 try {
   if(!localStorage.getItem('puertas_medidas_seeded')){
@@ -780,6 +815,7 @@ function saveColors(){ lsSet('puertas_colors',JSON.stringify(colors)); }
 function saveMarcos(){ lsSet('puertas_marcos',JSON.stringify(marcos)); }
 function saveFabricas(){ lsSet('puertas_fabricas',JSON.stringify(fabricas)); }
 function saveMedidas(){ lsSet('puertas_medidas',JSON.stringify(medidas)); }
+function saveLineas(){ lsSet('puertas_lineas',JSON.stringify(lineas)); }
 
 // ===== NAVIGATION =====
 function openForm(id){
@@ -791,6 +827,7 @@ function openForm(id){
   document.getElementById('ff-desc').value = '';
   rebuildMarcoSelect('');
   rebuildColorSelect('');
+  renderLineaChips('', '');
   document.getElementById('form-title-bar').textContent = id ? 'Editar Modelo' : 'Nuevo Modelo';
   document.getElementById('btn-save').textContent = id ? 'Guardar Cambios' : 'Guardar Modelo';
 
@@ -801,6 +838,7 @@ function openForm(id){
       document.getElementById('ff-desc').value    = m.descripcion||'';
       rebuildMarcoSelect(m.marco||'');
       rebuildColorSelect(m.color||'');
+      renderLineaChips(m.fabrica||'', m.linea||'');
       for(var i=0;i<(m.sizes||[]).length;i++) formSizes.push({medida:m.sizes[i].medida,r:m.sizes[i].r,l:m.sizes[i].l});
       formPhoto = m.photo||null;
     }
@@ -857,6 +895,7 @@ function validateModel(m){
   out.descripcion = typeof m.descripcion==='string' ? m.descripcion.slice(0,300) : '';
   out.color       = typeof m.color==='string'       ? m.color.slice(0,100)       : '';
   out.marco       = typeof m.marco==='string'       ? m.marco.slice(0,100)       : '';
+  out.linea       = typeof m.linea==='string'       ? m.linea.slice(0,100)       : '';
   out.photo = (typeof m.photo==='string' && m.photo.indexOf('data:image/')===0) ? m.photo : null;
   out.createdAt = (typeof m.createdAt==='number') ? m.createdAt : Date.now();
   out.sizes=[];
@@ -962,12 +1001,133 @@ function renderFabricaChips(selected){
 
 function selectFabricaChip(val){
   var cur = document.getElementById('ff-fabrica').value;
-  // Clic en el ya seleccionado → deselecciona
   var next = (cur===val) ? '' : val;
   document.getElementById('ff-fabrica').value = next;
   renderFabricaChips(next);
+  renderLineaChips(next, '');
 }
 
+// ===== LINEAS POR FÁBRICA =====
+function renderLineaChips(fabrica, selectedLinea){
+  var wrap = document.getElementById('ff-linea-wrap');
+  var hidden = document.getElementById('ff-linea');
+  var chipsEl = document.getElementById('ff-linea-chips');
+  if(!wrap) return;
+  var fab_lineas = (fabrica && lineas[fabrica]) ? lineas[fabrica] : [];
+  if(!fabrica || fab_lineas.length === 0){ wrap.style.display='none'; if(hidden) hidden.value=''; return; }
+  wrap.style.display = '';
+  if(hidden) hidden.value = selectedLinea||'';
+  if(!chipsEl) return;
+  var html = '';
+  for(var i=0;i<fab_lineas.length;i++){
+    var l=fab_lineas[i], sel=(l===selectedLinea);
+    html+='<button type="button" class="medida-chip'+(sel?' selected':'')+'" onclick="selectLineaChip(\''+esc(l)+'\')">'+esc(l)+'</button>';
+  }
+  chipsEl.innerHTML = html;
+}
+
+function selectLineaChip(val){
+  var cur = document.getElementById('ff-linea').value;
+  var next = (cur===val) ? '' : val;
+  document.getElementById('ff-linea').value = next;
+  renderLineaChips(document.getElementById('ff-fabrica').value, next);
+}
+
+function renderTempLineaChips(fabrica, selectedLinea){
+  var wrap = document.getElementById('tff-linea-wrap');
+  var hidden = document.getElementById('tff-linea');
+  var chipsEl = document.getElementById('tff-linea-chips');
+  if(!wrap) return;
+  var fab_lineas = (fabrica && lineas[fabrica]) ? lineas[fabrica] : [];
+  if(!fabrica || fab_lineas.length === 0){ wrap.style.display='none'; if(hidden) hidden.value=''; return; }
+  wrap.style.display = '';
+  if(hidden) hidden.value = selectedLinea||'';
+  if(!chipsEl) return;
+  var html = '';
+  for(var i=0;i<fab_lineas.length;i++){
+    var l=fab_lineas[i], sel=(l===selectedLinea);
+    html+='<button type="button" class="medida-chip'+(sel?' selected':'')+'" onclick="selectTempLineaChip(\''+esc(l)+'\')">'+esc(l)+'</button>';
+  }
+  chipsEl.innerHTML = html;
+}
+
+function selectTempLineaChip(val){
+  var cur = document.getElementById('tff-linea').value;
+  var next = (cur===val) ? '' : val;
+  document.getElementById('tff-linea').value = next;
+  renderTempLineaChips(document.getElementById('tff-fabrica').value, next);
+}
+
+// ===== PANEL FLOTANTE — FÁBRICAS CON LÍNEAS =====
+function gpRenderFabricas(){
+  var c=document.getElementById('gp-fabrica-list'); if(!c)return;
+  if(fabricas.length===0){
+    c.innerHTML='<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;color:var(--dim);">Sin fábricas cargadas</div>';
+    return;
+  }
+  var h='';
+  for(var i=0;i<fabricas.length;i++){
+    var f=fabricas[i], fab_lineas=(lineas[f]||[]);
+    var lineCount=fab_lineas.length>0?'<span style="font-size:10px;color:var(--accent);margin-left:4px;">'+fab_lineas.length+' línea'+(fab_lineas.length!==1?'s':'')+'</span>':'';
+    h+='<div style="margin-bottom:4px;">'
+      +'<div class="gp-fab-row">'
+      +'<span class="gp-fab-name">'+esc(f)+lineCount+'</span>'
+      +'<div style="display:flex;gap:4px;flex-shrink:0;">'
+      +'<button class="gp-fab-toggle" id="gp-fab-toggle-'+i+'" onclick="gpToggleLineasPanel('+i+')">▸ Líneas</button>'
+      +'<button class="gp-fab-del" onclick="gpDelFabrica('+i+')">✕</button>'
+      +'</div></div>'
+      +'<div class="gp-lineas-panel" id="gp-lineas-panel-'+i+'">'
+      +'<div class="add-color-row" style="margin-bottom:6px;">'
+      +'<input class="finput" id="gp-linea-inp-'+i+'" type="text" placeholder="Nueva línea..." style="flex:1;padding:5px 8px;font-size:12px;" onkeydown="if(event.keyCode===13){event.preventDefault();gpAddLinea('+i+');}">'
+      +'<button type="button" onclick="gpAddLinea('+i+')" class="btn-panel-add" style="font-size:11px;padding:0 10px;">+ Agregar</button>'
+      +'</div>'
+      +'<div id="gp-lineas-list-'+i+'" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;">';
+    for(var j=0;j<fab_lineas.length;j++){
+      h+='<div class="gp-item"><span>'+esc(fab_lineas[j])+'</span><button class="gp-item-del" onclick="gpDelLinea('+i+','+j+')">✕</button></div>';
+    }
+    h+='</div></div></div>';
+  }
+  c.innerHTML=h;
+}
+
+function gpToggleLineasPanel(fabIdx){
+  var panel=document.getElementById('gp-lineas-panel-'+fabIdx);
+  var toggle=document.getElementById('gp-fab-toggle-'+fabIdx);
+  if(!panel) return;
+  var isOpen=panel.classList.contains('open');
+  panel.classList.toggle('open',!isOpen);
+  if(toggle) toggle.classList.toggle('open',!isOpen);
+  if(!isOpen){ var inp=document.getElementById('gp-linea-inp-'+fabIdx); if(inp) setTimeout(function(){inp.focus();},50); }
+}
+
+function gpAddLinea(fabIdx){
+  var fab=fabricas[fabIdx]; if(!fab) return;
+  var inp=document.getElementById('gp-linea-inp-'+fabIdx); if(!inp) return;
+  var val=inp.value.trim(); if(!val) return;
+  if(!lineas[fab]) lineas[fab]=[];
+  for(var i=0;i<lineas[fab].length;i++){if(lineas[fab][i].toLowerCase()===val.toLowerCase()){showToast('Ya existe');return;}}
+  lineas[fab].push(val); saveLineas();
+  inp.value=''; inp.focus();
+  gpRenderFabricas();
+  var panel=document.getElementById('gp-lineas-panel-'+fabIdx); if(panel) panel.classList.add('open');
+  var toggle=document.getElementById('gp-fab-toggle-'+fabIdx); if(toggle) toggle.classList.add('open');
+  var cf=document.getElementById('ff-fabrica'); if(cf&&cf.value===fab) renderLineaChips(fab,(document.getElementById('ff-linea')||{}).value||'');
+  var tf=document.getElementById('tff-fabrica'); if(tf&&tf.value===fab) renderTempLineaChips(fab,(document.getElementById('tff-linea')||{}).value||'');
+  showToast('Línea "'+val+'" agregada');
+}
+
+function gpDelLinea(fabIdx, lineaIdx){
+  var fab=fabricas[fabIdx]; if(!fab||!lineas[fab]) return;
+  var name=lineas[fab][lineaIdx];
+  lineas[fab].splice(lineaIdx,1);
+  if(lineas[fab].length===0) delete lineas[fab];
+  saveLineas();
+  gpRenderFabricas();
+  var panel=document.getElementById('gp-lineas-panel-'+fabIdx); if(panel) panel.classList.add('open');
+  var toggle=document.getElementById('gp-fab-toggle-'+fabIdx); if(toggle) toggle.classList.add('open');
+  var cf=document.getElementById('ff-fabrica'); if(cf&&cf.value===fab) renderLineaChips(fab,(document.getElementById('ff-linea')||{}).value||'');
+  showToast('Línea "'+name+'" eliminada');
+}
 
 function updateFabricaFilter(){
   var sel=document.getElementById('f-fabrica-filter'); if(!sel) return;
@@ -1120,6 +1280,7 @@ function saveModel(){
   var m = {
     id: sanitizeId(editingId)||String(Date.now()),
     fabrica:     document.getElementById('ff-fabrica').value.trim(),
+    linea:       document.getElementById('ff-linea').value.trim(),
     descripcion: document.getElementById('ff-desc').value.trim(),
     marco:       document.getElementById('ff-marco').value,
     color:       document.getElementById('ff-color').value,
@@ -1695,9 +1856,9 @@ function renderTable(filtered){
     var rowspan=sizes.length||1;
     var isOdd=(j%2===1);
     var oddCls=isOdd?' tbl-odd':'';
-    var fabHtml=m.fabrica?'<span class="tbl-ftag">'+esc(m.fabrica)+'</span>':'<span style="color:var(--dim)">—</span>';
-    var colHtml=m.color?'<span class="tbl-ftag">'+esc(m.color)+'</span>':'<span style="color:var(--dim)">—</span>';
-    var marHtml=m.marco?'<span class="tbl-ftag">'+esc(m.marco)+'</span>':'<span style="color:var(--dim)">—</span>';
+    var fabHtml=(m.fabrica?'<span class="tbl-ftag tbl-ftag-fab">'+esc(m.fabrica)+'</span>':'')+(m.linea?'<span class="tbl-ftag tbl-ftag-fab">'+esc(m.linea)+'</span>':'')||'<span style="color:var(--dim)">—</span>';
+    var colHtml=m.color?'<span class="tbl-ftag tbl-ftag-color">'+esc(m.color)+'</span>':'<span style="color:var(--dim)">—</span>';
+    var marHtml=m.marco?'<span class="tbl-ftag tbl-ftag-marco">'+esc(m.marco)+'</span>':'<span style="color:var(--dim)">—</span>';
     var descHtml=m.descripcion?esc(m.descripcion):'<span style="color:var(--dim)">—</span>';
     var actHtml='<div class="tbl-acts">'
       +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')">Editar</button>'
@@ -1798,8 +1959,9 @@ function renderMosaic(filtered){
       var descHtml=m.descripcion?esc(m.descripcion):(m.fabrica?esc(m.fabrica):'Sin descripción');
       var meta=[];
       if(m.fabrica&&m.descripcion) meta.push('<span class="mosaic-meta-item mosaic-meta-fab">'+esc(m.fabrica)+'</span>');
-      if(m.color)  meta.push('<span class="mosaic-meta-item">'+esc(m.color)+'</span>');
-      if(m.marco)  meta.push('<span class="mosaic-meta-item">'+esc(m.marco)+'</span>');
+      if(m.linea)  meta.push('<span class="mosaic-meta-item mosaic-meta-fab">'+esc(m.linea)+'</span>');
+      if(m.color)  meta.push('<span class="mosaic-meta-item" style="color:#7abf9e;">'+esc(m.color)+'</span>');
+      if(m.marco)  meta.push('<span class="mosaic-meta-item" style="color:#7a9dc8;">'+esc(m.marco)+'</span>');
       var metaHtml=meta.length?'<div class="mosaic-meta">'+meta.join('<span class="mosaic-meta-sep">·</span>')+'</div>':'';
       html+='<div class="mosaic-card'+(hasPhoto?'':' no-photo')+'" onclick="openMosaicModal(\''+mid+'\')">'
         +'<div class="mosaic-img-wrap">'+imgHtml+'</div>'
@@ -1941,9 +2103,10 @@ function renderList(){
       +'<div class="door-header">'
       +(m.descripcion?'<div class="door-desc-row">'+esc(m.descripcion)+'</div>':'')
       +'<div class="door-header-row1">'
-      +(m.fabrica?'<span class="ftag">'+esc(m.fabrica)+'</span>':'')
-      +(m.color?'<span class="ftag">'+esc(m.color)+'</span>':'')
-      +(m.marco?'<span class="ftag">'+esc(m.marco)+'</span>':'')
+      +(m.fabrica?'<span class="ftag ftag-fab">'+esc(m.fabrica)+'</span>':'')
+      +(m.linea?'<span class="ftag ftag-fab">'+esc(m.linea)+'</span>':'')
+      +(m.color?'<span class="ftag ftag-color">'+esc(m.color)+'</span>':'')
+      +(m.marco?'<span class="ftag ftag-marco">'+esc(m.marco)+'</span>':'')
       +(hasBody?'<span class="cnt-lbl">'+(m.sizes||[]).length+' med.</span>':'')
       +'</div>'
       +'</div>'
@@ -2028,7 +2191,7 @@ function exportJSON(){
     }
     var exportColors=colors.filter(function(c){return usedColors[c];});
     var exportMarcos=marcos.filter(function(m){return usedMarcos[m];});
-    var payload={models:data, colors:exportColors, marcos:exportMarcos, fabricas:fabricas};
+    var payload={models:data, colors:exportColors, marcos:exportMarcos, fabricas:fabricas, lineas:lineas};
     var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
     downloadBlob(blob,'catalogo-puertas-'+new Date().toISOString().slice(0,10)+'.json');
     showToast('JSON exportado ('+data.length+' modelos)');
@@ -2042,7 +2205,7 @@ function importJSON(e){
     try{
       var raw=JSON.parse(ev.target.result);
       // Support both old format (array) and new format ({models, colors, marcos})
-      var importedColors=[], importedMarcos=[], importedFabricas=[];
+      var importedColors=[], importedMarcos=[], importedFabricas=[], importedLineas={};
       if(Array.isArray(raw)){
         imported=raw;
       } else {
@@ -2050,6 +2213,7 @@ function importJSON(e){
         importedColors=raw.colors||[];
         importedMarcos=raw.marcos||[];
         importedFabricas=raw.fabricas||[];
+        importedLineas=(raw.lineas && typeof raw.lineas==='object' && !Array.isArray(raw.lineas)) ? raw.lineas : {};
       }
       if(!Array.isArray(imported))throw new Error();
       pushUndo('Importar JSON');
@@ -2080,7 +2244,17 @@ function importJSON(e){
         var fv=importedFabricas[fi];
         if(typeof fv==='string' && fv && fabricas.indexOf(fv)===-1) fabricas.push(fv.slice(0,100));
       }
-      saveModels(); saveColors(); saveMarcos(); saveFabricas();
+      // Merge lineas
+      for(var lk in importedLineas){
+        if(!importedLineas.hasOwnProperty(lk)) continue;
+        if(typeof lk!=='string' || !Array.isArray(importedLineas[lk])) continue;
+        if(!lineas[lk]) lineas[lk]=[];
+        for(var li=0;li<importedLineas[lk].length;li++){
+          var lv=importedLineas[lk][li];
+          if(typeof lv==='string' && lv && lineas[lk].indexOf(lv)===-1) lineas[lk].push(lv.slice(0,100));
+        }
+      }
+      saveModels(); saveColors(); saveMarcos(); saveFabricas(); saveLineas();
       updateFilters(); renderList();
       showToast('Importado: '+added+' nuevo'+(added!==1?'s':'')+', '+updated+' actualizado'+(updated!==1?'s':''));
     }catch(err){showToast('JSON invalido');}
@@ -2253,6 +2427,7 @@ function openTempForm(id){
   document.getElementById('tff-desc').value='';
   document.getElementById('tff-color').value='';
   document.getElementById('tff-marco').value='';
+  renderTempLineaChips('','');
   document.getElementById('temp-form-title-bar').textContent=id?'Editar Modelo Temporal':'Nuevo Modelo Temporal';
   document.getElementById('temp-btn-save').textContent=id?'Guardar Cambios':'Guardar Modelo Temporal';
   if(id){
@@ -2263,6 +2438,7 @@ function openTempForm(id){
       document.getElementById('tff-color').value=m.color||'';
       document.getElementById('tff-marco').value=m.marco||'';
       for(var i=0;i<(m.sizes||[]).length;i++) tempFormSizes.push({medida:m.sizes[i].medida,r:m.sizes[i].r,l:m.sizes[i].l});
+      renderTempLineaChips(m.fabrica||'', m.linea||'');
     }
   }
   renderTempFabricaChips(document.getElementById('tff-fabrica').value);
@@ -2291,6 +2467,7 @@ function selectTempFabrica(val){
   var next=(cur===val)?'':val;
   document.getElementById('tff-fabrica').value=next;
   renderTempFabricaChips(next);
+  renderTempLineaChips(next,'');
 }
 
 function renderTempColorChips(selected){
@@ -2383,17 +2560,18 @@ function saveTempModel(){
   var desc=document.getElementById('tff-desc').value.trim();
   var color=document.getElementById('tff-color').value.trim();
   var marco=document.getElementById('tff-marco').value.trim();
+  var linea=(document.getElementById('tff-linea')||{}).value||'';
   if(!desc&&!fab){showTempToast('Ingresa al menos una descripción o fábrica');return;}
   pushTempUndo(tempEditingId?'Editar '+desc:'Agregar '+desc);
   if(tempEditingId){
     for(var i=0;i<tempModels.length;i++){
       if(tempModels[i].id===tempEditingId){
-        tempModels[i]={id:tempEditingId,fabrica:fab,descripcion:desc,color:color,marco:marco,sizes:tempFormSizes.slice()};
+        tempModels[i]={id:tempEditingId,fabrica:fab,linea:linea,descripcion:desc,color:color,marco:marco,sizes:tempFormSizes.slice()};
         break;
       }
     }
   } else {
-    tempModels.push({id:'t'+Date.now(),fabrica:fab,descripcion:desc,color:color,marco:marco,sizes:tempFormSizes.slice()});
+    tempModels.push({id:'t'+Date.now(),fabrica:fab,linea:linea,descripcion:desc,color:color,marco:marco,sizes:tempFormSizes.slice()});
   }
   saveTempModels();
   closeTempForm();
@@ -2551,9 +2729,10 @@ function renderTempList(){
       }
     }
     var hasBody=numSizes>0;
-    var tags=(m.fabrica?'<span class="ftag">'+esc(m.fabrica)+'</span>':'')
-      +(m.color?'<span class="ftag">'+esc(m.color)+'</span>':'')
-      +(m.marco?'<span class="ftag">'+esc(m.marco)+'</span>':'');
+    var tags=(m.fabrica?'<span class="ftag ftag-fab">'+esc(m.fabrica)+'</span>':'')
+      +(m.linea?'<span class="ftag ftag-fab">'+esc(m.linea)+'</span>':'')
+      +(m.color?'<span class="ftag ftag-color">'+esc(m.color)+'</span>':'')
+      +(m.marco?'<span class="ftag ftag-marco">'+esc(m.marco)+'</span>':'');
     html+='<div class="door-card">'
       +'<input type="checkbox" class="temp-check" data-id="'+mid+'" onchange="updateTempSelLabel()" style="margin:0 4px 0 8px;flex-shrink:0;align-self:center;">'
       +'<div class="door-header-wrap" onclick="toggleCard(\'tcb-'+mid+'\')" style="cursor:pointer;flex:1;">'
@@ -2586,9 +2765,9 @@ function renderTempTable(list){
     var rowspan=sizes.length||1;
     var isOdd=(j%2===1);
     var oddCls=isOdd?' tbl-odd':'';
-    var fabHtml=m.fabrica?'<span class="tbl-ftag">'+esc(m.fabrica)+'</span>':'—';
-    var colHtml=m.color?'<span class="tbl-ftag">'+esc(m.color)+'</span>':'—';
-    var marHtml=m.marco?'<span class="tbl-ftag">'+esc(m.marco)+'</span>':'—';
+    var fabHtml=(m.fabrica?'<span class="tbl-ftag tbl-ftag-fab">'+esc(m.fabrica)+'</span>':'')+(m.linea?'<span class="tbl-ftag tbl-ftag-fab">'+esc(m.linea)+'</span>':'')||'—';
+    var colHtml=m.color?'<span class="tbl-ftag tbl-ftag-color">'+esc(m.color)+'</span>':'—';
+    var marHtml=m.marco?'<span class="tbl-ftag tbl-ftag-marco">'+esc(m.marco)+'</span>':'—';
     var descHtml=m.descripcion?esc(m.descripcion):'—';
     var actHtml='<div class="tbl-acts">'
       +'<button class="abtn abtn-edit" onclick="openTempForm(\''+mid+'\')">Editar</button>'
@@ -2745,24 +2924,18 @@ function closeGlobalPanel(e){
   if(e && e.target!==document.getElementById('global-panel-overlay')) return;
   document.getElementById('global-panel-overlay').style.display='none';
   document.body.style.overflow='';
-  // Refrescar chips del formulario principal si está abierto
   var cur_fab=document.getElementById('ff-fabrica'); if(cur_fab) renderFabricaChips(cur_fab.value);
+  if(cur_fab) renderLineaChips(cur_fab.value, (document.getElementById('ff-linea')||{}).value||'');
   var cur_col=document.getElementById('ff-color');   if(cur_col) renderColorChips(cur_col.value);
   var cur_mar=document.getElementById('ff-marco');   if(cur_mar) renderMarcoChips(cur_mar.value);
   var mw=document.getElementById('medidas-chips-wrap'); if(mw) renderMedidasChips();
-  // Refrescar chips del formulario temporal si está abierto
   var tf=document.getElementById('tff-fabrica'); if(tf) renderTempFabricaChips(tf.value);
+  if(tf) renderTempLineaChips(tf.value, (document.getElementById('tff-linea')||{}).value||'');
   var tc=document.getElementById('tff-color');   if(tc) renderTempColorChips(tc.value);
   var tm=document.getElementById('tff-marco');   if(tm) renderTempMarcoChips(tm.value);
   var tmw=document.getElementById('temp-medidas-chips-wrap'); if(tmw) renderTempMedidasChips();
 }
 
-function gpRenderFabricas(){
-  var c=document.getElementById('gp-fabrica-list'); if(!c)return;
-  if(fabricas.length===0){c.innerHTML='<div style="grid-column:1/-1;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;color:var(--dim);">Sin fábricas cargadas</div>';return;}
-  var h=''; for(var i=0;i<fabricas.length;i++) h+='<div class="gp-item"><span>'+esc(fabricas[i])+'</span><button class="gp-item-del" onclick="gpDelFabrica('+i+')">✕</button></div>';
-  c.innerHTML=h;
-}
 function gpRenderColors(){
   var c=document.getElementById('gp-color-list'); if(!c)return;
   if(colors.length===0){c.innerHTML='<div style="grid-column:1/-1;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;color:var(--dim);">Sin colores cargados</div>';return;}
