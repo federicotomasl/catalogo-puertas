@@ -317,15 +317,12 @@ select.finput{cursor:pointer;}
           <div class="export-wrap" id="export-wrap">
             <button class="btn btn-outline" onclick="toggleExportDrop()">Exportar ▾</button>
             <div class="export-drop" id="export-drop">
-              <button class="export-opt" onclick="exportJSON();closeExportDrop()">Todo (JSON)</button>
-              <div class="export-opt-sep"></div>
               <button class="export-opt" onclick="exportListas('fabricas');closeExportDrop()">Fábricas</button>
               <button class="export-opt" onclick="exportListas('colores');closeExportDrop()">Colores</button>
               <button class="export-opt" onclick="exportListas('marcos');closeExportDrop()">Marcos</button>
               <button class="export-opt" onclick="exportListas('medidas');closeExportDrop()">Medidas</button>
             </div>
           </div>
-          <label class="btn btn-outline" style="cursor:pointer;">Importar<input type="file" accept=".json" style="display:none" onchange="importJSON(event)"></label>
           <button class="btn btn-ghost" onclick="exportPDF()">PDF</button>
           <button class="btn btn-outline" onclick="exportCSV()">CSV</button>
           <button id="undo-btn" class="btn btn-ghost" onclick="performUndo()" disabled style="opacity:0.35;" title="Sin acciones para deshacer">&#8630;</button>
@@ -578,8 +575,6 @@ select.finput{cursor:pointer;}
         <button class="btn btn-ghost" onclick="closeTemporal()">← Principal</button>
       </div>
       <div class="topbar-actions">
-        <button class="btn btn-ghost" onclick="exportTempJSON()">Exportar</button>
-        <label class="btn btn-ghost" style="cursor:pointer;">Importar<input type="file" accept=".json" style="display:none" onchange="importTempJSON(event)"></label>
         <button class="btn btn-ghost" onclick="exportTempPDF()">PDF</button>
         <button class="btn btn-ghost" onclick="exportTempCSV()">CSV</button>
         <button id="temp-undo-btn" class="btn btn-ghost" onclick="performTempUndo()" disabled style="opacity:0.35;">&#8630;</button>
@@ -722,11 +717,12 @@ function performUndo(){
   });
   if(redoHistory.length > UNDO_LIMIT) redoHistory.shift();
   var snap = undoHistory.pop();
+  var prevModels = models.slice();
   models = snap.models;
   colors = snap.colors;
   marcos = snap.marcos;
   if(snap.tempModels !== undefined){ tempModels=snap.tempModels; saveTempModels(); renderTempList(); var tb=document.getElementById('btn-temporal'); if(tb) tb.textContent=tempModels.length>0?'⏱ Temporal ('+tempModels.length+')':'⏱ Temporal'; }
-  saveModels(); saveColors(); saveMarcos();
+  syncModelsToSupa(prevModels, models); saveColors(); saveMarcos();
   updateFilters(); renderList();
   restoreOpenCards(open);
   updateSelLabel();
@@ -747,11 +743,12 @@ function performRedo(){
   });
   if(undoHistory.length > UNDO_LIMIT) undoHistory.shift();
   var snap = redoHistory.pop();
+  var prevModels2 = models.slice();
   models = snap.models;
   colors = snap.colors;
   marcos = snap.marcos;
-  if(snap.tempModels !== undefined){ tempModels=snap.tempModels; saveTempModels(); renderTempList(); var tb=document.getElementById('btn-temporal'); if(tb) tb.textContent=tempModels.length>0?'⏱ Temporal ('+tempModels.length+')':'⏱ Temporal'; }
-  saveModels(); saveColors(); saveMarcos();
+  if(snap.tempModels !== undefined){ tempModels=snap.tempModels; saveTempModels(); renderTempList(); var tb2=document.getElementById('btn-temporal'); if(tb2) tb2.textContent=tempModels.length>0?'⏱ Temporal ('+tempModels.length+')':'⏱ Temporal'; }
+  syncModelsToSupa(prevModels2, models); saveColors(); saveMarcos();
   updateFilters(); renderList();
   restoreOpenCards(open);
   updateSelLabel();
@@ -774,64 +771,96 @@ function updateRedoBtn(){
   if(tbtn){ var has2=redoHistory.length>0; tbtn.disabled=!has2; tbtn.style.opacity=has2?'1':'0.35'; }
 }
 
-try {
-  var s = localStorage.getItem('puertas_models');
-  if(!s) s = localStorage.getItem('puertas_catalog'); // backward compat
-  if(s) models = JSON.parse(s);
-} catch(e){}
-try {
-  var c = localStorage.getItem('puertas_colors');
-  if(c) {
-    var raw = JSON.parse(c);
-    // Migrate: if items are objects {name:...}, extract the name string
-    colors = [];
-    for(var ci=0; ci<raw.length; ci++){
-      if(typeof raw[ci] === 'string') colors.push(raw[ci]);
-      else if(raw[ci] && typeof raw[ci].name === 'string') colors.push(raw[ci].name);
-    }
-    // Save cleaned version back
-    localStorage.setItem('puertas_colors', JSON.stringify(colors));
-  }
-} catch(e){ colors = []; }
-try {
-  var m2 = localStorage.getItem('puertas_marcos');
-  if(m2) {
-    var rawm = JSON.parse(m2);
-    marcos = [];
-    for(var mi=0; mi<rawm.length; mi++){
-      if(typeof rawm[mi] === 'string') marcos.push(rawm[mi]);
-      else if(rawm[mi] && typeof rawm[mi].name === 'string') marcos.push(rawm[mi].name);
-    }
-  }
-} catch(e){ marcos = []; }
-try { var t = localStorage.getItem('puertas_theme'); if(t==='light'){darkMode=false;document.body.classList.add('light');} } catch(e){}
-try { var vm = localStorage.getItem('puertas_viewmode'); if(vm==='table') viewMode='table'; } catch(e){}
-try {
-  var fraw = localStorage.getItem('puertas_fabricas');
-  if(fraw) fabricas = JSON.parse(fraw);
-} catch(e){ fabricas = []; }
-try {
-  var lraw = localStorage.getItem('puertas_lineas');
-  if(lraw) lineas = JSON.parse(lraw);
-} catch(e){ lineas = {}; }
-// Precargar medidas estándar una única vez
-try {
-  if(!localStorage.getItem('puertas_medidas_seeded')){
-    medidas = ['90/10','90/15','80/10','80/15','70/10','70/15','60/10','60/15'];
-    localStorage.setItem('puertas_medidas', JSON.stringify(medidas));
-    localStorage.setItem('puertas_medidas_seeded','1');
-  } else {
-    var mraw = localStorage.getItem('puertas_medidas');
-    if(mraw) medidas = JSON.parse(mraw);
-  }
-} catch(e){ medidas = ['90/10','90/15','80/10','80/15','70/10','70/15','60/10','60/15']; }
+// ===== SUPABASE CONFIG =====
+var SUPA_URL = 'https://ddowemygrrbjoqkyguhq.supabase.co';
+var SUPA_KEY = 'sb_publishable_TF6bRm78aN2sWLKSLIiObg_1fKt5oQb';
+var SUPA_TABLE = 'puertas';
 
-function saveModels(){ lsSet('puertas_models',JSON.stringify(models)); }
-function saveColors(){ lsSet('puertas_colors',JSON.stringify(colors)); }
-function saveMarcos(){ lsSet('puertas_marcos',JSON.stringify(marcos)); }
-function saveFabricas(){ lsSet('puertas_fabricas',JSON.stringify(fabricas)); }
-function saveMedidas(){ lsSet('puertas_medidas',JSON.stringify(medidas)); }
-function saveLineas(){ lsSet('puertas_lineas',JSON.stringify(lineas)); }
+// Verificar sesión
+var _session = localStorage.getItem('torri_session');
+if(!_session){ window.location.replace('index.html'); throw new Error('No session'); }
+
+function supaHeaders(){
+  return {
+    'apikey': SUPA_KEY,
+    'Authorization': 'Bearer '+_session,
+    'Content-Type': 'application/json'
+  };
+}
+
+function handleSupaError(res){
+  if(res.status === 401){
+    localStorage.removeItem('torri_session');
+    window.location.replace('index.html');
+    throw new Error('Session expired');
+  }
+  if(!res.ok) return res.json().then(function(e){ throw new Error(e.message||res.statusText); });
+  return Promise.resolve();
+}
+
+function supaUpsert(id, data){
+  return fetch(SUPA_URL+'/rest/v1/'+SUPA_TABLE, {
+    method: 'POST',
+    headers: Object.assign({}, supaHeaders(), {'Prefer': 'resolution=merge-duplicates'}),
+    body: JSON.stringify({id: id, data: data})
+  }).then(function(res){
+    if(res.status===401){localStorage.removeItem('torri_session');window.location.replace('index.html');return;}
+    if(!res.ok) res.json().then(function(e){showToast('Error al guardar: '+(e.message||res.statusText));});
+  });
+}
+
+function supaDelete(id){
+  return fetch(SUPA_URL+'/rest/v1/'+SUPA_TABLE+'?id=eq.'+encodeURIComponent(id), {
+    method: 'DELETE',
+    headers: supaHeaders()
+  }).then(function(res){
+    if(res.status===401){localStorage.removeItem('torri_session');window.location.replace('index.html');return;}
+    if(!res.ok) res.json().then(function(e){showToast('Error al eliminar: '+(e.message||res.statusText));});
+  });
+}
+
+// ===== SAVE FUNCTIONS (Supabase) =====
+function saveModels(changedModel){
+  // Solo guarda el modelo que cambió; si no se pasa, no hace nada
+  if(changedModel) supaUpsert(changedModel.id, changedModel);
+}
+function saveColors(){  supaUpsert('config_colors',  colors); }
+function saveMarcos(){  supaUpsert('config_marcos',  marcos); }
+function saveFabricas(){ supaUpsert('config_fabricas', buildFabricasPayload()); }
+function saveMedidas(){ supaUpsert('config_medidas', medidas); }
+function saveLineas(){  saveFabricas(); } // lineas van dentro de fabricas
+
+function buildFabricasPayload(){
+  // Formato: { "Roma": ["Lisa","Vidriada"], "Aluar": [] }
+  var payload = {};
+  for(var i=0;i<fabricas.length;i++){
+    var f=fabricas[i];
+    payload[f] = lineas[f]||[];
+  }
+  return payload;
+}
+
+function syncModelsToSupa(prevModels, nextModels){
+  // Upsert modelos que cambiaron o son nuevos
+  var prevMap={};
+  for(var i=0;i<prevModels.length;i++) prevMap[prevModels[i].id]=prevModels[i];
+  var nextMap={};
+  for(var j=0;j<nextModels.length;j++){
+    nextMap[nextModels[j].id]=true;
+    var p=prevMap[nextModels[j].id];
+    var changed=!p||JSON.stringify(p)!==JSON.stringify(nextModels[j]);
+    if(changed) supaUpsert(nextModels[j].id, nextModels[j]);
+  }
+  // Eliminar modelos que ya no existen
+  for(var id in prevMap){
+    if(prevMap.hasOwnProperty(id) && !nextMap[id]) supaDelete(id);
+  }
+}
+
+// UI preferences siguen en localStorage
+try { var t = localStorage.getItem('puertas_theme'); if(t==='light'){darkMode=false;document.body.classList.add('light');} } catch(e){}
+try { var vm = localStorage.getItem('puertas_viewmode'); if(vm==='table') viewMode='table'; else if(vm==='mosaic') viewMode='mosaic'; } catch(e){}
+try { var tsm = localStorage.getItem('puertas_temp_models'); if(tsm) tempModels = JSON.parse(tsm); } catch(e){ tempModels=[]; }
 
 // ===== NAVIGATION =====
 function openForm(id){
@@ -1315,7 +1344,7 @@ function saveModel(){
     models.push(m);
     showToast('Modelo guardado');
   }
-  saveModels(); updateFilters(); renderList(); closeForm();
+  supaUpsert(m.id, m); updateFilters(); renderList(); closeForm();
 }
 
 // ===== DUPLICATE =====
@@ -1324,7 +1353,7 @@ function duplicateModel(id){
   var copy=JSON.parse(JSON.stringify(src));
   copy.id=String(Date.now()); copy.createdAt=Date.now();
   pushUndo('Duplicar modelo');
-  models.push(copy); saveModels(); updateFilters(); renderList(); showToast('Modelo duplicado');
+  models.push(copy); supaUpsert(copy.id, copy); updateFilters(); renderList(); showToast('Modelo duplicado');
 }
 
 // ===== DELETE WITH UNDO =====
@@ -1332,7 +1361,7 @@ function deleteModel(id){
   var idx=-1; for(var i=0;i<models.length;i++){if(models[i].id===id){idx=i;break;}}
   if(idx===-1)return;
   pushUndo('Eliminar: '+(models[idx].fabrica||models[idx].descripcion||'modelo'));
-  models.splice(idx,1); saveModels(); updateFilters(); renderList();
+  models.splice(idx,1); supaDelete(id); updateFilters(); renderList();
   showToast('Modelo eliminado');
 }
 
@@ -1343,7 +1372,7 @@ function adjustStock(btn, modelId, sizeIdx, side, delta){
   pushUndo('Stock: '+esc(sz.medida)+' '+(side==='r'?'Der':'Izq')+' '+(delta>0?'+':'')+delta);
   if(side==='r') sz.r=Math.max(0,(sz.r||0)+delta);
   else           sz.l=Math.max(0,(sz.l||0)+delta);
-  saveModels();
+  supaUpsert(m.id, m);
   // Update only the touched span — works for both card (.qval) and table (.tbl-qval)
   var span=btn.parentNode.querySelector('.qval')||btn.parentNode.querySelector('.tbl-qval');
   if(span){
@@ -1546,8 +1575,8 @@ function resetAllStock(){
         models[i].sizes[j].r=0;
         models[i].sizes[j].l=0;
       }
+      supaUpsert(models[i].id, models[i]);
     }
-    saveModels();
     renderList();
     showToast('Stock reseteado a cero');
     return;
@@ -2142,8 +2171,9 @@ function deleteSelected(){
   var n=Object.keys(ids).length;
   if(n===0) return;
   pushUndo('Eliminar '+n+' modelo'+(n!==1?'s':''));
+  for(var delId in ids){ if(ids.hasOwnProperty(delId)) supaDelete(delId); }
   models=models.filter(function(m){return !ids[m.id];});
-  saveModels(); updateFilters(); renderList();
+  updateFilters(); renderList();
   updateSelLabel();
   showToast(n+' modelo'+(n!==1?'s':'')+' eliminado'+(n!==1?'s':''));
 }
@@ -2281,7 +2311,11 @@ function importJSON(e){
           if(typeof lv==='string' && lv && lineas[lk].indexOf(lv)===-1) lineas[lk].push(lv.slice(0,100));
         }
       }
-      saveModels(); saveColors(); saveMarcos(); saveFabricas(); saveLineas(); saveMedidas();
+      saveColors(); saveMarcos(); saveFabricas(); saveLineas(); saveMedidas();
+      // Upsert todos los modelos importados/actualizados
+      if(!isListaOnly){
+        for(var ui=0;ui<models.length;ui++) supaUpsert(models[ui].id, models[ui]);
+      }
       updateFilters(); renderList();
       if(isListaOnly){
         showToast('Listas importadas correctamente');
@@ -2699,9 +2733,10 @@ function promoteSelected(){
             var newM=JSON.parse(JSON.stringify(m));
             newM.id='m'+Date.now()+Math.random();
             models.push(newM);
+            supaUpsert(newM.id, newM);
           }
           tempModels=tempModels.filter(function(m){return !ids[m.id];});
-          saveModels(); updateFilters(); renderList();
+          updateFilters(); renderList();
           saveTempModels(); renderTempList();
           var tb=document.getElementById('btn-temporal');
           if(tb) tb.textContent=tempModels.length>0?'⏱ Temporal ('+tempModels.length+')':'⏱ Temporal';
@@ -3089,21 +3124,23 @@ function gpAddMarco(){
 }
 
 function gpDelFabrica(idx){
-  var name=fabricas[idx]; fabricas.splice(idx,1); saveFabricas();
-  for(var i=0;i<models.length;i++){if(models[i].fabrica===name) models[i].fabrica='';}
-  saveModels(); gpRenderFabricas(); updateFabricaFilter(); renderList();
+  var name=fabricas[idx]; fabricas.splice(idx,1);
+  if(lineas[name]) delete lineas[name];
+  saveFabricas();
+  for(var i=0;i<models.length;i++){if(models[i].fabrica===name){models[i].fabrica='';supaUpsert(models[i].id,models[i]);}}
+  gpRenderFabricas(); updateFabricaFilter(); renderList();
   showToast('Fábrica eliminada');
 }
 function gpDelColor(idx){
   var name=colors[idx]; colors.splice(idx,1); saveColors();
-  for(var i=0;i<models.length;i++){if(models[i].color===name) models[i].color='';}
-  saveModels(); gpRenderColors(); updateColorFilter(); renderList();
+  for(var i=0;i<models.length;i++){if(models[i].color===name){models[i].color='';supaUpsert(models[i].id,models[i]);}}
+  gpRenderColors(); updateColorFilter(); renderList();
   showToast('Color eliminado');
 }
 function gpDelMarco(idx){
   var name=marcos[idx]; marcos.splice(idx,1); saveMarcos();
-  for(var i=0;i<models.length;i++){if(models[i].marco===name) models[i].marco='';}
-  saveModels(); gpRenderMarcos(); updateMarcoFilter(); renderList();
+  for(var i=0;i<models.length;i++){if(models[i].marco===name){models[i].marco='';supaUpsert(models[i].id,models[i]);}}
+  gpRenderMarcos(); updateMarcoFilter(); renderList();
   showToast('Marco eliminado');
 }
 
@@ -3134,25 +3171,68 @@ function gpDelMedida(idx){
 }
 
 // ===== INIT =====
-updateFilters();
-if(viewMode==='table'){
-  document.getElementById('vt-cards').className='';
-  document.getElementById('vt-table').className='active';
-  document.getElementById('card-only-btns').style.display='none';
-} else if(viewMode==='mosaic'){
-  document.getElementById('vt-cards').className='';
-  document.getElementById('vt-mosaic').className='active';
-  document.getElementById('card-only-btns').style.display='none';
-  var _msb=document.getElementById('mosaic-size-btn');
-  if(_msb) _msb.style.display='';
-} else {
-  // cards: nada extra
-}
-document.getElementById('grp-none').classList.add('active');
-renderList();
-// Update temporal button indicator
-var _tb=document.getElementById('btn-temporal');
-if(_tb && tempModels.length>0) _tb.textContent='⏱ Temporal ('+tempModels.length+')';
+// Mostrar indicador de carga
+document.getElementById('door-list').innerHTML='<div style="text-align:center;padding:40px 20px;font-family:\'Barlow Condensed\',sans-serif;font-size:14px;color:var(--muted);letter-spacing:0.08em;">Cargando...</div>';
+
+// Cargar datos desde Supabase
+fetch(SUPA_URL+'/rest/v1/'+SUPA_TABLE+'?select=*', {headers: supaHeaders()})
+  .then(function(res){
+    if(res.status===401){localStorage.removeItem('torri_session');window.location.replace('index.html');return;}
+    if(!res.ok) throw new Error(res.statusText);
+    return res.json();
+  })
+  .then(function(rows){
+    if(!rows) return;
+    models=[]; colors=[]; marcos=[]; fabricas=[]; medidas=[]; lineas={}; tempModels=[];
+    for(var i=0;i<rows.length;i++){
+      var row=rows[i], d=row.data;
+      if(row.id==='config_colors'){
+        colors=Array.isArray(d)?d:[];
+      } else if(row.id==='config_marcos'){
+        marcos=Array.isArray(d)?d:[];
+      } else if(row.id==='config_medidas'){
+        medidas=Array.isArray(d)?d:[];
+      } else if(row.id==='config_fabricas'){
+        // d = { "Roma": ["Lisa","Vidriada"], "Aluar": [] }
+        if(d && typeof d==='object' && !Array.isArray(d)){
+          fabricas=Object.keys(d);
+          for(var k=0;k<fabricas.length;k++){
+            lineas[fabricas[k]]=Array.isArray(d[fabricas[k]])?d[fabricas[k]]:[];
+          }
+        }
+      } else {
+        // Modelo normal
+        var m=validateModel(d);
+        if(m) models.push(m);
+      }
+    }
+    // Fallback medidas por defecto si no hay ninguna
+    if(medidas.length===0){
+      medidas=['90/10','90/15','80/10','80/15','70/10','70/15','60/10','60/15'];
+      saveMedidas();
+    }
+    updateFilters();
+    if(viewMode==='table'){
+      document.getElementById('vt-cards').className='';
+      document.getElementById('vt-table').className='active';
+      document.getElementById('card-only-btns').style.display='none';
+    } else if(viewMode==='mosaic'){
+      document.getElementById('vt-cards').className='';
+      document.getElementById('vt-mosaic').className='active';
+      document.getElementById('card-only-btns').style.display='none';
+      var _msb=document.getElementById('mosaic-size-btn');
+      if(_msb) _msb.style.display='';
+    }
+    document.getElementById('grp-none').classList.add('active');
+    renderList();
+    var _tb=document.getElementById('btn-temporal');
+    if(_tb && tempModels.length>0) _tb.textContent='⏱ Temporal ('+tempModels.length+')';
+    updateTotalsBarTop();
+  })
+  .catch(function(err){
+    showToast('Error al cargar datos: '+err.message);
+    document.getElementById('door-list').innerHTML='<div style="text-align:center;padding:40px 20px;color:#e05555;font-family:\'Barlow Condensed\',sans-serif;">Error al conectar con el servidor</div>';
+  });
 
 // Set totals-bar top to match topbar height
 function updateTotalsBarTop(){
