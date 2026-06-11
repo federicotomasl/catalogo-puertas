@@ -657,8 +657,8 @@ var viewMode = 'cards';
 var groupBy = 'none';
 
 // ===== UNDO HISTORY =====
-var UNDO_LIMIT = 20;
-var undoHistory = []; // [{snapshot:{models,colors,marcos}, label:'...'}]
+var UNDO_LIMIT = 10;
+var undoHistory = [];
 var redoHistory = [];
 
 function pushUndo(label){
@@ -667,6 +667,9 @@ function pushUndo(label){
     models: cloneModelsLight(models),
     colors: colors.slice(),
     marcos: marcos.slice(),
+    fabricas: fabricas.slice(),
+    lineas: JSON.parse(JSON.stringify(lineas)),
+    medidas: medidas.slice(),
     tempModels: cloneModelsLight(tempModels)
   });
   if(undoHistory.length > UNDO_LIMIT) undoHistory.shift();
@@ -704,16 +707,25 @@ function performUndo(){
     models: cloneModelsLight(models),
     colors: colors.slice(),
     marcos: marcos.slice(),
+    fabricas: fabricas.slice(),
+    lineas: JSON.parse(JSON.stringify(lineas)),
+    medidas: medidas.slice(),
     tempModels: cloneModelsLight(tempModels)
   });
   if(redoHistory.length > UNDO_LIMIT) redoHistory.shift();
   var snap = undoHistory.pop();
   var prevModels = models.slice();
+  var prevColors = colors.slice(), prevMarcos = marcos.slice();
+  var prevFabricas = fabricas.slice(), prevLineas = JSON.parse(JSON.stringify(lineas)), prevMedidas = medidas.slice();
   models = snap.models;
-  colors = snap.colors;
-  marcos = snap.marcos;
+  colors = snap.colors; marcos = snap.marcos;
+  fabricas = snap.fabricas||[]; lineas = snap.lineas||{}; medidas = snap.medidas||[];
   if(snap.tempModels !== undefined){ tempModels=snap.tempModels; saveTempModels(); renderTempList(); var tb=document.getElementById('btn-temporal'); if(tb) tb.textContent=tempModels.length>0?'⏱ Temporal ('+tempModels.length+')':'⏱ Temporal'; }
-  syncModelsToSupa(prevModels, models); saveColors(); saveMarcos();
+  syncModelsToSupa(prevModels, models);
+  if(JSON.stringify(prevColors)!==JSON.stringify(colors)) saveColors();
+  if(JSON.stringify(prevMarcos)!==JSON.stringify(marcos)) saveMarcos();
+  if(JSON.stringify(prevFabricas)!==JSON.stringify(fabricas)||JSON.stringify(prevLineas)!==JSON.stringify(lineas)) saveFabricas();
+  if(JSON.stringify(prevMedidas)!==JSON.stringify(medidas)) saveMedidas();
   updateFilters(); renderList();
   restoreOpenCards(open);
   updateSelLabel();
@@ -730,16 +742,25 @@ function performRedo(){
     models: cloneModelsLight(models),
     colors: colors.slice(),
     marcos: marcos.slice(),
+    fabricas: fabricas.slice(),
+    lineas: JSON.parse(JSON.stringify(lineas)),
+    medidas: medidas.slice(),
     tempModels: cloneModelsLight(tempModels)
   });
   if(undoHistory.length > UNDO_LIMIT) undoHistory.shift();
   var snap = redoHistory.pop();
   var prevModels2 = models.slice();
+  var prevColors2 = colors.slice(), prevMarcos2 = marcos.slice();
+  var prevFabricas2 = fabricas.slice(), prevLineas2 = JSON.parse(JSON.stringify(lineas)), prevMedidas2 = medidas.slice();
   models = snap.models;
-  colors = snap.colors;
-  marcos = snap.marcos;
+  colors = snap.colors; marcos = snap.marcos;
+  fabricas = snap.fabricas||[]; lineas = snap.lineas||{}; medidas = snap.medidas||[];
   if(snap.tempModels !== undefined){ tempModels=snap.tempModels; saveTempModels(); renderTempList(); var tb2=document.getElementById('btn-temporal'); if(tb2) tb2.textContent=tempModels.length>0?'⏱ Temporal ('+tempModels.length+')':'⏱ Temporal'; }
-  syncModelsToSupa(prevModels2, models); saveColors(); saveMarcos();
+  syncModelsToSupa(prevModels2, models);
+  if(JSON.stringify(prevColors2)!==JSON.stringify(colors)) saveColors();
+  if(JSON.stringify(prevMarcos2)!==JSON.stringify(marcos)) saveMarcos();
+  if(JSON.stringify(prevFabricas2)!==JSON.stringify(fabricas)||JSON.stringify(prevLineas2)!==JSON.stringify(lineas)) saveFabricas();
+  if(JSON.stringify(prevMedidas2)!==JSON.stringify(medidas)) saveMedidas();
   updateFilters(); renderList();
   restoreOpenCards(open);
   updateSelLabel();
@@ -1155,6 +1176,7 @@ function gpAddLinea(fabIdx){
 function gpDelLinea(fabIdx, lineaIdx){
   var fab=fabricas[fabIdx]; if(!fab||!lineas[fab]) return;
   var name=lineas[fab][lineaIdx];
+  pushUndo('Eliminar línea: '+name);
   lineas[fab].splice(lineaIdx,1);
   if(lineas[fab].length===0) delete lineas[fab];
   saveLineas();
@@ -3115,7 +3137,9 @@ function gpAddMarco(){
 }
 
 function gpDelFabrica(idx){
-  var name=fabricas[idx]; fabricas.splice(idx,1);
+  var name=fabricas[idx];
+  pushUndo('Eliminar fábrica: '+name);
+  fabricas.splice(idx,1);
   if(lineas[name]) delete lineas[name];
   saveFabricas();
   for(var i=0;i<models.length;i++){if(models[i].fabrica===name){models[i].fabrica='';supaUpsert(models[i].id,models[i]);}}
@@ -3123,13 +3147,17 @@ function gpDelFabrica(idx){
   showToast('Fábrica eliminada');
 }
 function gpDelColor(idx){
-  var name=colors[idx]; colors.splice(idx,1); saveColors();
+  var name=colors[idx];
+  pushUndo('Eliminar color: '+name);
+  colors.splice(idx,1); saveColors();
   for(var i=0;i<models.length;i++){if(models[i].color===name){models[i].color='';supaUpsert(models[i].id,models[i]);}}
   gpRenderColors(); updateColorFilter(); renderList();
   showToast('Color eliminado');
 }
 function gpDelMarco(idx){
-  var name=marcos[idx]; marcos.splice(idx,1); saveMarcos();
+  var name=marcos[idx];
+  pushUndo('Eliminar marco: '+name);
+  marcos.splice(idx,1); saveMarcos();
   for(var i=0;i<models.length;i++){if(models[i].marco===name){models[i].marco='';supaUpsert(models[i].id,models[i]);}}
   gpRenderMarcos(); updateMarcoFilter(); renderList();
   showToast('Marco eliminado');
@@ -3153,9 +3181,10 @@ function gpAddMedida(){
   showToast('Medida "'+val+'" agregada');
 }
 function gpDelMedida(idx){
-  var name=medidas[idx]; medidas.splice(idx,1); saveMedidas();
+  var name=medidas[idx];
+  pushUndo('Eliminar medida: '+name);
+  medidas.splice(idx,1); saveMedidas();
   gpRenderMedidas();
-  // Refrescar chips en formularios abiertos
   var w=document.getElementById('medidas-chips-wrap'); if(w) renderMedidasChips();
   var tw=document.getElementById('temp-medidas-chips-wrap'); if(tw) renderTempMedidasChips();
   showToast('Medida "'+name+'" eliminada de la lista');
