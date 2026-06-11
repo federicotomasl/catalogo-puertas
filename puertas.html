@@ -2380,14 +2380,11 @@ function exportPDF(){
   loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', function(){
     loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js', function(){
       var doc = new window.jspdf.jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
-      var fecha=new Date().toLocaleDateString('es-AR');
-
-      doc.setFontSize(16);
+      doc.setFontSize(14);
       doc.setTextColor(200,98,26);
-      doc.text('Catálogo de Puertas', 14, 16);
-      doc.setFontSize(9);
-      doc.setTextColor(130,130,130);
-      doc.text(data.length+' modelo'+(data.length!==1?'s':'')+' · '+fecha, 14, 22);
+      var fecha=new Date().toLocaleDateString('es-AR');
+      var titulo='Puertas   '+data.length+' modelo'+(data.length!==1?'s':'')+'   '+fecha;
+      doc.text(titulo, 14, 16);
 
       var rows=[];
       var groups=groupModels(data);
@@ -2417,7 +2414,7 @@ function exportPDF(){
       }
 
       doc.autoTable({
-        startY: 26,
+        startY: 22,
         head: [['Fábrica / Línea','Descripción','Color','Marco','Medida / Stock']],
         body: rows,
         theme: 'grid',
@@ -2425,7 +2422,11 @@ function exportPDF(){
         bodyStyles: {fontSize:8, textColor:50},
         alternateRowStyles: {fillColor:[253,245,239]},
         columnStyles: {
-          0:{cellWidth:38}, 1:{cellWidth:60}, 2:{cellWidth:28}, 3:{cellWidth:28}, 4:{cellWidth:32}
+          0:{cellWidth:38},
+          1:{cellWidth:'auto'},
+          2:{cellWidth:20},
+          3:{cellWidth:20},
+          4:{cellWidth:32}
         },
         margin:{left:14, right:14},
         didDrawPage: function(d){
