@@ -392,8 +392,6 @@ select.finput{cursor:pointer;}
           <button class="fchip" id="fchip-medida" onclick="toggleFchip('medida')">Medida <span class="fchip-arrow">▼</span></button>
           <div class="fchip-drop" id="fchip-drop-medida"><div class="fchip-opts" id="fchip-opts-medida"></div></div>
         </div>
-        <!-- Filtro solo-con-foto: visible solo en cards y mosaico -->
-        <button id="filter-photo-btn" class="fchip" onclick="toggleFilterPhoto()" title="Mostrar solo puertas con foto" style="display:none;">Foto</button>
         <!-- Hidden selects used by getFiltered() -->
         <select id="f-fabrica-filter" style="display:none;"><option value="">Todas</option></select>
         <select id="f-marco-filter" style="display:none;"><option value="">Todos</option></select>
@@ -407,7 +405,6 @@ select.finput{cursor:pointer;}
       <span id="card-only-btns" style="display:inline-flex;gap:5px;">
         <button onclick="expandAll()" class="inline-btn">Desplegar todo</button>
         <button onclick="collapseAll()" class="inline-btn">Contraer todo</button>
-        <button id="photo-toggle-btn" onclick="togglePhotoDisplay()" class="inline-btn">Con fotos</button>
       </span>
       <button id="mosaic-size-btn" onclick="toggleMosaicSize()" class="inline-btn" style="display:none;" title="Cambiar tamaño de mosaico">⊟ Chico</button>
       <div style="margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0;">
@@ -1472,7 +1469,6 @@ function getFiltered(){
     if(mf && (m.marco||'')!==mf) continue;
     if(cf && (m.color||'')!==cf) continue;
     if(medf){var found=false;for(var j=0;j<(m.sizes||[]).length;j++){if(m.sizes[j].medida===medf){found=true;break;}} if(!found)continue;}
-    if(filterOnlyWithPhoto && viewMode!=='table' && !m.photo) continue;
     out.push(m);
   }
   if(currentSort==='fabrica') out.sort(function(a,b){return(a.fabrica||'').localeCompare(b.fabrica||'');});
@@ -1642,10 +1638,6 @@ function resetFilters(){
   document.getElementById('search-input').value='';
   var ids=['f-fabrica-filter','f-marco-filter','f-color-filter','f-medida-filter'];
   for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el)el.value='';}
-  // Reset filtro de foto
-  filterOnlyWithPhoto = false;
-  var fpb=document.getElementById('filter-photo-btn');
-  if(fpb) fpb.classList.remove('active');
   // Reset chip labels
   var labels={fabrica:'Fábrica',marco:'Marco',color:'Color',medida:'Medida'};
   var keys=Object.keys(labels);
@@ -1663,13 +1655,11 @@ function resetFilters(){
 }
 
 function updateResetBtn(){
-  var photoActive = (viewMode==='cards'||viewMode==='mosaic') ? filterOnlyWithPhoto : false;
   var ff=(document.getElementById('f-fabrica-filter')||{}).value||'';
   var mf=(document.getElementById('f-marco-filter')||{}).value||'';
   var cf=(document.getElementById('f-color-filter')||{}).value||'';
   var medf=(document.getElementById('f-medida-filter')||{}).value||'';
-  var anyActive = !!(ff||mf||cf||medf||photoActive);
-  // La cruz es active cuando NO hay filtros (igual que agrupar/ordenar)
+  var anyActive = !!(ff||mf||cf||medf);
   var clearTab=document.getElementById('filter-clear-tab');
   if(clearTab) clearTab.className = anyActive ? 'filter-tab' : 'filter-tab active';
 }
@@ -1737,8 +1727,6 @@ function updateFchipLabel(key){
 
 function toggleFilters(){ /* legacy no-op */ }
 
-var showPhotos = true;
-var filterOnlyWithPhoto = false;
 var mosaicSmall = false;
 
 function toggleMosaicSize(){
@@ -1748,37 +1736,12 @@ function toggleMosaicSize(){
   renderList();
 }
 
-function toggleFilterPhoto(){
-  filterOnlyWithPhoto = !filterOnlyWithPhoto;
-  var btn = document.getElementById('filter-photo-btn');
-  if(btn){
-    btn.classList.toggle('active', filterOnlyWithPhoto);
-  }
-  updateResetBtn();
-  renderList();
-}
-
-function togglePhotoDisplay(){
-  showPhotos = !showPhotos;
-  var btn = document.getElementById('photo-toggle-btn');
-  if(btn){
-    btn.textContent = showPhotos ? 'Con fotos' : 'Sin fotos';
-    btn.style.borderColor = showPhotos ? 'var(--accent)' : 'var(--border)';
-    btn.style.color = showPhotos ? 'var(--accent)' : 'var(--muted)';
-  }
-  // Apply immediately to all visible photos
-  var photos = document.querySelectorAll('.card-photo-img');
-  for(var i=0;i<photos.length;i++) photos[i].style.display = showPhotos ? '' : 'none';
-}
-
 // ===== EXPAND/COLLAPSE ALL =====
 function expandAll(){
   var bodies=document.querySelectorAll('.card-body');
   var btns=document.querySelectorAll('.abtn-exp');
   for(var i=0;i<bodies.length;i++) bodies[i].className='card-body open';
   for(var j=0;j<btns.length;j++){btns[j].className='abtn abtn-exp open';btns[j].textContent='▲';}
-  var photos=document.querySelectorAll('.card-photo-img');
-  for(var p=0;p<photos.length;p++) photos[p].style.display=showPhotos?'':'none';
   allExpanded=true;
 }
 
@@ -1831,10 +1794,6 @@ function setViewMode(mode){
   document.getElementById('vt-table').className  = mode==='table'  ? 'active' : '';
   document.getElementById('vt-mosaic').className = mode==='mosaic' ? 'active' : '';
   document.getElementById('card-only-btns').style.display = mode==='cards' ? 'inline-flex' : 'none';
-  // Botón "Con foto": visible solo en cards y mosaico
-  var fpb = document.getElementById('filter-photo-btn');
-  if(fpb) fpb.style.display = (mode==='cards' || mode==='mosaic') ? '' : 'none';
-  // Botón tamaño mosaico: visible solo en mosaico
   var msb = document.getElementById('mosaic-size-btn');
   if(msb) msb.style.display = mode==='mosaic' ? '' : 'none';
   renderList();
@@ -2114,7 +2073,7 @@ function renderList(){
     var sizesRowStyle='';
     var hasSizes=(m.sizes||[]).length>0;
     var hasBody=hasSizes||!!m.photo;
-    var photoHtml=m.photo?'<img src="'+m.photo+'" class="card-photo-img" loading="lazy">':'';
+    var photoHtml=''; // fotos solo en mosaico
     html+='<div class="door-card">'
       +'<input type="checkbox" class="door-check" data-id="'+mid+'" onchange="updateSelLabel()">'
       +'<div class="door-top">'
@@ -2354,44 +2313,75 @@ function exportCSV(){
 
 function exportPDF(){
   var data=getExportModels();
-  var groups=groupModels(data);
-  var groupLabels={fabrica:'Fábrica',marco:'Marco',color:'Color'};
+  if(data.length===0){showToast('Sin modelos para exportar');return;}
+  showToast('Generando PDF…');
 
-  var rows='';
-  for(var g=0;g<groups.length;g++){
-    var grp=groups[g];
-    if(grp.key!==null){
-      var groupLabel=groupLabels[groupBy]||groupBy;
-      rows+='<tr class="grp-hdr"><td colspan="5">'+esc(grp.key)
-        +' <span style="font-weight:400;color:#999;font-size:10px;">— '+grp.models.length+' modelo'+(grp.models.length!==1?'s':'')+'</span></td></tr>';
-    }
-    for(var i=0;i<grp.models.length;i++){
-      var m=grp.models[i];
-      var sizesHtml='';
-      for(var s=0;s<(m.sizes||[]).length;s++){var sz=m.sizes[s];sizesHtml+='<div style="white-space:nowrap;margin-bottom:2px;">'+esc(sz.medida)+'&nbsp;&nbsp;D:'+(parseInt(sz.r)||0)+'&nbsp;&nbsp;I:'+(parseInt(sz.l)||0)+'</div>';}
-      var rowClass=(i%2===1)?'even':'';
-      rows+='<tr class="'+rowClass+'"><td>'+esc(m.fabrica||'-')+'</td><td>'+esc(m.descripcion||'-')+'</td><td>'+esc(m.color||'-')+'</td><td>'+esc(m.marco||'-')+'</td><td>'+(sizesHtml||'-')+'</td></tr>';
-    }
+  // Cargar jsPDF + autotable si no están
+  function loadScript(src, cb){
+    if(document.querySelector('script[src="'+src+'"]')){cb();return;}
+    var s=document.createElement('script'); s.src=src; s.onload=cb; document.head.appendChild(s);
   }
+  loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', function(){
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js', function(){
+      var doc = new window.jspdf.jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
+      var fecha=new Date().toLocaleDateString('es-AR');
 
-  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Catalogo</title><style>'
-    +'body{font-family:Arial,sans-serif;padding:20px;font-size:12px;max-width:720px;margin:0 auto;}'
-    +'h1{color:#c8621a;font-size:18px;margin-bottom:14px;display:flex;align-items:baseline;gap:10px;}'
-    +'h1 span{font-size:12px;color:#888;font-weight:normal;}'
-    +'table{width:100%;border-collapse:collapse;table-layout:auto;}'
-    +'th{background:#c8621a;color:#fff;padding:7px 6px;text-align:left;font-size:11px;white-space:nowrap;}'
-    +'td{padding:6px 6px;border-bottom:1px solid #eee;vertical-align:top;}'
-    +'tr.even td{background:#fdf5ef;}'
-    +'tr.grp-hdr td{background:#f0e8e0;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#c8621a;padding:5px 6px;border-top:2px solid #c8621a;}'
-    +'</style></head><body>'
-    +'<h1>Catalogo de Puertas <span>'+data.length+' modelo'+(data.length!==1?'s':'')+(groupBy!=='none'?' · Agrupado por '+groupLabels[groupBy]:'')+'</span></h1>'
-    +'<table><thead><tr>'
-    +'<th>Fabrica</th><th>Descripcion</th><th>Color</th><th>Marco</th><th>Medidas y Stock</th>'
-    +'</tr></thead><tbody>'+rows+'</tbody></table></body></html>';
+      doc.setFontSize(16);
+      doc.setTextColor(200,98,26);
+      doc.text('Catálogo de Puertas', 14, 16);
+      doc.setFontSize(9);
+      doc.setTextColor(130,130,130);
+      doc.text(data.length+' modelo'+(data.length!==1?'s':'')+' · '+fecha, 14, 22);
 
-  var win=window.open('','_blank');
-  if(win){win.document.write(html);win.document.close();}
-  else{downloadBlob(new Blob([html],{type:'text/html'}),'catalogo.html');}
+      var rows=[];
+      var groups=groupModels(data);
+      for(var g=0;g<groups.length;g++){
+        var grp=groups[g];
+        if(grp.key!==null){
+          rows.push([{content:grp.key+' — '+grp.models.length+' modelo'+(grp.models.length!==1?'s':''), colSpan:5, styles:{fillColor:[240,232,224],textColor:[200,98,26],fontStyle:'bold',fontSize:8}}]);
+        }
+        for(var i=0;i<grp.models.length;i++){
+          var m=grp.models[i];
+          var fabLinea=(m.fabrica||'—')+'  '+(m.linea||'—');
+          if((m.sizes||[]).length===0){
+            rows.push([fabLinea, m.descripcion||'—', m.color||'—', m.marco||'—', '—']);
+          } else {
+            for(var s=0;s<m.sizes.length;s++){
+              var sz=m.sizes[s];
+              rows.push([
+                s===0?fabLinea:'',
+                s===0?(m.descripcion||'—'):'',
+                s===0?(m.color||'—'):'',
+                s===0?(m.marco||'—'):'',
+                sz.medida+'  D:'+(parseInt(sz.r)||0)+' I:'+(parseInt(sz.l)||0)
+              ]);
+            }
+          }
+        }
+      }
+
+      doc.autoTable({
+        startY: 26,
+        head: [['Fábrica / Línea','Descripción','Color','Marco','Medida / Stock']],
+        body: rows,
+        theme: 'grid',
+        headStyles: {fillColor:[200,98,26], textColor:255, fontSize:9, fontStyle:'bold'},
+        bodyStyles: {fontSize:8, textColor:50},
+        alternateRowStyles: {fillColor:[253,245,239]},
+        columnStyles: {
+          0:{cellWidth:38}, 1:{cellWidth:60}, 2:{cellWidth:28}, 3:{cellWidth:28}, 4:{cellWidth:32}
+        },
+        margin:{left:14, right:14},
+        didDrawPage: function(d){
+          doc.setFontSize(7); doc.setTextColor(160,160,160);
+          doc.text('Aberturas Torri — Pág. '+d.pageNumber, doc.internal.pageSize.width-14, doc.internal.pageSize.height-6, {align:'right'});
+        }
+      });
+
+      doc.save('catalogo-puertas-'+new Date().toISOString().slice(0,10)+'.pdf');
+      showToast('PDF descargado');
+    });
+  });
 }
 
 // ===== TEMPORAL STATE =====
@@ -2934,17 +2924,67 @@ function importTempJSON(e){
 }
 
 function exportTempPDF(){
-  var rows='';
-  for(var i=0;i<tempModels.length;i++){
-    var m=tempModels[i];
-    var sizesHtml='';
-    for(var s=0;s<(m.sizes||[]).length;s++){var sz=m.sizes[s];sizesHtml+='<div>'+esc(sz.medida)+'&nbsp;D:'+(parseInt(sz.r)||0)+'&nbsp;I:'+(parseInt(sz.l)||0)+'</div>';}
-    rows+='<tr><td>'+esc(m.fabrica||'-')+'</td><td>'+esc(m.descripcion||'-')+'</td><td>'+esc(m.color||'-')+'</td><td>'+esc(m.marco||'-')+'</td><td>'+(sizesHtml||'-')+'</td></tr>';
+  if(tempModels.length===0){showTempToast('Sin modelos para exportar');return;}
+  showTempToast('Generando PDF…');
+
+  function loadScript(src, cb){
+    if(document.querySelector('script[src="'+src+'"]')){cb();return;}
+    var s=document.createElement('script'); s.src=src; s.onload=cb; document.head.appendChild(s);
   }
-  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Temporal</title><style>body{font-family:Arial,sans-serif;padding:20px;font-size:12px;}h1{color:#7abf9e;font-size:16px;margin-bottom:14px;}table{width:100%;border-collapse:collapse;}th{background:#7abf9e;color:#fff;padding:6px;text-align:left;font-size:11px;}td{padding:5px 6px;border-bottom:1px solid #eee;vertical-align:top;}tr:nth-child(even) td{background:#f5fbf7;}</style></head><body><h1>Catálogo Temporal — '+tempModels.length+' modelo'+(tempModels.length!==1?'s':'')+'</h1><table><thead><tr><th>Fabrica</th><th>Descripcion</th><th>Color</th><th>Marco</th><th>Medidas</th></tr></thead><tbody>'+rows+'</tbody></table></body></html>';
-  var win=window.open('','_blank');
-  if(win){win.document.write(html);win.document.close();}
-  else{downloadBlob(new Blob([html],{type:'text/html'}),'temporal.html');}
+  loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', function(){
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js', function(){
+      var doc = new window.jspdf.jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
+      var fecha=new Date().toLocaleDateString('es-AR');
+
+      doc.setFontSize(16);
+      doc.setTextColor(122,191,158);
+      doc.text('Catálogo Temporal', 14, 16);
+      doc.setFontSize(9);
+      doc.setTextColor(130,130,130);
+      doc.text(tempModels.length+' modelo'+(tempModels.length!==1?'s':'')+' · '+fecha, 14, 22);
+
+      var rows=[];
+      for(var i=0;i<tempModels.length;i++){
+        var m=tempModels[i];
+        var fabLinea=(m.fabrica||'—')+'  '+(m.linea||'—');
+        if((m.sizes||[]).length===0){
+          rows.push([fabLinea, m.descripcion||'—', m.color||'—', m.marco||'—', '—']);
+        } else {
+          for(var s=0;s<m.sizes.length;s++){
+            var sz=m.sizes[s];
+            rows.push([
+              s===0?fabLinea:'',
+              s===0?(m.descripcion||'—'):'',
+              s===0?(m.color||'—'):'',
+              s===0?(m.marco||'—'):'',
+              sz.medida+'  D:'+(parseInt(sz.r)||0)+' I:'+(parseInt(sz.l)||0)
+            ]);
+          }
+        }
+      }
+
+      doc.autoTable({
+        startY: 26,
+        head: [['Fábrica / Línea','Descripción','Color','Marco','Medida / Stock']],
+        body: rows,
+        theme: 'grid',
+        headStyles: {fillColor:[122,191,158], textColor:255, fontSize:9, fontStyle:'bold'},
+        bodyStyles: {fontSize:8, textColor:50},
+        alternateRowStyles: {fillColor:[245,251,247]},
+        columnStyles: {
+          0:{cellWidth:38}, 1:{cellWidth:60}, 2:{cellWidth:28}, 3:{cellWidth:28}, 4:{cellWidth:32}
+        },
+        margin:{left:14, right:14},
+        didDrawPage: function(d){
+          doc.setFontSize(7); doc.setTextColor(160,160,160);
+          doc.text('Aberturas Torri · Temporal — Pág. '+d.pageNumber, doc.internal.pageSize.width-14, doc.internal.pageSize.height-6, {align:'right'});
+        }
+      });
+
+      doc.save('catalogo-temporal-'+new Date().toISOString().slice(0,10)+'.pdf');
+      showTempToast('PDF descargado');
+    });
+  });
 }
 
 function exportTempCSV(){
@@ -3090,22 +3130,14 @@ if(viewMode==='table'){
   document.getElementById('vt-cards').className='';
   document.getElementById('vt-table').className='active';
   document.getElementById('card-only-btns').style.display='none';
-  // ocultar botón foto en tabla
-  var _fpb=document.getElementById('filter-photo-btn');
-  if(_fpb) _fpb.style.display='none';
 } else if(viewMode==='mosaic'){
   document.getElementById('vt-cards').className='';
   document.getElementById('vt-mosaic').className='active';
   document.getElementById('card-only-btns').style.display='none';
-  // mostrar botón foto y tamaño en mosaico
-  var _fpb2=document.getElementById('filter-photo-btn');
-  if(_fpb2) _fpb2.style.display='';
   var _msb=document.getElementById('mosaic-size-btn');
   if(_msb) _msb.style.display='';
 } else {
-  // cards: mostrar botón foto
-  var _fpb3=document.getElementById('filter-photo-btn');
-  if(_fpb3) _fpb3.style.display='';
+  // cards: nada extra
 }
 document.getElementById('grp-none').classList.add('active');
 renderList();
