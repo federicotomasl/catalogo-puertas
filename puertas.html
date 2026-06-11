@@ -93,6 +93,15 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .gp-fab-del{background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:11px;padding:0 0 0 4px;line-height:1;flex-shrink:0;}
 .gp-fab-del:hover{color:#e05555;}
 
+/* EXPORT DROPDOWN */
+.export-wrap{position:relative;display:inline-block;}
+.export-drop{display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:50;background:var(--bg2);border:1px solid var(--border);border-radius:5px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.3);min-width:130px;}
+.export-drop.open{display:block;}
+.export-opt{display:block;width:100%;text-align:left;padding:7px 12px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);background:transparent;border:none;cursor:pointer;white-space:nowrap;}
+.export-opt:hover{background:var(--bg3);color:var(--accent);}
+.export-opt-sep{height:1px;background:var(--border);margin:2px 0;}
+
+
 .door-name{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;color:var(--text);flex-shrink:0;}
 .cnt-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--dim);flex-shrink:0;}
 
@@ -305,7 +314,16 @@ select.finput{cursor:pointer;}
           <button class="btn btn-outline" onclick="openTemporal()" id="btn-temporal" style="border-color:#7abf9e;color:#7abf9e;">⏱ Temporal</button>
         </div>
         <div class="topbar-actions">
-          <button class="btn btn-outline" onclick="exportJSON()">Exportar</button>
+          <div class="export-wrap" id="export-wrap">
+            <button class="btn btn-outline" onclick="toggleExportDrop()">Exportar ▾</button>
+            <div class="export-drop" id="export-drop">
+              <button class="export-opt" onclick="exportJSON();closeExportDrop()">Todo (JSON)</button>
+              <div class="export-opt-sep"></div>
+              <button class="export-opt" onclick="exportListas('fabricas');closeExportDrop()">Fábricas</button>
+              <button class="export-opt" onclick="exportListas('colores');closeExportDrop()">Colores</button>
+              <button class="export-opt" onclick="exportListas('marcos');closeExportDrop()">Marcos</button>
+            </div>
+          </div>
           <label class="btn btn-outline" style="cursor:pointer;">Importar<input type="file" accept=".json" style="display:none" onchange="importJSON(event)"></label>
           <button class="btn btn-ghost" onclick="exportPDF()">PDF</button>
           <button class="btn btn-outline" onclick="exportCSV()">CSV</button>
@@ -2180,6 +2198,45 @@ function getExportModels(){
   return out;
 }
 
+// ===== EXPORT DROPDOWN =====
+function toggleExportDrop(){
+  var drop=document.getElementById('export-drop');
+  if(!drop) return;
+  var isOpen=drop.classList.contains('open');
+  drop.classList.toggle('open',!isOpen);
+  if(!isOpen){
+    setTimeout(function(){
+      document.addEventListener('click', closeExportDropOutside, {once:true, capture:true});
+    },0);
+  }
+}
+function closeExportDrop(){
+  var drop=document.getElementById('export-drop');
+  if(drop) drop.classList.remove('open');
+}
+function closeExportDropOutside(e){
+  var wrap=document.getElementById('export-wrap');
+  if(wrap && !wrap.contains(e.target)) closeExportDrop();
+  else if(document.getElementById('export-drop').classList.contains('open')){
+    document.addEventListener('click', closeExportDropOutside, {once:true, capture:true});
+  }
+}
+function exportListas(tipo){
+  var payload={}, filename='';
+  if(tipo==='fabricas'){
+    payload={fabricas:fabricas, lineas:lineas};
+    filename='fabricas-puertas.json';
+  } else if(tipo==='colores'){
+    payload={colors:colors};
+    filename='colores-puertas.json';
+  } else if(tipo==='marcos'){
+    payload={marcos:marcos};
+    filename='marcos-puertas.json';
+  }
+  downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),filename);
+  showToast('Exportado: '+filename);
+}
+
 function exportJSON(){
   try{
     var data=getExportModels();
@@ -2206,6 +2263,7 @@ function importJSON(e){
       var raw=JSON.parse(ev.target.result);
       // Support both old format (array) and new format ({models, colors, marcos})
       var importedColors=[], importedMarcos=[], importedFabricas=[], importedLineas={};
+      var isListaOnly=false;
       if(Array.isArray(raw)){
         imported=raw;
       } else {
@@ -2214,21 +2272,22 @@ function importJSON(e){
         importedMarcos=raw.marcos||[];
         importedFabricas=raw.fabricas||[];
         importedLineas=(raw.lineas && typeof raw.lineas==='object' && !Array.isArray(raw.lineas)) ? raw.lineas : {};
+        // Detectar archivo de lista parcial (sin modelos)
+        if(!raw.models && imported.length===0 && (importedFabricas.length||importedColors.length||importedMarcos.length||Object.keys(importedLineas).length)){
+          isListaOnly=true;
+        }
       }
-      if(!Array.isArray(imported))throw new Error();
-      pushUndo('Importar JSON');
-      var existIds={};
-      for(var i=0;i<models.length;i++) existIds[models[i].id]=i;
-      var added=0, updated=0, skipped=0;
-      for(var j=0;j<imported.length;j++){
-        var imp=validateModel(imported[j]);
-        if(!imp){ skipped++; continue; }
-        if(existIds[imp.id]!==undefined){
-          models[existIds[imp.id]]=imp; // update existing
-          updated++;
-        } else {
-          models.push(imp);
-          added++;
+      if(!isListaOnly){
+        if(!Array.isArray(imported))throw new Error();
+        pushUndo('Importar JSON');
+        var existIds={};
+        for(var i=0;i<models.length;i++) existIds[models[i].id]=i;
+        var added=0, updated=0, skipped=0;
+        for(var j=0;j<imported.length;j++){
+          var imp=validateModel(imported[j]);
+          if(!imp){ skipped++; continue; }
+          if(existIds[imp.id]!==undefined){ models[existIds[imp.id]]=imp; updated++; }
+          else { models.push(imp); added++; }
         }
       }
       // Merge colors and marcos without duplicates (solo strings válidos)
@@ -2256,7 +2315,13 @@ function importJSON(e){
       }
       saveModels(); saveColors(); saveMarcos(); saveFabricas(); saveLineas();
       updateFilters(); renderList();
-      showToast('Importado: '+added+' nuevo'+(added!==1?'s':'')+', '+updated+' actualizado'+(updated!==1?'s':''));
+      if(isListaOnly){
+        showToast('Listas importadas correctamente');
+      } else {
+        var msg='Importado: '+added+' nuevo'+(added!==1?'s':'')+', '+updated+' actualizado'+(updated!==1?'s':'');
+        if(skipped) msg+=' ('+skipped+' inválido'+(skipped!==1?'s':'')+ ')';
+        showToast(msg);
+      }
     }catch(err){showToast('JSON invalido');}
     e.target.value='';
   };
