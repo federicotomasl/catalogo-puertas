@@ -314,15 +314,6 @@ select.finput{cursor:pointer;}
           <button class="btn btn-outline" onclick="openTemporal()" id="btn-temporal" style="border-color:#7abf9e;color:#7abf9e;">⏱ Temporal</button>
         </div>
         <div class="topbar-actions">
-          <div class="export-wrap" id="export-wrap">
-            <button class="btn btn-outline" onclick="toggleExportDrop()">Exportar ▾</button>
-            <div class="export-drop" id="export-drop">
-              <button class="export-opt" onclick="exportListas('fabricas');closeExportDrop()">Fábricas</button>
-              <button class="export-opt" onclick="exportListas('colores');closeExportDrop()">Colores</button>
-              <button class="export-opt" onclick="exportListas('marcos');closeExportDrop()">Marcos</button>
-              <button class="export-opt" onclick="exportListas('medidas');closeExportDrop()">Medidas</button>
-            </div>
-          </div>
           <button class="btn btn-ghost" onclick="exportPDF()">PDF</button>
           <button class="btn btn-outline" onclick="exportCSV()">CSV</button>
           <button id="undo-btn" class="btn btn-ghost" onclick="performUndo()" disabled style="opacity:0.35;" title="Sin acciones para deshacer">&#8630;</button>
@@ -3184,6 +3175,7 @@ fetch(SUPA_URL+'/rest/v1/'+SUPA_TABLE+'?select=*', {headers: supaHeaders()})
   .then(function(rows){
     if(!rows) return;
     models=[]; colors=[]; marcos=[]; fabricas=[]; medidas=[]; lineas={}; tempModels=[];
+    var medidasRowFound = false;
     for(var i=0;i<rows.length;i++){
       var row=rows[i], d=row.data;
       if(row.id==='config_colors'){
@@ -3191,9 +3183,9 @@ fetch(SUPA_URL+'/rest/v1/'+SUPA_TABLE+'?select=*', {headers: supaHeaders()})
       } else if(row.id==='config_marcos'){
         marcos=Array.isArray(d)?d:[];
       } else if(row.id==='config_medidas'){
+        medidasRowFound=true;
         medidas=Array.isArray(d)?d:[];
       } else if(row.id==='config_fabricas'){
-        // d = { "Roma": ["Lisa","Vidriada"], "Aluar": [] }
         if(d && typeof d==='object' && !Array.isArray(d)){
           fabricas=Object.keys(d);
           for(var k=0;k<fabricas.length;k++){
@@ -3201,13 +3193,12 @@ fetch(SUPA_URL+'/rest/v1/'+SUPA_TABLE+'?select=*', {headers: supaHeaders()})
           }
         }
       } else {
-        // Modelo normal
         var m=validateModel(d);
         if(m) models.push(m);
       }
     }
-    // Fallback medidas por defecto si no hay ninguna
-    if(medidas.length===0){
+    // Solo sembrar medidas por defecto si el registro nunca existió en Supabase
+    if(!medidasRowFound){
       medidas=['90/10','90/15','80/10','80/15','70/10','70/15','60/10','60/15'];
       saveMedidas();
     }
