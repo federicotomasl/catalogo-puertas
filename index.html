@@ -92,9 +92,7 @@ body {
   margin-bottom: 6px;
 }
 
-.header-title span {
-  color: var(--accent);
-}
+.header-title span { color: var(--accent); }
 
 .header-sub {
   font-family: 'Barlow Condensed', sans-serif;
@@ -104,10 +102,16 @@ body {
   letter-spacing: 0.04em;
 }
 
-.theme-btn {
+.header-actions {
   position: absolute;
   top: 20px;
   right: 20px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.theme-btn {
   background: transparent;
   border: 1px solid var(--border);
   color: var(--muted);
@@ -122,6 +126,25 @@ body {
   transition: all .15s;
 }
 .theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.logout-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 4px;
+  height: 30px;
+  padding: 0 10px;
+  cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  transition: all .15s;
+}
+.logout-btn:hover { border-color: #c0392b; color: #c0392b; }
 
 /* ── CATALOG GRID ── */
 .section-label {
@@ -168,14 +191,8 @@ body {
   border-radius: 3px 0 0 3px;
 }
 
-.catalog-card:hover {
-  border-color: var(--accent);
-  background: var(--tbg);
-}
-
-.catalog-card:hover::before {
-  background: var(--accent);
-}
+.catalog-card:hover { border-color: var(--accent); background: var(--tbg); }
+.catalog-card:hover::before { background: var(--accent); }
 
 .catalog-icon {
   width: 40px;
@@ -193,14 +210,9 @@ body {
   transition: opacity .15s;
 }
 
-.catalog-card:hover .catalog-icon svg {
-  opacity: 1;
-}
+.catalog-card:hover .catalog-icon svg { opacity: 1; }
 
-.catalog-info {
-  flex: 1;
-  min-width: 0;
-}
+.catalog-info { flex: 1; min-width: 0; }
 
 .catalog-name {
   font-family: 'Rajdhani', sans-serif;
@@ -210,21 +222,10 @@ body {
   text-transform: uppercase;
   color: var(--text);
   line-height: 1;
-  margin-bottom: 3px;
   transition: color .15s;
 }
 
-.catalog-card:hover .catalog-name {
-  color: var(--accent);
-}
-
-.catalog-desc {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--muted);
-  letter-spacing: 0.03em;
-}
+.catalog-card:hover .catalog-name { color: var(--accent); }
 
 .catalog-arrow {
   font-family: 'Barlow Condensed', sans-serif;
@@ -234,26 +235,7 @@ body {
   transition: color .15s, transform .15s;
 }
 
-.catalog-card:hover .catalog-arrow {
-  color: var(--accent);
-  transform: translateX(3px);
-}
-
-.catalog-badge {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 2px 6px;
-  border-radius: 3px;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  color: var(--muted);
-  white-space: nowrap;
-  flex-shrink: 0;
-  align-self: flex-start;
-}
+.catalog-card:hover .catalog-arrow { color: var(--accent); transform: translateX(3px); }
 
 /* ── FOOTER ── */
 .footer {
@@ -280,11 +262,120 @@ body {
   color: var(--dim);
 }
 
-/* ── DIVIDER ── */
-.list-divider {
+/* ── LOGIN SCREEN ── */
+#login-screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+#login-screen.visible { display: flex; }
+
+.login-box {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.login-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.login-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
   height: 1px;
-  background: var(--border);
-  margin: 4px 12px;
+  background: var(--accent);
+}
+
+.login-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+  margin-bottom: 28px;
+}
+
+.login-title span { color: var(--accent); }
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.login-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.login-input {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color .15s;
+}
+
+.login-input:focus { border-color: var(--accent); }
+.login-input::placeholder { color: var(--dim); }
+
+.login-btn {
+  margin-top: 8px;
+  background: var(--accent);
+  border: none;
+  border-radius: 5px;
+  padding: 11px;
+  color: #fff;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.login-btn:hover { background: var(--al); }
+.login-btn:disabled { opacity: 0.5; cursor: default; }
+
+.login-error {
+  margin-top: 10px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #c0392b;
+  letter-spacing: 0.04em;
+  min-height: 16px;
+  text-align: center;
 }
 
 ::-webkit-scrollbar { width: 3px; }
@@ -293,10 +384,32 @@ body {
 </head>
 <body>
 
-<div class="page">
+<!-- ===== LOGIN SCREEN ===== -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-eyebrow">Sistema de Catálogos</div>
+    <div class="login-title">Aberturas <span>Torri</span></div>
+    <div class="login-field">
+      <div class="login-label">Email</div>
+      <input class="login-input" id="login-email" type="email" placeholder="usuario@email.com" autocomplete="email">
+    </div>
+    <div class="login-field">
+      <div class="login-label">Contraseña</div>
+      <input class="login-input" id="login-password" type="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Ingresar</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ===== CATALOG PAGE ===== -->
+<div class="page" id="catalog-page" style="display:none;">
 
   <div class="header">
-    <button class="theme-btn" onclick="toggleTheme()" title="Cambiar tema">&#9788;</button>
+    <div class="header-actions">
+      <button class="logout-btn" onclick="doLogout()">Salir</button>
+      <button class="theme-btn" onclick="toggleTheme()" title="Cambiar tema">&#9788;</button>
+    </div>
     <div class="header-eyebrow">Sistema de Catálogos</div>
     <div class="header-title">Aberturas <span>Torri</span></div>
     <div class="header-sub">Stock de productos · Gestión interna</div>
@@ -368,6 +481,9 @@ body {
 </div>
 
 <script>
+var SUPABASE_URL = 'https://ddowemygrrbjoqkyguhq.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_TF6bRm78aN2sWLKSLIiObg_1fKt5oQb';
+
 var darkMode = true;
 try { var t = localStorage.getItem('torri_theme'); if(t === 'light') { darkMode = false; document.body.classList.add('light'); } } catch(e) {}
 
@@ -376,6 +492,92 @@ function toggleTheme() {
   document.body.classList.toggle('light', !darkMode);
   try { localStorage.setItem('torri_theme', darkMode ? 'dark' : 'light'); } catch(e) {}
 }
+
+// ── AUTH ──
+function checkSession() {
+  var session = null;
+  try { session = localStorage.getItem('torri_session'); } catch(e) {}
+  if (session) {
+    showCatalog();
+  } else {
+    showLogin();
+  }
+}
+
+function showLogin() {
+  document.getElementById('login-screen').classList.add('visible');
+  document.getElementById('catalog-page').style.display = 'none';
+  // Precargar credenciales guardadas
+  try {
+    var savedEmail = localStorage.getItem('torri_saved_email');
+    var savedPassword = localStorage.getItem('torri_saved_password');
+    if (savedEmail) document.getElementById('login-email').value = savedEmail;
+    if (savedPassword) document.getElementById('login-password').value = savedPassword;
+  } catch(e) {}
+}
+
+function showCatalog() {
+  document.getElementById('login-screen').classList.remove('visible');
+  document.getElementById('catalog-page').style.display = 'flex';
+}
+
+function setLoginError(msg) {
+  document.getElementById('login-error').textContent = msg || '';
+}
+
+function doLogin() {
+  var email = document.getElementById('login-email').value.trim();
+  var password = document.getElementById('login-password').value;
+  var btn = document.getElementById('login-btn');
+
+  if (!email || !password) { setLoginError('Completá email y contraseña.'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Ingresando...';
+  setLoginError('');
+
+  fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY
+    },
+    body: JSON.stringify({ email: email, password: password })
+  })
+  .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
+  .then(function(result) {
+    btn.disabled = false;
+    btn.textContent = 'Ingresar';
+    if (result.ok && result.data.access_token) {
+      try {
+        localStorage.setItem('torri_session', result.data.access_token);
+        localStorage.setItem('torri_saved_email', email);
+        localStorage.setItem('torri_saved_password', password);
+      } catch(e) {}
+      showCatalog();
+    } else {
+      var msg = (result.data && result.data.error_description) || (result.data && result.data.msg) || 'Credenciales incorrectas.';
+      setLoginError(msg);
+    }
+  })
+  .catch(function() {
+    btn.disabled = false;
+    btn.textContent = 'Ingresar';
+    setLoginError('Error de conexión. Verificá tu internet.');
+  });
+}
+
+function doLogout() {
+  try { localStorage.removeItem('torri_session'); } catch(e) {}
+  showLogin();
+}
+
+// Enter en cualquier campo del login
+document.getElementById('login-email').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
+document.getElementById('login-password').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
+
+// ── INIT ──
+checkSession();
 </script>
 </body>
 </html>
