@@ -425,27 +425,6 @@ select.finput{cursor:pointer;}
         <div class="sizes-title">Medidas y Stock</div>
         <div id="medidas-chips-wrap" class="medidas-chips"></div>
         <div id="sizes-container"></div>
-        <div class="srow">
-          <input class="sinput" id="new-medida" type="text" placeholder="00/00" maxlength="5" oninput="maskMedida(this)" onkeydown="medidaKeydown(event,this)">
-          <div class="stinput-wrap">
-            <span class="stinput-lbl lbl-r">D</span>
-            <input class="stinput-bare" id="new-r" type="number" value="0" min="0">
-          </div>
-          <div class="stinput-wrap">
-            <span class="stinput-lbl lbl-l">I</span>
-            <input class="stinput-bare" id="new-l" type="number" value="0" min="0">
-          </div>
-          <button class="addbtn" onclick="addSize()">+</button>
-        </div>
-        <button type="button" onclick="toggleMedidasPanel()" style="margin-top:6px;width:100%;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--border);color:var(--muted);background:transparent;border-radius:4px;cursor:pointer;">+ Agregar medida a la lista</button>
-        <div class="color-panel" id="medidas-panel" style="margin-top:6px;margin-bottom:0;">
-          <div class="flabel">Nueva medida estándar</div>
-          <div class="add-color-row">
-            <input class="finput" id="ff-new-medida" type="text" placeholder="00/00" maxlength="5" oninput="maskMedida(this)" onkeydown="medidaKeydown(event,this)" style="flex:1;">
-            <button type="button" onclick="addMedidaStd()" class="btn-panel-add">Agregar</button>
-          </div>
-          <div class="manage-list" id="medidas-manage-list"></div>
-        </div>
       </div>
 
       <div class="fgrp">
@@ -507,6 +486,18 @@ select.finput{cursor:pointer;}
           <button type="button" onclick="gpAddMarco()" class="btn-panel-add">+ Agregar</button>
         </div>
         <div id="gp-marco-list" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:3px;"></div>
+      </div>
+
+      <div style="height:1px;background:var(--border);"></div>
+
+      <!-- MEDIDAS -->
+      <div>
+        <div class="flabel" style="margin-bottom:6px;">Medidas Estándar</div>
+        <div class="add-color-row" style="margin-bottom:8px;">
+          <input class="finput" id="gp-new-medida" type="text" placeholder="00/00" maxlength="5" oninput="maskMedida(this)" style="flex:1;" onkeydown="if(event.keyCode===13){event.preventDefault();gpAddMedida();}">
+          <button type="button" onclick="gpAddMedida()" class="btn-panel-add">+ Agregar</button>
+        </div>
+        <div id="gp-medida-list" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:3px;"></div>
       </div>
 
     </div>
@@ -610,18 +601,6 @@ select.finput{cursor:pointer;}
       <div class="sizes-title">Medidas y Stock</div>
       <div id="temp-medidas-chips-wrap" class="medidas-chips"></div>
       <div id="temp-sizes-container"></div>
-      <div class="srow">
-        <input class="sinput" id="tnew-medida" type="text" placeholder="00/00" maxlength="5" oninput="maskMedida(this)" onkeydown="medidaKeydown(event,this)">
-        <div class="stinput-wrap">
-          <span class="stinput-lbl lbl-r">D</span>
-          <input class="stinput-bare" id="tnew-r" type="number" value="0" min="0">
-        </div>
-        <div class="stinput-wrap">
-          <span class="stinput-lbl lbl-l">I</span>
-          <input class="stinput-bare" id="tnew-l" type="number" value="0" min="0">
-        </div>
-        <button class="addbtn" onclick="addTempSize()">+</button>
-      </div>
     </div>
     <button class="btn-save" id="temp-btn-save" onclick="saveTempModel()">Guardar Modelo Temporal</button>
   </div>
@@ -812,10 +791,6 @@ function openForm(id){
   document.getElementById('ff-desc').value = '';
   rebuildMarcoSelect('');
   rebuildColorSelect('');
-  var mdp=document.getElementById('medidas-panel'); if(mdp) mdp.className='color-panel';
-  document.getElementById('new-medida').value = '';
-  document.getElementById('new-r').value = 0;
-  document.getElementById('new-l').value = 0;
   document.getElementById('form-title-bar').textContent = id ? 'Editar Modelo' : 'Nuevo Modelo';
   document.getElementById('btn-save').textContent = id ? 'Guardar Cambios' : 'Guardar Modelo';
 
@@ -1042,52 +1017,6 @@ function sortFormSizes(){
   });
 }
 
-function toggleMedidasPanel(){
-  var p = document.getElementById('medidas-panel');
-  var fp = document.getElementById('fabrica-panel');
-  var cp = document.getElementById('color-panel');
-  var mp = document.getElementById('marco-panel');
-  if(!p) return;
-  if(p.className === 'color-panel on'){ p.className = 'color-panel'; }
-  else {
-    fp.className='color-panel'; cp.className='color-panel'; mp.className='color-panel';
-    p.className = 'color-panel on'; renderMedidasManageList();
-  }
-}
-
-function addMedidaStd(){
-  var inp = document.getElementById('ff-new-medida');
-  var val = (inp.value||'').trim();
-  if(!val || val.length < 3){showToast('Medida inválida');return;}
-  for(var i=0;i<medidas.length;i++){if(medidas[i]===val){showToast('Ya existe');return;}}
-  medidas.push(val);
-  saveMedidas();
-  inp.value='';
-  renderMedidasManageList();
-  renderMedidasChips();
-  showToast('Medida "'+val+'" agregada a la lista');
-}
-
-function renderMedidasManageList(){
-  var c=document.getElementById('medidas-manage-list'); if(!c)return;
-  if(medidas.length===0){c.innerHTML='<div class="manage-empty">No hay medidas en la lista</div>';return;}
-  var html='';
-  for(var i=0;i<medidas.length;i++){
-    html+='<div class="manage-item"><span>'+esc(medidas[i])+'</span><button type="button" class="manage-del" onclick="deleteMedidaStd('+i+')">&#10005; Eliminar</button></div>';
-  }
-  c.innerHTML=html;
-}
-
-function deleteMedidaStd(idx){
-  if(idx<0||idx>=medidas.length)return;
-  var name=medidas[idx];
-  medidas.splice(idx,1);
-  saveMedidas();
-  renderMedidasManageList();
-  renderMedidasChips();
-  showToast('Medida "'+name+'" eliminada de la lista');
-}
-
 // ===== MEDIDA MASK (NN/NN) — slash always present =====
 function maskMedida(input){
   var raw = input.value.replace(/\D/g,'').slice(0,4);
@@ -1162,20 +1091,6 @@ function sortSizes(arr){
     if(pb.a!==pa.a) return pb.a-pa.a; // mayor a menor por primer numero
     return pa.b-pb.b;                  // menor a mayor por segundo numero
   });
-}
-
-function addSize(){
-  var med = document.getElementById('new-medida').value.trim();
-  if(!med){showToast('Ingresa una medida');return;}
-  var r = parseInt(document.getElementById('new-r').value)||0;
-  var l = parseInt(document.getElementById('new-l').value)||0;
-  formSizes.push({medida:med,r:r,l:l});
-  formSizes = sortSizes(formSizes);
-  document.getElementById('new-medida').value='';
-  document.getElementById('new-r').value=0;
-  document.getElementById('new-l').value=0;
-  renderSizesForm();
-  renderMedidasChips();
 }
 
 // ===== PHOTO FORM =====
@@ -2338,9 +2253,6 @@ function openTempForm(id){
   document.getElementById('tff-desc').value='';
   document.getElementById('tff-color').value='';
   document.getElementById('tff-marco').value='';
-  document.getElementById('tnew-medida').value='';
-  document.getElementById('tnew-r').value=0;
-  document.getElementById('tnew-l').value=0;
   document.getElementById('temp-form-title-bar').textContent=id?'Editar Modelo Temporal':'Nuevo Modelo Temporal';
   document.getElementById('temp-btn-save').textContent=id?'Guardar Cambios':'Guardar Modelo Temporal';
   if(id){
@@ -2464,21 +2376,6 @@ function renderTempSizesForm(){
       c.appendChild(row);
     })(i);
   }
-}
-
-function addTempSize(){
-  var med=document.getElementById('tnew-medida').value.trim();
-  var digits=med.replace(/\D/g,'');
-  if(!med||digits.length===0){showTempToast('Ingresa una medida');return;}
-  var r=parseInt(document.getElementById('tnew-r').value)||0;
-  var l=parseInt(document.getElementById('tnew-l').value)||0;
-  tempFormSizes.push({medida:med,r:r,l:l});
-  tempFormSizes=sortSizes(tempFormSizes);
-  document.getElementById('tnew-medida').value='';
-  document.getElementById('tnew-r').value=0;
-  document.getElementById('tnew-l').value=0;
-  renderTempSizesForm();
-  renderTempMedidasChips();
 }
 
 function saveTempModel(){
@@ -2840,7 +2737,7 @@ function openGlobalPanel(){
   var o=document.getElementById('global-panel-overlay');
   o.style.display='flex';
   document.body.style.overflow='hidden';
-  gpRenderFabricas(); gpRenderColors(); gpRenderMarcos();
+  gpRenderFabricas(); gpRenderColors(); gpRenderMarcos(); gpRenderMedidas();
   setTimeout(function(){ document.getElementById('gp-new-fabrica').focus(); },100);
 }
 
@@ -2852,10 +2749,12 @@ function closeGlobalPanel(e){
   var cur_fab=document.getElementById('ff-fabrica'); if(cur_fab) renderFabricaChips(cur_fab.value);
   var cur_col=document.getElementById('ff-color');   if(cur_col) renderColorChips(cur_col.value);
   var cur_mar=document.getElementById('ff-marco');   if(cur_mar) renderMarcoChips(cur_mar.value);
+  var mw=document.getElementById('medidas-chips-wrap'); if(mw) renderMedidasChips();
   // Refrescar chips del formulario temporal si está abierto
   var tf=document.getElementById('tff-fabrica'); if(tf) renderTempFabricaChips(tf.value);
   var tc=document.getElementById('tff-color');   if(tc) renderTempColorChips(tc.value);
   var tm=document.getElementById('tff-marco');   if(tm) renderTempMarcoChips(tm.value);
+  var tmw=document.getElementById('temp-medidas-chips-wrap'); if(tmw) renderTempMedidasChips();
 }
 
 function gpRenderFabricas(){
@@ -2919,6 +2818,32 @@ function gpDelMarco(idx){
   for(var i=0;i<models.length;i++){if(models[i].marco===name) models[i].marco='';}
   saveModels(); gpRenderMarcos(); updateMarcoFilter(); renderList();
   showToast('Marco eliminado');
+}
+
+function gpRenderMedidas(){
+  var c=document.getElementById('gp-medida-list'); if(!c)return;
+  if(medidas.length===0){c.innerHTML='<div style="grid-column:1/-1;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;color:var(--dim);">Sin medidas cargadas</div>';return;}
+  var h=''; for(var i=0;i<medidas.length;i++) h+='<div class="gp-item"><span>'+esc(medidas[i])+'</span><button class="gp-item-del" onclick="gpDelMedida('+i+')">✕</button></div>';
+  c.innerHTML=h;
+}
+function gpAddMedida(){
+  var inp=document.getElementById('gp-new-medida'), val=(inp.value||'').trim();
+  if(!val||val.length<3){showToast('Medida inválida');return;}
+  for(var i=0;i<medidas.length;i++){if(medidas[i]===val){showToast('Ya existe');return;}}
+  medidas.push(val); saveMedidas(); inp.value=''; inp.focus();
+  gpRenderMedidas();
+  // Refrescar chips en formularios abiertos
+  var w=document.getElementById('medidas-chips-wrap'); if(w) renderMedidasChips();
+  var tw=document.getElementById('temp-medidas-chips-wrap'); if(tw) renderTempMedidasChips();
+  showToast('Medida "'+val+'" agregada');
+}
+function gpDelMedida(idx){
+  var name=medidas[idx]; medidas.splice(idx,1); saveMedidas();
+  gpRenderMedidas();
+  // Refrescar chips en formularios abiertos
+  var w=document.getElementById('medidas-chips-wrap'); if(w) renderMedidasChips();
+  var tw=document.getElementById('temp-medidas-chips-wrap'); if(tw) renderTempMedidasChips();
+  showToast('Medida "'+name+'" eliminada de la lista');
 }
 
 // ===== INIT =====
