@@ -322,6 +322,7 @@ select.finput{cursor:pointer;}
               <button class="export-opt" onclick="exportListas('fabricas');closeExportDrop()">Fábricas</button>
               <button class="export-opt" onclick="exportListas('colores');closeExportDrop()">Colores</button>
               <button class="export-opt" onclick="exportListas('marcos');closeExportDrop()">Marcos</button>
+              <button class="export-opt" onclick="exportListas('medidas');closeExportDrop()">Medidas</button>
             </div>
           </div>
           <label class="btn btn-outline" style="cursor:pointer;">Importar<input type="file" accept=".json" style="display:none" onchange="importJSON(event)"></label>
@@ -2191,6 +2192,9 @@ function exportListas(tipo){
   } else if(tipo==='marcos'){
     payload={marcos:marcos};
     filename='marcos-puertas.json';
+  } else if(tipo==='medidas'){
+    payload={medidas:medidas};
+    filename='medidas-puertas.json';
   }
   downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),filename);
   showToast('Exportado: '+filename);
@@ -2207,7 +2211,7 @@ function exportJSON(){
     }
     var exportColors=colors.filter(function(c){return usedColors[c];});
     var exportMarcos=marcos.filter(function(m){return usedMarcos[m];});
-    var payload={models:data, colors:exportColors, marcos:exportMarcos, fabricas:fabricas, lineas:lineas};
+    var payload={models:data, colors:exportColors, marcos:exportMarcos, fabricas:fabricas, lineas:lineas, medidas:medidas};
     var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
     downloadBlob(blob,'catalogo-puertas-'+new Date().toISOString().slice(0,10)+'.json');
     showToast('JSON exportado ('+data.length+' modelos)');
@@ -2221,7 +2225,7 @@ function importJSON(e){
     try{
       var raw=JSON.parse(ev.target.result);
       // Support both old format (array) and new format ({models, colors, marcos})
-      var importedColors=[], importedMarcos=[], importedFabricas=[], importedLineas={};
+      var importedColors=[], importedMarcos=[], importedFabricas=[], importedLineas={}, importedMedidas=[];
       var isListaOnly=false;
       if(Array.isArray(raw)){
         imported=raw;
@@ -2231,10 +2235,15 @@ function importJSON(e){
         importedMarcos=raw.marcos||[];
         importedFabricas=raw.fabricas||[];
         importedLineas=(raw.lineas && typeof raw.lineas==='object' && !Array.isArray(raw.lineas)) ? raw.lineas : {};
+        importedMedidas=Array.isArray(raw.medidas)?raw.medidas:[];
         // Detectar archivo de lista parcial (sin modelos)
-        if(!raw.models && imported.length===0 && (importedFabricas.length||importedColors.length||importedMarcos.length||Object.keys(importedLineas).length)){
+        if(!raw.models && imported.length===0 && (importedFabricas.length||importedColors.length||importedMarcos.length||Object.keys(importedLineas).length||importedMedidas.length)){
           isListaOnly=true;
         }
+      }
+      for(var mdi=0;mdi<importedMedidas.length;mdi++){
+        var mdv=importedMedidas[mdi];
+        if(typeof mdv==='string' && mdv && medidas.indexOf(mdv)===-1) medidas.push(mdv.slice(0,10));
       }
       if(!isListaOnly){
         if(!Array.isArray(imported))throw new Error();
@@ -2272,7 +2281,7 @@ function importJSON(e){
           if(typeof lv==='string' && lv && lineas[lk].indexOf(lv)===-1) lineas[lk].push(lv.slice(0,100));
         }
       }
-      saveModels(); saveColors(); saveMarcos(); saveFabricas(); saveLineas();
+      saveModels(); saveColors(); saveMarcos(); saveFabricas(); saveLineas(); saveMedidas();
       updateFilters(); renderList();
       if(isListaOnly){
         showToast('Listas importadas correctamente');
