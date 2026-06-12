@@ -611,13 +611,13 @@ select.finput{cursor:pointer;}
     </div>
   </div>
   <div class="form-wrap">
-    <div class="fgrp">
-      <div class="flabel">Fabrica</div>
+    <div class="fgrp-section">
+      <div class="flabel-section">Fábrica</div>
       <input type="hidden" id="tff-fabrica" value="">
       <div id="tff-fabrica-chips" class="medidas-chips" style="flex-wrap:wrap;"></div>
     </div>
-    <div class="fgrp" id="tff-linea-wrap" style="display:none;">
-      <div class="flabel">Línea</div>
+    <div class="fgrp-section" id="tff-linea-wrap" style="display:none;">
+      <div class="flabel-section">Línea</div>
       <input type="hidden" id="tff-linea" value="">
       <div id="tff-linea-chips" class="medidas-chips" style="flex-wrap:wrap;"></div>
     </div>
@@ -625,20 +625,20 @@ select.finput{cursor:pointer;}
       <div class="flabel">Descripcion</div>
       <input class="finput" id="tff-desc" type="text" placeholder="Descripcion breve...">
     </div>
-    <div class="frow" style="align-items:flex-start;margin-bottom:0;">
+    <div class="frow-section">
       <div class="fgrp-half">
-        <div class="flabel">Color de Puerta</div>
+        <div class="flabel-section">Color</div>
         <input type="hidden" id="tff-color" value="">
         <div id="tff-color-chips" class="medidas-chips" style="flex-wrap:wrap;max-height:90px;overflow-y:auto;"></div>
       </div>
       <div class="fgrp-half">
-        <div class="flabel">Tipo de Marco</div>
+        <div class="flabel-section">Marco</div>
         <input type="hidden" id="tff-marco" value="">
         <div id="tff-marco-chips" class="medidas-chips" style="flex-wrap:wrap;max-height:90px;overflow-y:auto;"></div>
       </div>
     </div>
-    <div class="sizes-section" style="margin-top:10px;">
-      <div class="sizes-title">Medidas y Stock</div>
+    <div class="fgrp-section">
+      <div class="flabel-section" style="margin-top:0;">Medidas y Stock</div>
       <div id="temp-medidas-chips-wrap" class="medidas-chips"></div>
       <div id="temp-sizes-container"></div>
     </div>
