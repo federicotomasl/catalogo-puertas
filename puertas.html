@@ -826,7 +826,8 @@ var SUPA_TABLE = 'puertas';
 
 // Verificar sesión
 var _session = localStorage.getItem('torri_session');
-if(!_session){ window.location.replace('index.html'); }
+var _mode = localStorage.getItem('torri_mode');
+if(!_session && _mode !== 'consulta'){ window.location.replace('index.html'); }
 
 function handleSessionExpired(){
   localStorage.removeItem('torri_session');
