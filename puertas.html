@@ -275,6 +275,16 @@ select.finput{cursor:pointer;}
 .mosaic-modal-close{position:absolute;top:12px;right:14px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-size:16px;cursor:pointer;border-radius:4px;padding:3px 9px;font-family:'Barlow Condensed',sans-serif;font-weight:700;}
 .mosaic-modal-close:hover{border-color:var(--accent);color:var(--accent);}
 
+/* LOGIN MODAL */
+#login-modal{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;padding:20px;}
+#login-modal.open{display:flex;}
+.login-box{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:28px 24px 24px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:14px;}
+.login-title{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);text-align:center;}
+.login-subtitle{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--dim);text-align:center;margin-top:-8px;}
+.login-error{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:#e05555;text-align:center;display:none;}
+.login-btn{width:100%;padding:11px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--accent);color:#fff;border:none;border-radius:5px;cursor:pointer;transition:opacity .15s;}
+.login-btn:hover{opacity:0.85;}
+.login-btn:disabled{opacity:0.5;cursor:default;}
 /* GLOBAL PANEL items */
 .gp-item{display:flex;align-items:center;justify-content:space-between;padding:4px 6px;border-radius:4px;background:var(--bg3);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;color:var(--text);overflow:hidden;}
 .gp-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
@@ -539,6 +549,18 @@ select.finput{cursor:pointer;}
   </div>
 </div>
 
+<!-- ===== LOGIN MODAL ===== -->
+<div id="login-modal">
+  <div class="login-box">
+    <div class="login-title">Aberturas Torri</div>
+    <div class="login-subtitle">Iniciá sesión para continuar</div>
+    <div class="login-error" id="login-error"></div>
+    <input class="finput" id="login-email" type="email" placeholder="Email" autocomplete="email" onkeydown="if(event.keyCode===13)doLogin()">
+    <input class="finput" id="login-pass" type="password" placeholder="Contraseña" autocomplete="current-password" onkeydown="if(event.keyCode===13)doLogin()">
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Ingresar</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <div class="toast" id="toast-temp" style="bottom:60px;"></div>
 
@@ -796,7 +818,54 @@ var SUPA_TABLE = 'puertas';
 
 // Verificar sesión
 var _session = localStorage.getItem('torri_session');
-if(!_session){ window.location.replace('index.html'); throw new Error('No session'); }
+
+function showLoginModal(){
+  document.getElementById('login-modal').className='open';
+  document.getElementById('login-error').style.display='none';
+  document.getElementById('login-error').textContent='';
+  // No bloquear el body scroll para que el modal funcione
+  setTimeout(function(){ document.getElementById('login-email').focus(); }, 150);
+}
+
+function doLogin(){
+  var email=(document.getElementById('login-email').value||'').trim();
+  var pass=document.getElementById('login-pass').value||'';
+  var errEl=document.getElementById('login-error');
+  var btn=document.getElementById('login-btn');
+  if(!email||!pass){ errEl.textContent='Ingresá email y contraseña.'; errEl.style.display='block'; return; }
+  btn.disabled=true; btn.textContent='Ingresando...';
+  errEl.style.display='none';
+  fetch(SUPA_URL+'/auth/v1/token?grant_type=password',{
+    method:'POST',
+    headers:{'apikey':SUPA_KEY,'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,password:pass})
+  }).then(function(res){ return res.json().then(function(d){return{ok:res.ok,data:d};}); })
+  .then(function(r){
+    btn.disabled=false; btn.textContent='Ingresar';
+    if(!r.ok||!r.data.access_token){
+      errEl.textContent=r.data.error_description||r.data.msg||'Credenciales incorrectas.';
+      errEl.style.display='block';
+      return;
+    }
+    _session=r.data.access_token;
+    localStorage.setItem('torri_session',_session);
+    document.getElementById('login-modal').className='';
+    document.getElementById('login-pass').value='';
+    // Si el catálogo no está cargado aún, iniciarlo
+    if(models.length===0 && document.getElementById('door-list').textContent.indexOf('Cargando')===-1){
+      initCatalog();
+    }
+  }).catch(function(){
+    btn.disabled=false; btn.textContent='Ingresar';
+    errEl.textContent='Error de conexión.'; errEl.style.display='block';
+  });
+}
+
+function handleSessionExpired(){
+  localStorage.removeItem('torri_session');
+  _session=null;
+  showLoginModal();
+}
 
 function supaHeaders(){
   return {
@@ -808,8 +877,7 @@ function supaHeaders(){
 
 function handleSupaError(res){
   if(res.status === 401){
-    localStorage.removeItem('torri_session');
-    window.location.replace('index.html');
+    handleSessionExpired();
     throw new Error('Session expired');
   }
   if(!res.ok) return res.json().then(function(e){ throw new Error(e.message||res.statusText); });
@@ -822,7 +890,7 @@ function supaUpsert(id, data){
     headers: Object.assign({}, supaHeaders(), {'Prefer': 'resolution=merge-duplicates'}),
     body: JSON.stringify({id: id, data: data})
   }).then(function(res){
-    if(res.status===401){localStorage.removeItem('torri_session');window.location.replace('index.html');return;}
+    if(res.status===401){handleSessionExpired();return;}
     if(!res.ok) res.json().then(function(e){showToast('Error al guardar: '+(e.message||res.statusText));});
   });
 }
@@ -832,7 +900,7 @@ function supaDelete(id){
     method: 'DELETE',
     headers: supaHeaders()
   }).then(function(res){
-    if(res.status===401){localStorage.removeItem('torri_session');window.location.replace('index.html');return;}
+    if(res.status===401){handleSessionExpired();return;}
     if(!res.ok) res.json().then(function(e){showToast('Error al eliminar: '+(e.message||res.statusText));});
   });
 }
@@ -3197,68 +3265,73 @@ function gpDelMedida(idx){
 }
 
 // ===== INIT =====
-// Mostrar indicador de carga
-document.getElementById('door-list').innerHTML='<div style="text-align:center;padding:40px 20px;font-family:\'Barlow Condensed\',sans-serif;font-size:14px;color:var(--muted);letter-spacing:0.08em;">Cargando...</div>';
+function initCatalog(){
+  document.getElementById('door-list').innerHTML='<div style="text-align:center;padding:40px 20px;font-family:\'Barlow Condensed\',sans-serif;font-size:14px;color:var(--muted);letter-spacing:0.08em;">Cargando...</div>';
 
-// Cargar datos desde Supabase
-fetch(SUPA_URL+'/rest/v1/'+SUPA_TABLE+'?select=*', {headers: supaHeaders()})
-  .then(function(res){
-    if(res.status===401){localStorage.removeItem('torri_session');window.location.replace('index.html');return;}
-    if(!res.ok) throw new Error(res.statusText);
-    return res.json();
-  })
-  .then(function(rows){
-    if(!rows) return;
-    models=[]; colors=[]; marcos=[]; fabricas=[]; medidas=[]; lineas={}; tempModels=[];
-    var medidasRowFound = false;
-    for(var i=0;i<rows.length;i++){
-      var row=rows[i], d=row.data;
-      if(row.id==='config_colors'){
-        colors=Array.isArray(d)?d:[];
-      } else if(row.id==='config_marcos'){
-        marcos=Array.isArray(d)?d:[];
-      } else if(row.id==='config_medidas'){
-        medidasRowFound=true;
-        medidas=Array.isArray(d)?d:[];
-      } else if(row.id==='config_fabricas'){
-        if(d && typeof d==='object' && !Array.isArray(d)){
-          fabricas=Object.keys(d);
-          for(var k=0;k<fabricas.length;k++){
-            lineas[fabricas[k]]=Array.isArray(d[fabricas[k]])?d[fabricas[k]]:[];
+  fetch(SUPA_URL+'/rest/v1/'+SUPA_TABLE+'?select=*', {headers: supaHeaders()})
+    .then(function(res){
+      if(res.status===401){handleSessionExpired();return;}
+      if(!res.ok) throw new Error(res.statusText);
+      return res.json();
+    })
+    .then(function(rows){
+      if(!rows) return;
+      models=[]; colors=[]; marcos=[]; fabricas=[]; medidas=[]; lineas={}; tempModels=[];
+      var medidasRowFound = false;
+      for(var i=0;i<rows.length;i++){
+        var row=rows[i], d=row.data;
+        if(row.id==='config_colors'){
+          colors=Array.isArray(d)?d:[];
+        } else if(row.id==='config_marcos'){
+          marcos=Array.isArray(d)?d:[];
+        } else if(row.id==='config_medidas'){
+          medidasRowFound=true;
+          medidas=Array.isArray(d)?d:[];
+        } else if(row.id==='config_fabricas'){
+          if(d && typeof d==='object' && !Array.isArray(d)){
+            fabricas=Object.keys(d);
+            for(var k=0;k<fabricas.length;k++){
+              lineas[fabricas[k]]=Array.isArray(d[fabricas[k]])?d[fabricas[k]]:[];
+            }
           }
+        } else {
+          var m=validateModel(d);
+          if(m) models.push(m);
         }
-      } else {
-        var m=validateModel(d);
-        if(m) models.push(m);
       }
-    }
-    // Solo sembrar medidas por defecto si el registro nunca existió en Supabase
-    if(!medidasRowFound){
-      medidas=['90/10','90/15','80/10','80/15','70/10','70/15','60/10','60/15'];
-      saveMedidas();
-    }
-    updateFilters();
-    if(viewMode==='table'){
-      document.getElementById('vt-cards').className='';
-      document.getElementById('vt-table').className='active';
-      document.getElementById('card-only-btns').style.display='none';
-    } else if(viewMode==='mosaic'){
-      document.getElementById('vt-cards').className='';
-      document.getElementById('vt-mosaic').className='active';
-      document.getElementById('card-only-btns').style.display='none';
-      var _msb=document.getElementById('mosaic-size-btn');
-      if(_msb) _msb.style.display='';
-    }
-    document.getElementById('grp-none').classList.add('active');
-    renderList();
-    var _tb=document.getElementById('btn-temporal');
-    if(_tb && tempModels.length>0) _tb.textContent='⏱ Temporal ('+tempModels.length+')';
-    updateTotalsBarTop();
-  })
-  .catch(function(err){
-    showToast('Error al cargar datos: '+err.message);
-    document.getElementById('door-list').innerHTML='<div style="text-align:center;padding:40px 20px;color:#e05555;font-family:\'Barlow Condensed\',sans-serif;">Error al conectar con el servidor</div>';
-  });
+      if(!medidasRowFound){
+        medidas=['90/10','90/15','80/10','80/15','70/10','70/15','60/10','60/15'];
+        saveMedidas();
+      }
+      updateFilters();
+      if(viewMode==='table'){
+        document.getElementById('vt-cards').className='';
+        document.getElementById('vt-table').className='active';
+        document.getElementById('card-only-btns').style.display='none';
+      } else if(viewMode==='mosaic'){
+        document.getElementById('vt-cards').className='';
+        document.getElementById('vt-mosaic').className='active';
+        document.getElementById('card-only-btns').style.display='none';
+        var _msb=document.getElementById('mosaic-size-btn');
+        if(_msb) _msb.style.display='';
+      }
+      document.getElementById('grp-none').classList.add('active');
+      renderList();
+      var _tb=document.getElementById('btn-temporal');
+      if(_tb && tempModels.length>0) _tb.textContent='⏱ Temporal ('+tempModels.length+')';
+      updateTotalsBarTop();
+    })
+    .catch(function(err){
+      showToast('Error al cargar datos: '+err.message);
+      document.getElementById('door-list').innerHTML='<div style="text-align:center;padding:40px 20px;color:#e05555;font-family:\'Barlow Condensed\',sans-serif;">Error al conectar con el servidor</div>';
+    });
+}
+
+if(_session){
+  initCatalog();
+} else {
+  showLoginModal();
+}
 
 // Set totals-bar top to match topbar height
 function updateTotalsBarTop(){
