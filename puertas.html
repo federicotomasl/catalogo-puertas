@@ -316,7 +316,7 @@ select.finput{cursor:pointer;}
           <a href="index.html" class="btn btn-ghost" style="text-decoration:none;">⌂</a>
           <div class="topbar-title">Puertas</div>
           <button class="btn btn-accent" onclick="openForm(null)">+ Nuevo</button>
-          <button class="btn btn-outline" onclick="openGlobalPanel()">+ Agregar</button>
+          <button class="btn btn-outline" onclick="openGlobalPanel()">Actualizar</button>
           <button class="btn btn-outline" onclick="openTemporal()" id="btn-temporal" style="border-color:#7abf9e;color:#7abf9e;">⏱ Temporal</button>
         </div>
         <div class="topbar-actions">
@@ -417,7 +417,7 @@ select.finput{cursor:pointer;}
       <div class="topbar-inner" style="flex-direction:row;justify-content:space-between;">
         <div class="topbar-title" id="form-title-bar">Nuevo Modelo</div>
         <div class="topbar-actions">
-          <button class="btn btn-outline" onclick="openGlobalPanel()">+ Agregar</button>
+          <button class="btn btn-outline" onclick="openGlobalPanel()">Actualizar</button>
           <button class="btn btn-ghost" onclick="toggleTheme()">&#9788;</button>
           <button class="btn btn-ghost" onclick="closeForm()">&#8592; Volver</button>
         </div>
@@ -484,7 +484,7 @@ select.finput{cursor:pointer;}
 <div id="global-panel-overlay" onclick="closeGlobalPanel(event)" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.6);align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;">
   <div id="global-panel-inner" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;width:100%;max-width:540px;margin:auto;overflow:hidden;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px 10px;border-bottom:1px solid var(--border);">
-      <span style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);">Gestionar listas</span>
+      <span style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);">Actualizar Listas</span>
       <button onclick="closeGlobalPanel()" style="background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;">✕</button>
     </div>
     <div style="padding:14px;display:flex;flex-direction:column;gap:18px;">
@@ -568,7 +568,7 @@ select.finput{cursor:pointer;}
       <div style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;">
         <div class="topbar-title" style="color:#7abf9e;">Catálogo Temporal</div>
         <button class="btn btn-accent" onclick="openTempForm(null)">+ Nuevo</button>
-        <button class="btn btn-outline" onclick="openGlobalPanel()">+ Agregar</button>
+        <button class="btn btn-outline" onclick="openGlobalPanel()">Actualizar</button>
         <button class="btn btn-ghost" onclick="closeTemporal()">← Principal</button>
       </div>
       <div class="topbar-actions">
@@ -602,7 +602,7 @@ select.finput{cursor:pointer;}
     <div class="topbar-inner" style="flex-direction:row;justify-content:space-between;">
       <div class="topbar-title" id="temp-form-title-bar" style="color:#7abf9e;">Nuevo Modelo Temporal</div>
       <div style="display:flex;gap:5px;">
-        <button class="btn btn-outline" onclick="openGlobalPanel()">+ Agregar</button>
+        <button class="btn btn-outline" onclick="openGlobalPanel()">Actualizar</button>
         <button class="btn btn-ghost" onclick="toggleTheme()">&#9788;</button>
         <button class="btn btn-ghost" onclick="closeTempForm()">← Volver</button>
       </div>
