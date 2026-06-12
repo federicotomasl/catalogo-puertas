@@ -108,16 +108,16 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 /* CARDS */
 .sizes-row-wrap{display:flex;justify-content:center;}
 .sizes-row{display:inline-grid;grid-template-columns:auto auto auto;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden;}
-.size-chip{font-family:'Barlow Condensed',sans-serif;font-size:11px;display:flex;align-items:center;gap:3px;padding:2px 7px;border-bottom:1px solid var(--border);}
+.size-chip{font-family:'Barlow Condensed',sans-serif;font-size:9px;display:flex;align-items:center;gap:2px;padding:2px 4px;border-bottom:1px solid var(--border);}
 .size-val{color:var(--text);font-weight:700;}
-.ssep{color:var(--dim);font-size:10px;}
+.ssep{color:var(--dim);font-size:8px;}
 .stock-r{color:#7abf9e;}
 .stock-l{color:#9ab3d4;}
 .stock-zero{color:var(--zero);font-weight:700;}
 .qbtns{display:flex;align-items:center;gap:1px;}
-.qbtn{background:var(--bg3);border:1px solid var(--border);border-radius:2px;color:var(--muted);cursor:pointer;font-size:11px;font-weight:700;width:17px;height:17px;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;}
+.qbtn{background:var(--bg3);border:1px solid var(--border);border-radius:2px;color:var(--muted);cursor:pointer;font-size:9px;font-weight:700;width:14px;height:14px;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;}
 .qbtn:active{background:var(--accent);color:#fff;border-color:var(--accent);}
-.qval{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;min-width:16px;text-align:center;}
+.qval{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;min-width:12px;text-align:center;}
 .card-photo-img{width:100%;max-height:200px;object-fit:contain;border-radius:4px;border:1px solid var(--border);background:var(--bg3);margin-top:6px;}
 
 /* CARD ACTIONS */
@@ -155,6 +155,11 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .frow{display:flex;gap:8px;margin-bottom:12px;}
 .fgrp{margin-bottom:12px;}
 .fgrp-half{flex:1;min-width:0;}
+.fgrp-section{margin-bottom:12px;border:1px solid var(--accent);border-radius:7px;padding:10px 12px 10px;opacity:0.85;}
+.fgrp-section .flabel-section{margin-bottom:8px;}
+.frow-section{display:flex;gap:0;margin-bottom:12px;border:1px solid var(--accent);border-radius:7px;overflow:hidden;opacity:0.85;}
+.frow-section .fgrp-half{padding:10px 12px 10px;border-right:1px solid var(--accent);}
+.frow-section .fgrp-half:last-child{border-right:none;}
 .flabel{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
 .flabel-section{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;text-align:center;}
 .finput{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:9px 10px;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;outline:none;}
@@ -420,13 +425,13 @@ select.finput{cursor:pointer;}
     </div>
 
     <div class="form-wrap">
-      <div class="fgrp">
+      <div class="fgrp-section">
         <div class="flabel-section">Fábrica</div>
         <input type="hidden" id="ff-fabrica" value="">
         <div id="ff-fabrica-chips" class="medidas-chips" style="flex-wrap:wrap;"></div>
       </div>
       <!-- Línea: solo aparece si la fábrica seleccionada tiene líneas definidas -->
-      <div class="fgrp" id="ff-linea-wrap" style="display:none;">
+      <div class="fgrp-section" id="ff-linea-wrap" style="display:none;">
         <div class="flabel-section">Línea</div>
         <input type="hidden" id="ff-linea" value="">
         <div id="ff-linea-chips" class="medidas-chips" style="flex-wrap:wrap;"></div>
@@ -438,7 +443,7 @@ select.finput{cursor:pointer;}
       </div>
 
       <!-- Color + Marco side by side -->
-      <div class="frow" style="align-items:flex-start;margin-bottom:0;">
+      <div class="frow-section">
         <div class="fgrp-half">
           <div class="flabel-section">Color</div>
           <input type="hidden" id="ff-color" value="">
@@ -451,8 +456,8 @@ select.finput{cursor:pointer;}
         </div>
       </div>
 
-      <div class="sizes-section">
-        <div class="flabel-section" style="margin-top:4px;">Medidas y Stock</div>
+      <div class="fgrp-section">
+        <div class="flabel-section" style="margin-top:0;">Medidas y Stock</div>
         <div id="medidas-chips-wrap" class="medidas-chips"></div>
         <div id="sizes-container"></div>
       </div>
