@@ -107,7 +107,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 
 /* CARDS */
 .sizes-row-wrap{display:flex;justify-content:center;}
-.sizes-row{display:inline-grid;grid-template-columns:auto auto;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+.sizes-row{display:inline-grid;grid-template-columns:auto auto auto;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden;}
 .size-chip{font-family:'Barlow Condensed',sans-serif;font-size:11px;display:flex;align-items:center;gap:3px;padding:2px 7px;border-bottom:1px solid var(--border);}
 .size-val{color:var(--text);font-weight:700;}
 .ssep{color:var(--dim);font-size:10px;}
@@ -156,6 +156,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .fgrp{margin-bottom:12px;}
 .fgrp-half{flex:1;min-width:0;}
 .flabel{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.flabel-section{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;text-align:center;}
 .finput{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:9px 10px;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;outline:none;}
 .finput:focus{border-color:var(--accent);}
 .finput::placeholder{color:var(--dim);}
@@ -420,13 +421,13 @@ select.finput{cursor:pointer;}
 
     <div class="form-wrap">
       <div class="fgrp">
-        <div class="flabel">Fabrica</div>
+        <div class="flabel-section">Fábrica</div>
         <input type="hidden" id="ff-fabrica" value="">
         <div id="ff-fabrica-chips" class="medidas-chips" style="flex-wrap:wrap;"></div>
       </div>
       <!-- Línea: solo aparece si la fábrica seleccionada tiene líneas definidas -->
       <div class="fgrp" id="ff-linea-wrap" style="display:none;">
-        <div class="flabel">Línea</div>
+        <div class="flabel-section">Línea</div>
         <input type="hidden" id="ff-linea" value="">
         <div id="ff-linea-chips" class="medidas-chips" style="flex-wrap:wrap;"></div>
       </div>
@@ -439,19 +440,19 @@ select.finput{cursor:pointer;}
       <!-- Color + Marco side by side -->
       <div class="frow" style="align-items:flex-start;margin-bottom:0;">
         <div class="fgrp-half">
-          <div class="flabel">Color de Puerta</div>
+          <div class="flabel-section">Color</div>
           <input type="hidden" id="ff-color" value="">
           <div id="ff-color-chips" class="medidas-chips" style="flex-wrap:wrap;max-height:90px;overflow-y:auto;"></div>
         </div>
         <div class="fgrp-half">
-          <div class="flabel">Tipo de Marco</div>
+          <div class="flabel-section">Marco</div>
           <input type="hidden" id="ff-marco" value="">
           <div id="ff-marco-chips" class="medidas-chips" style="flex-wrap:wrap;max-height:90px;overflow-y:auto;"></div>
         </div>
       </div>
 
       <div class="sizes-section">
-        <div class="sizes-title">Medidas y Stock</div>
+        <div class="flabel-section" style="margin-top:4px;">Medidas y Stock</div>
         <div id="medidas-chips-wrap" class="medidas-chips"></div>
         <div id="sizes-container"></div>
       </div>
@@ -485,7 +486,7 @@ select.finput{cursor:pointer;}
 
       <!-- FABRICAS -->
       <div>
-        <div class="flabel" style="margin-bottom:6px;">Fábricas</div>
+        <div class="flabel-section">Fábricas</div>
         <div class="add-color-row" style="margin-bottom:8px;">
           <input class="finput" id="gp-new-fabrica" type="text" placeholder="Nueva fábrica..." style="flex:1;" onkeydown="if(event.keyCode===13){event.preventDefault();gpAddFabrica();}">
           <button type="button" onclick="gpAddFabrica()" class="btn-panel-add">+ Agregar</button>
@@ -497,7 +498,7 @@ select.finput{cursor:pointer;}
 
       <!-- COLORES -->
       <div>
-        <div class="flabel" style="margin-bottom:6px;">Colores</div>
+        <div class="flabel-section">Colores</div>
         <div class="add-color-row" style="margin-bottom:8px;">
           <input class="finput" id="gp-new-color" type="text" placeholder="Nuevo color..." style="flex:1;" onkeydown="if(event.keyCode===13){event.preventDefault();gpAddColor();}">
           <button type="button" onclick="gpAddColor()" class="btn-panel-add">+ Agregar</button>
@@ -509,7 +510,7 @@ select.finput{cursor:pointer;}
 
       <!-- MARCOS -->
       <div>
-        <div class="flabel" style="margin-bottom:6px;">Tipos de Marco</div>
+        <div class="flabel-section">Tipos de Marco</div>
         <div class="add-color-row" style="margin-bottom:8px;">
           <input class="finput" id="gp-new-marco" type="text" placeholder="Nuevo marco..." style="flex:1;" onkeydown="if(event.keyCode===13){event.preventDefault();gpAddMarco();}">
           <button type="button" onclick="gpAddMarco()" class="btn-panel-add">+ Agregar</button>
@@ -521,7 +522,7 @@ select.finput{cursor:pointer;}
 
       <!-- MEDIDAS -->
       <div>
-        <div class="flabel" style="margin-bottom:6px;">Medidas Estándar</div>
+        <div class="flabel-section">Medidas Estándar</div>
         <div class="add-color-row" style="margin-bottom:8px;">
           <input class="finput" id="gp-new-medida" type="text" placeholder="00/00" maxlength="5" oninput="maskMedida(this)" style="flex:1;" onkeydown="if(event.keyCode===13){event.preventDefault();gpAddMedida();}">
           <button type="button" onclick="gpAddMedida()" class="btn-panel-add">+ Agregar</button>
@@ -3080,7 +3081,6 @@ function openGlobalPanel(){
   o.style.display='flex';
   document.body.style.overflow='hidden';
   gpRenderFabricas(); gpRenderColors(); gpRenderMarcos(); gpRenderMedidas();
-  setTimeout(function(){ document.getElementById('gp-new-fabrica').focus(); },100);
 }
 
 function closeGlobalPanel(e){
