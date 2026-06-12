@@ -367,6 +367,23 @@ body {
 .login-btn:hover { background: var(--al); }
 .login-btn:disabled { opacity: 0.5; cursor: default; }
 
+.consulta-btn {
+  margin-top: 8px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 10px;
+  color: var(--muted);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.consulta-btn:hover { border-color: var(--dim); color: var(--text); }
+
 .login-error {
   margin-top: 10px;
   font-family: 'Barlow Condensed', sans-serif;
@@ -398,6 +415,7 @@ body {
       <input class="login-input" id="login-password" type="password" placeholder="••••••••" autocomplete="current-password">
     </div>
     <button class="login-btn" id="login-btn" onclick="doLogin()">Ingresar</button>
+    <button class="consulta-btn" onclick="doConsulta()">Solo consultar</button>
     <div class="login-error" id="login-error"></div>
   </div>
 </div>
@@ -496,8 +514,10 @@ function toggleTheme() {
 // ── AUTH ──
 function checkSession() {
   var session = null;
+  var mode = null;
   try { session = localStorage.getItem('torri_session'); } catch(e) {}
-  if (session) {
+  try { mode = localStorage.getItem('torri_mode'); } catch(e) {}
+  if (session || mode === 'consulta') {
     showCatalog();
   } else {
     showLogin();
@@ -553,6 +573,7 @@ function doLogin() {
         localStorage.setItem('torri_session', result.data.access_token);
         localStorage.setItem('torri_saved_email', email);
         localStorage.setItem('torri_saved_password', password);
+        localStorage.setItem('torri_mode', 'completo');
       } catch(e) {}
       showCatalog();
     } else {
@@ -567,8 +588,16 @@ function doLogin() {
   });
 }
 
+function doConsulta() {
+  try { localStorage.setItem('torri_mode', 'consulta'); } catch(e) {}
+  showCatalog();
+}
+
 function doLogout() {
-  try { localStorage.removeItem('torri_session'); } catch(e) {}
+  try {
+    localStorage.removeItem('torri_session');
+    localStorage.removeItem('torri_mode');
+  } catch(e) {}
   showLogin();
 }
 

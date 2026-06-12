@@ -285,6 +285,9 @@ select.finput{cursor:pointer;}
 .login-btn{width:100%;padding:11px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--accent);color:#fff;border:none;border-radius:5px;cursor:pointer;transition:opacity .15s;}
 .login-btn:hover{opacity:0.85;}
 .login-btn:disabled{opacity:0.5;cursor:default;}
+
+/* MODO CONSULTA */
+.consulta-disabled{opacity:0.35 !important;cursor:not-allowed !important;pointer-events:none !important;}
 /* GLOBAL PANEL items */
 .gp-item{display:flex;align-items:center;justify-content:space-between;padding:4px 6px;border-radius:4px;background:var(--bg3);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;color:var(--text);overflow:hidden;}
 .gp-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
@@ -325,7 +328,7 @@ select.finput{cursor:pointer;}
         <div style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;">
           <a href="index.html" class="btn btn-ghost" style="text-decoration:none;">⌂</a>
           <div class="topbar-title">Puertas</div>
-          <button class="btn btn-accent" onclick="openForm(null)">+ Nuevo</button>
+          <button id="btn-nuevo" class="btn btn-accent" onclick="openForm(null)">+ Nuevo</button>
           <button class="btn btn-outline" onclick="openGlobalPanel()">Actualizar</button>
           <button class="btn btn-outline" onclick="openTemporal()" id="btn-temporal" style="border-color:#7abf9e;color:#7abf9e;">⏱ Temporal</button>
         </div>
@@ -680,6 +683,34 @@ var formSizes = [];
 var formPhoto = null;
 var darkMode = true;
 var allExpanded = false;
+var consultaMode = (localStorage.getItem('torri_mode') === 'consulta');
+
+function isConsulta(){ return consultaMode; }
+
+function applyConsultaMode(){
+  if(!consultaMode) return;
+  // Botones fijos del topbar y controles
+  var ids=['btn-nuevo','del-sel-btn','undo-btn','redo-btn'];
+  for(var i=0;i<ids.length;i++){
+    var el=document.getElementById(ids[i]);
+    if(el) el.classList.add('consulta-disabled');
+  }
+  // Reset stock chip
+  var resetBtn=document.getElementById('reset-stock-chip');
+  if(resetBtn) resetBtn.classList.add('consulta-disabled');
+  // Botones dinámicos en las cards/tabla
+  var clss=['.abtn-edit','.abtn-dup','.abtn-del','.qbtn'];
+  for(var j=0;j<clss.length;j++){
+    var els=document.querySelectorAll(clss[j]);
+    for(var k=0;k<els.length;k++) els[k].classList.add('consulta-disabled');
+  }
+  // Botones del temporal
+  var tempClss=['.btn-promote','.btn-discard'];
+  for(var t=0;t<tempClss.length;t++){
+    var tels=document.querySelectorAll(tempClss[t]);
+    for(var tk=0;tk<tels.length;tk++) tels[tk].classList.add('consulta-disabled');
+  }
+}
 var filtersOpen = false;
 var viewMode = 'cards';
 var groupBy = 'none';
@@ -950,7 +981,7 @@ try { var tsm = localStorage.getItem('puertas_temp_models'); if(tsm) tempModels 
 
 // ===== NAVIGATION =====
 function openForm(id){
-  editingId = id||null;
+  if(isConsulta()) return;
   formSizes = [];
   formPhoto = null;
 
@@ -1232,7 +1263,7 @@ function gpToggleLineasPanel(fabIdx){
 }
 
 function gpAddLinea(fabIdx){
-  var fab=fabricas[fabIdx]; if(!fab) return;
+  if(isConsulta()) return;
   var inp=document.getElementById('gp-linea-inp-'+fabIdx); if(!inp) return;
   var val=inp.value.trim(); if(!val) return;
   if(!lineas[fab]) lineas[fab]=[];
@@ -1248,7 +1279,7 @@ function gpAddLinea(fabIdx){
 }
 
 function gpDelLinea(fabIdx, lineaIdx){
-  var fab=fabricas[fabIdx]; if(!fab||!lineas[fab]) return;
+  if(isConsulta()) return;
   var name=lineas[fab][lineaIdx];
   pushUndo('Eliminar línea: '+name);
   lineas[fab].splice(lineaIdx,1);
@@ -1409,6 +1440,7 @@ function removePhoto(){
 
 // ===== SAVE =====
 function saveModel(){
+  if(isConsulta()) return;
   var m = {
     id: sanitizeId(editingId)||String(Date.now()),
     fabrica:     document.getElementById('ff-fabrica').value.trim(),
@@ -1436,7 +1468,7 @@ function saveModel(){
 
 // ===== DUPLICATE =====
 function duplicateModel(id){
-  var src=getModel(id); if(!src)return;
+  if(isConsulta()) return;
   var copy=JSON.parse(JSON.stringify(src));
   copy.id=String(Date.now()); copy.createdAt=Date.now();
   pushUndo('Duplicar modelo');
@@ -1445,7 +1477,7 @@ function duplicateModel(id){
 
 // ===== DELETE WITH UNDO =====
 function deleteModel(id){
-  var idx=-1; for(var i=0;i<models.length;i++){if(models[i].id===id){idx=i;break;}}
+  if(isConsulta()) return; for(var i=0;i<models.length;i++){if(models[i].id===id){idx=i;break;}}
   if(idx===-1)return;
   pushUndo('Eliminar: '+(models[idx].fabrica||models[idx].descripcion||'modelo'));
   models.splice(idx,1); supaDelete(id); updateFilters(); renderList();
@@ -1454,7 +1486,7 @@ function deleteModel(id){
 
 // ===== QUICK STOCK (no re-render) =====
 function adjustStock(btn, modelId, sizeIdx, side, delta){
-  var m=getModel(modelId); if(!m||!m.sizes[sizeIdx])return;
+  if(isConsulta()) return; if(!m||!m.sizes[sizeIdx])return;
   var sz=m.sizes[sizeIdx];
   pushUndo('Stock: '+esc(sz.medida)+' '+(side==='r'?'Der':'Izq')+' '+(delta>0?'+':'')+delta);
   if(side==='r') sz.r=Math.max(0,(sz.r||0)+delta);
@@ -1653,6 +1685,7 @@ function toggleMedidas(){
 var resetStockPending = false;
 
 function resetAllStock(){
+  if(isConsulta()) return;
   if(resetStockPending){
     // Second click: execute
     resetStockPending=false;
@@ -2118,8 +2151,8 @@ function renderList(){
   noStockExpanded=false;
 
   var groups=groupModels(filtered);
-  if(viewMode==='table'){ renderTable(filtered, groups); updateResetBtn(); return; }
-  if(viewMode==='mosaic'){ renderMosaic(filtered, groups); updateResetBtn(); return; }
+  if(viewMode==='table'){ renderTable(filtered, groups); updateResetBtn(); if(consultaMode) applyConsultaMode(); return; }
+  if(viewMode==='mosaic'){ renderMosaic(filtered, groups); updateResetBtn(); if(consultaMode) applyConsultaMode(); return; }
 
   var list=document.getElementById('door-list');
   if(n===0){
@@ -2224,6 +2257,7 @@ function renderList(){
     for(var ei=0;ei<exps.length;ei++){exps[ei].className='abtn abtn-exp open';exps[ei].textContent='▲';}
   }
   updateResetBtn();
+  if(consultaMode) applyConsultaMode();
 }
 
 // ===== SELECT ALL =====
@@ -2253,7 +2287,7 @@ function updateSelLabel(){
 
 // ===== DELETE SELECTED =====
 function deleteSelected(){
-  var checked=document.querySelectorAll('.door-check:checked'), ids={};
+  if(isConsulta()) return;
   for(var i=0;i<checked.length;i++) ids[checked[i].getAttribute('data-id')]=true;
   var n=Object.keys(ids).length;
   if(n===0) return;
@@ -2798,6 +2832,7 @@ function updateTempSelLabel(){
 var promoteSelPending=false;
 
 function promoteSelected(){
+  if(isConsulta()) return;
   var checks=document.querySelectorAll('.temp-check:checked');
   if(!checks.length) return;
   var btn=document.getElementById('promote-sel-btn');
@@ -3154,6 +3189,11 @@ function openGlobalPanel(){
   o.style.display='flex';
   document.body.style.overflow='hidden';
   gpRenderFabricas(); gpRenderColors(); gpRenderMarcos(); gpRenderMedidas();
+  // En modo consulta ocultar los inputs de agregar
+  if(isConsulta()){
+    var addRows=document.querySelectorAll('#global-panel-overlay .add-color-row');
+    for(var i=0;i<addRows.length;i++) addRows[i].style.display='none';
+  }
 }
 
 function closeGlobalPanel(e){
@@ -3186,7 +3226,7 @@ function gpRenderMarcos(){
 }
 
 function gpAddFabrica(){
-  var inp=document.getElementById('gp-new-fabrica'), name=inp.value.trim();
+  if(isConsulta()) return; name=inp.value.trim();
   if(!name) return;
   for(var i=0;i<fabricas.length;i++){if(fabricas[i].toLowerCase()===name.toLowerCase()){showToast('Ya existe');return;}}
   fabricas.push(name); saveFabricas(); inp.value=''; inp.focus();
@@ -3194,7 +3234,7 @@ function gpAddFabrica(){
   showToast('Fábrica "'+name+'" agregada');
 }
 function gpAddColor(){
-  var inp=document.getElementById('gp-new-color'), name=inp.value.trim();
+  if(isConsulta()) return; name=inp.value.trim();
   if(!name) return;
   for(var i=0;i<colors.length;i++){if(colors[i].toLowerCase()===name.toLowerCase()){showToast('Ya existe');return;}}
   colors.push(name); saveColors(); inp.value=''; inp.focus();
@@ -3202,7 +3242,7 @@ function gpAddColor(){
   showToast('Color "'+name+'" agregado');
 }
 function gpAddMarco(){
-  var inp=document.getElementById('gp-new-marco'), name=inp.value.trim();
+  if(isConsulta()) return; name=inp.value.trim();
   if(!name) return;
   for(var i=0;i<marcos.length;i++){if(marcos[i].toLowerCase()===name.toLowerCase()){showToast('Ya existe');return;}}
   marcos.push(name); saveMarcos(); inp.value=''; inp.focus();
@@ -3211,7 +3251,7 @@ function gpAddMarco(){
 }
 
 function gpDelFabrica(idx){
-  var name=fabricas[idx];
+  if(isConsulta()) return;
   pushUndo('Eliminar fábrica: '+name);
   fabricas.splice(idx,1);
   if(lineas[name]) delete lineas[name];
@@ -3221,7 +3261,7 @@ function gpDelFabrica(idx){
   showToast('Fábrica eliminada');
 }
 function gpDelColor(idx){
-  var name=colors[idx];
+  if(isConsulta()) return;
   pushUndo('Eliminar color: '+name);
   colors.splice(idx,1); saveColors();
   for(var i=0;i<models.length;i++){if(models[i].color===name){models[i].color='';supaUpsert(models[i].id,models[i]);}}
@@ -3229,7 +3269,7 @@ function gpDelColor(idx){
   showToast('Color eliminado');
 }
 function gpDelMarco(idx){
-  var name=marcos[idx];
+  if(isConsulta()) return;
   pushUndo('Eliminar marco: '+name);
   marcos.splice(idx,1); saveMarcos();
   for(var i=0;i<models.length;i++){if(models[i].marco===name){models[i].marco='';supaUpsert(models[i].id,models[i]);}}
@@ -3244,7 +3284,7 @@ function gpRenderMedidas(){
   c.innerHTML=h;
 }
 function gpAddMedida(){
-  var inp=document.getElementById('gp-new-medida'), val=(inp.value||'').trim();
+  if(isConsulta()) return; val=(inp.value||'').trim();
   if(!val||val.length<3){showToast('Medida inválida');return;}
   for(var i=0;i<medidas.length;i++){if(medidas[i]===val){showToast('Ya existe');return;}}
   medidas.push(val); saveMedidas(); inp.value=''; inp.focus();
@@ -3255,7 +3295,7 @@ function gpAddMedida(){
   showToast('Medida "'+val+'" agregada');
 }
 function gpDelMedida(idx){
-  var name=medidas[idx];
+  if(isConsulta()) return;
   pushUndo('Eliminar medida: '+name);
   medidas.splice(idx,1); saveMedidas();
   gpRenderMedidas();
@@ -3320,6 +3360,7 @@ function initCatalog(){
       var _tb=document.getElementById('btn-temporal');
       if(_tb && tempModels.length>0) _tb.textContent='⏱ Temporal ('+tempModels.length+')';
       updateTotalsBarTop();
+      if(consultaMode) applyConsultaMode();
     })
     .catch(function(err){
       showToast('Error al cargar datos: '+err.message);
