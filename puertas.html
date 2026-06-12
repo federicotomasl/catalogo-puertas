@@ -3306,7 +3306,7 @@ function initCatalog(){
     });
 }
 
-if(_session){
+if(_session || _mode === 'consulta'){
   initCatalog();
 }
 
