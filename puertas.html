@@ -569,10 +569,10 @@ select.finput{cursor:pointer;}
   <div class="topbar">
     <div class="topbar-inner">
       <div style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;">
-        <div class="topbar-title" style="color:#7abf9e;">Catálogo Temporal</div>
+        <button class="btn btn-ghost" onclick="closeTemporal()">← Principal</button>
+        <div class="topbar-title" style="color:#7abf9e;">Temporal</div>
         <button class="btn btn-accent" onclick="openTempForm(null)">+ Nuevo</button>
         <button class="btn btn-outline" onclick="openGlobalPanel()">Actualizar</button>
-        <button class="btn btn-ghost" onclick="closeTemporal()">← Principal</button>
       </div>
       <div class="topbar-actions">
         <button class="btn btn-ghost" onclick="exportTempPDF()">PDF</button>
