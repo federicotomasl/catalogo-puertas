@@ -836,11 +836,12 @@ function handleSessionExpired(){
 }
 
 function supaHeaders(){
-  return {
+  var h = {
     'apikey': SUPA_KEY,
-    'Authorization': 'Bearer '+_session,
     'Content-Type': 'application/json'
   };
+  if(_session) h['Authorization'] = 'Bearer '+_session;
+  return h;
 }
 
 function handleSupaError(res){
