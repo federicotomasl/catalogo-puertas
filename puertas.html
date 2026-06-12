@@ -436,12 +436,6 @@ select.finput{cursor:pointer;}
         <input class="finput" id="ff-desc" type="text" placeholder="Descripcion breve...">
       </div>
 
-      <!-- CAMPO TEMPORAL TEST: material -->
-      <div class="fgrp">
-        <div class="flabel">Material</div>
-        <input class="finput" id="ff-material" type="text" placeholder="ej: MDF, Madera, PVC...">
-      </div>
-
       <!-- Color + Marco side by side -->
       <div class="frow" style="align-items:flex-start;margin-bottom:0;">
         <div class="fgrp-half">
@@ -888,7 +882,6 @@ function openForm(id){
 
   rebuildFabricaSelect('');
   document.getElementById('ff-desc').value = '';
-  document.getElementById('ff-material').value = ''; // TEMPORAL TEST
   rebuildMarcoSelect('');
   rebuildColorSelect('');
   renderLineaChips('', '');
@@ -900,7 +893,6 @@ function openForm(id){
     if(m){
       rebuildFabricaSelect(m.fabrica||'');
       document.getElementById('ff-desc').value    = m.descripcion||'';
-      document.getElementById('ff-material').value = m.material||''; // TEMPORAL TEST
       rebuildMarcoSelect(m.marco||'');
       rebuildColorSelect(m.color||'');
       renderLineaChips(m.fabrica||'', m.linea||'');
@@ -961,7 +953,6 @@ function validateModel(m){
   out.color       = typeof m.color==='string'       ? m.color.slice(0,100)       : '';
   out.marco       = typeof m.marco==='string'       ? m.marco.slice(0,100)       : '';
   out.linea       = typeof m.linea==='string'       ? m.linea.slice(0,100)       : '';
-  out.material    = typeof m.material==='string'    ? m.material.slice(0,100)    : ''; // TEMPORAL TEST
   out.photo = (typeof m.photo==='string' && m.photo.indexOf('data:image/')===0) ? m.photo : null;
   out.createdAt = (typeof m.createdAt==='number') ? m.createdAt : Date.now();
   out.sizes=[];
@@ -1349,7 +1340,6 @@ function saveModel(){
     fabrica:     document.getElementById('ff-fabrica').value.trim(),
     linea:       document.getElementById('ff-linea').value.trim(),
     descripcion: document.getElementById('ff-desc').value.trim(),
-    material:    document.getElementById('ff-material').value.trim(), // TEMPORAL TEST
     marco:       document.getElementById('ff-marco').value,
     color:       document.getElementById('ff-color').value,
     sizes:       formSizes.map(function(s){return{medida:s.medida,r:s.r,l:s.l};}),
@@ -2135,7 +2125,6 @@ function renderList(){
       +'<div class="door-header-row1">'
       +(m.fabrica?'<span class="ftag ftag-fab">'+esc(m.fabrica)+'</span>':'')
       +(m.linea?'<span class="ftag ftag-fab">'+esc(m.linea)+'</span>':'')
-      +(m.material?'<span class="ftag">'+esc(m.material)+'</span>':'') // TEMPORAL TEST
       +(m.color?'<span class="ftag ftag-color">'+esc(m.color)+'</span>':'')
       +(m.marco?'<span class="ftag ftag-marco">'+esc(m.marco)+'</span>':'')
       +(hasBody?'<span class="cnt-lbl">'+(m.sizes||[]).length+' med.</span>':'')
