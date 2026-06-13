@@ -1178,32 +1178,39 @@ function gpRenderFabricas(){
     c.innerHTML='<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;color:var(--dim);">Sin fábricas cargadas</div>';
     return;
   }
-  var h='';
+  var h='<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:3px;" id="gp-fab-grid">';
   for(var i=0;i<fabricas.length;i++){
     var f=fabricas[i], fab_lineas=(lineas[f]||[]);
-    var lineCount=fab_lineas.length>0?'<span style="font-size:10px;color:var(--accent);margin-left:4px;">'+fab_lineas.length+' línea'+(fab_lineas.length!==1?'s':'')+'</span>':'';
-    h+='<div class="gp-item" style="grid-column:1/-1;flex-direction:column;align-items:stretch;gap:0;padding:0;">'
-      +'<div class="gp-fab-row">'
-      +'<span class="gp-fab-name">'+esc(f)+lineCount+'</span>'
-      +'<div style="display:flex;gap:4px;flex-shrink:0;">'
-      +'<button class="gp-fab-toggle" id="gp-fab-toggle-'+i+'" onclick="gpToggleLineasPanel('+i+')">▸ Líneas</button>'
-      +'<button class="gp-fab-del" onclick="gpDelFabrica('+i+')">✕</button>'
+    var lineCount=fab_lineas.length>0?'<span style="font-size:9px;color:var(--accent);"> ('+fab_lineas.length+')</span>':'';
+    h+='<div class="gp-item" style="flex-direction:column;align-items:stretch;gap:2px;padding:4px 6px;">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;gap:2px;">'
+      +'<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text);">'+esc(f)+lineCount+'</span>'
+      +'<div style="display:flex;gap:2px;flex-shrink:0;">'
+      +'<button class="gp-fab-toggle" id="gp-fab-toggle-'+i+'" onclick="gpToggleLineasPanel('+i+')" style="font-size:9px;padding:1px 5px;">▸</button>'
+      +'<button class="gp-item-del" onclick="gpDelFabrica('+i+')">✕</button>'
       +'</div></div>'
-      +'<div class="gp-lineas-panel" id="gp-lineas-panel-'+i+'">'
+      +'</div>';
+  }
+  h+='</div>';
+  // Subpaneles fuera del grid, uno por fábrica
+  for(var i=0;i<fabricas.length;i++){
+    var f=fabricas[i], fab_lineas=(lineas[f]||[]);
+    h+='<div class="gp-lineas-panel" id="gp-lineas-panel-'+i+'" style="margin-top:4px;">'
+      +'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;color:var(--accent);margin-bottom:6px;">'+esc(f)+' — Líneas</div>'
       +'<div class="add-color-row" style="margin-bottom:6px;">'
       +'<input class="finput" id="gp-linea-inp-'+i+'" type="text" placeholder="Nueva línea..." style="flex:1;padding:5px 8px;font-size:12px;" onkeydown="if(event.keyCode===13){event.preventDefault();gpAddLinea('+i+');}">'
       +'<button type="button" onclick="gpAddLinea('+i+')" class="btn-panel-add" style="font-size:11px;padding:0 10px;">+ Agregar</button>'
       +'</div>'
-      +'<div id="gp-lineas-list-'+i+'" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;">';
+      +'<div id="gp-lineas-list-'+i+'" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:3px;">';
     for(var j=0;j<fab_lineas.length;j++){
       h+='<div class="gp-item"><span>'+esc(fab_lineas[j])+'</span><button class="gp-item-del" onclick="gpDelLinea('+i+','+j+')">✕</button></div>';
     }
-    h+='</div></div></div>';
+    h+='</div></div>';
   }
   c.innerHTML=h;
-  c.style.display='grid';
-  c.style.gridTemplateColumns='1fr 1fr 1fr 1fr';
-  c.style.gap='3px';
+  c.style.display='';
+  c.style.gridTemplateColumns='';
+  c.style.gap='';
 }
 
 function gpToggleLineasPanel(fabIdx){
