@@ -404,7 +404,6 @@ select.finput{cursor:pointer;}
         <button onclick="expandAll()" class="inline-btn">Desplegar todo</button>
         <button onclick="collapseAll()" class="inline-btn">Contraer todo</button>
       </span>
-      <button id="mosaic-size-btn" onclick="toggleMosaicSize()" class="inline-btn" style="display:none;" title="Cambiar tamaño de mosaico">⊟ Chico</button>
       <div style="margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0;">
         <button id="del-sel-btn" onclick="deleteSelected()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:default;white-space:nowrap;transition:all .15s;" disabled>Eliminar sel.</button>
         <button class="filter-tab" id="sel-all-btn" onclick="toggleSelectAll(this)">Sel. todo</button>
@@ -1889,14 +1888,7 @@ function updateFchipLabel(key){
 
 function toggleFilters(){ /* legacy no-op */ }
 
-var mosaicSmall = false;
-
-function toggleMosaicSize(){
-  mosaicSmall = !mosaicSmall;
-  var btn = document.getElementById('mosaic-size-btn');
-  if(btn) btn.textContent = mosaicSmall ? '⊟ Grande' : '⊟ Chico';
-  renderList();
-}
+var mosaicSmall = true;
 
 // ===== EXPAND/COLLAPSE ALL =====
 function expandAll(){
@@ -1956,8 +1948,6 @@ function setViewMode(mode){
   document.getElementById('vt-table').className  = mode==='table'  ? 'active' : '';
   document.getElementById('vt-mosaic').className = mode==='mosaic' ? 'active' : '';
   document.getElementById('card-only-btns').style.display = mode==='cards' ? 'inline-flex' : 'none';
-  var msb = document.getElementById('mosaic-size-btn');
-  if(msb) msb.style.display = mode==='mosaic' ? '' : 'none';
   renderList();
 }
 
@@ -3277,8 +3267,6 @@ function initCatalog(){
         document.getElementById('vt-cards').className='';
         document.getElementById('vt-mosaic').className='active';
         document.getElementById('card-only-btns').style.display='none';
-        var _msb=document.getElementById('mosaic-size-btn');
-        if(_msb) _msb.style.display='';
       }
       document.getElementById('grp-none').classList.add('active');
       renderList();
