@@ -1238,8 +1238,7 @@ function gpAddLinea(fabIdx){
   if(!lineas[fab]) lineas[fab]=[];
   for(var i=0;i<lineas[fab].length;i++){if(lineas[fab][i].toLowerCase()===val.toLowerCase()){showToast('Ya existe');return;}}
   lineas[fab].push(val); saveLineas();
-  inp.value='';
-  if(document.activeElement) document.activeElement.blur();
+  inp.value=''; inp.focus();
   gpRenderFabricas();
   var panel=document.getElementById('gp-lineas-panel-'+fabIdx); if(panel) panel.classList.add('open');
   var toggle=document.getElementById('gp-fab-toggle-'+fabIdx); if(toggle) toggle.classList.add('open');
