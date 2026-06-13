@@ -491,7 +491,11 @@ select.finput{cursor:pointer;}
   <div id="global-panel-inner" onclick="event.stopPropagation()" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;width:100%;max-width:540px;margin:auto;overflow:hidden;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px 10px;border-bottom:1px solid var(--border);">
       <span style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);">Actualizar Listas</span>
-      <button onclick="closeGlobalPanel()" style="background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;">✕</button>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <button id="gp-undo-btn" onclick="performUndo()" class="btn btn-ghost" style="opacity:0.35;" disabled title="Deshacer">&#8630;</button>
+        <button id="gp-redo-btn" onclick="performRedo()" class="btn btn-ghost" style="opacity:0.35;" disabled title="Rehacer">&#8631;</button>
+        <button onclick="closeGlobalPanel()" style="background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;">✕</button>
+      </div>
     </div>
     <div style="padding:14px;display:flex;flex-direction:column;gap:18px;">
 
@@ -813,17 +817,23 @@ function performRedo(){
 }
 
 function updateUndoBtn(){
-  var btn = document.getElementById('undo-btn');
-  if(btn){ var has=undoHistory.length>0; btn.disabled=!has; btn.style.opacity=has?'1':'0.35'; btn.style.cursor=has?'pointer':'default'; btn.title=has?'Deshacer: '+undoHistory[undoHistory.length-1].label:'Sin acciones para deshacer'; }
+  var has=undoHistory.length>0;
+  var btn=document.getElementById('undo-btn');
+  if(btn){ btn.disabled=!has; btn.style.opacity=has?'1':'0.35'; btn.style.cursor=has?'pointer':'default'; btn.title=has?'Deshacer: '+undoHistory[undoHistory.length-1].label:'Sin acciones para deshacer'; }
   var tbtn=document.getElementById('temp-undo-btn');
-  if(tbtn){ var has2=undoHistory.length>0; tbtn.disabled=!has2; tbtn.style.opacity=has2?'1':'0.35'; }
+  if(tbtn){ tbtn.disabled=!has; tbtn.style.opacity=has?'1':'0.35'; }
+  var gpbtn=document.getElementById('gp-undo-btn');
+  if(gpbtn){ gpbtn.disabled=!has; gpbtn.style.opacity=has?'1':'0.35'; gpbtn.title=has?'Deshacer: '+undoHistory[undoHistory.length-1].label:'Sin acciones para deshacer'; }
 }
 
 function updateRedoBtn(){
-  var btn = document.getElementById('redo-btn');
-  if(btn){ var has=redoHistory.length>0; btn.disabled=!has; btn.style.opacity=has?'1':'0.35'; btn.style.cursor=has?'pointer':'default'; btn.title=has?'Rehacer: '+redoHistory[redoHistory.length-1].label:'Sin acciones para rehacer'; }
+  var has=redoHistory.length>0;
+  var btn=document.getElementById('redo-btn');
+  if(btn){ btn.disabled=!has; btn.style.opacity=has?'1':'0.35'; btn.style.cursor=has?'pointer':'default'; btn.title=has?'Rehacer: '+redoHistory[redoHistory.length-1].label:'Sin acciones para rehacer'; }
   var tbtn=document.getElementById('temp-redo-btn');
-  if(tbtn){ var has2=redoHistory.length>0; tbtn.disabled=!has2; tbtn.style.opacity=has2?'1':'0.35'; }
+  if(tbtn){ tbtn.disabled=!has; tbtn.style.opacity=has?'1':'0.35'; }
+  var gpbtn=document.getElementById('gp-redo-btn');
+  if(gpbtn){ gpbtn.disabled=!has; gpbtn.style.opacity=has?'1':'0.35'; gpbtn.title=has?'Rehacer: '+redoHistory[redoHistory.length-1].label:'Sin acciones para rehacer'; }
 }
 
 // ===== SUPABASE CONFIG =====
@@ -3373,8 +3383,7 @@ window.addEventListener('resize', updateTotalsBarTop);
 // Ctrl+Z / Ctrl+Y / Ctrl+Shift+Z keyboard shortcuts
 document.addEventListener('keydown', function(e){
   var tag=(document.activeElement||{}).tagName||'';
-  var inPanel = document.getElementById('global-panel-overlay') && document.getElementById('global-panel-overlay').contains(document.activeElement);
-  if((tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') && !inPanel) return;
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
   if((e.ctrlKey||e.metaKey) && e.key==='z' && !e.shiftKey){
     e.preventDefault(); performUndo();
   } else if((e.ctrlKey||e.metaKey) && (e.key==='y' || (e.key==='z' && e.shiftKey))){
