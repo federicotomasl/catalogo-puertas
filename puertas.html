@@ -2412,6 +2412,12 @@ function importJSON(e){
         var mdv=importedMedidas[mdi];
         if(typeof mdv==='string' && mdv && medidas.indexOf(mdv)===-1) medidas.push(mdv.slice(0,10));
       }
+      medidas.sort(function(a,b){
+        var pa=a.split('/'), pb=b.split('/');
+        var a1=parseInt(pa[0])||0, a2=parseInt(pa[1])||0;
+        var b1=parseInt(pb[0])||0, b2=parseInt(pb[1])||0;
+        if(b1!==a1) return b1-a1; return b2-a2;
+      });
       if(!isListaOnly){
         if(!Array.isArray(imported))throw new Error();
         pushUndo('Importar JSON');
@@ -3314,7 +3320,15 @@ function gpAddMedida(){
   var val=(inp.value||'').trim();
   if(!val||val.length<3){showToast('Medida inválida');return;}
   for(var i=0;i<medidas.length;i++){if(medidas[i]===val){showToast('Ya existe');return;}}
-  medidas.push(val); saveMedidas(); inp.value=''; inp.focus();
+  medidas.push(val);
+  medidas.sort(function(a,b){
+    var pa=a.split('/'), pb=b.split('/');
+    var a1=parseInt(pa[0])||0, a2=parseInt(pa[1])||0;
+    var b1=parseInt(pb[0])||0, b2=parseInt(pb[1])||0;
+    if(b1!==a1) return b1-a1;
+    return b2-a2;
+  });
+  saveMedidas(); inp.value=''; inp.focus();
   gpRenderMedidas();
   // Refrescar chips en formularios abiertos
   var w=document.getElementById('medidas-chips-wrap'); if(w) renderMedidasChips();
