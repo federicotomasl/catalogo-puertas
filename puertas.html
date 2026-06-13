@@ -3140,10 +3140,10 @@ function openGlobalPanel(){
   o.style.display='flex';
   document.body.style.overflow='hidden';
   gpRenderFabricas(); gpRenderColors(); gpRenderMarcos(); gpRenderMedidas();
-  // En modo consulta ocultar los inputs de agregar
-  if(isConsulta()){
-    var addRows=document.querySelectorAll('#global-panel-overlay .add-color-row');
-    for(var i=0;i<addRows.length;i++) addRows[i].style.display='none';
+  // Mostrar u ocultar inputs según el modo
+  var addRows=document.querySelectorAll('#global-panel-overlay .add-color-row');
+  for(var i=0;i<addRows.length;i++){
+    addRows[i].style.display=isConsulta()?'none':'';
   }
 }
 
