@@ -488,7 +488,7 @@ select.finput{cursor:pointer;}
 
 <!-- ===== GLOBAL PANEL ===== -->
 <div id="global-panel-overlay" onclick="closeGlobalPanel(event)" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.6);align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;">
-  <div id="global-panel-inner" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;width:100%;max-width:540px;margin:auto;overflow:hidden;">
+  <div id="global-panel-inner" onclick="event.stopPropagation()" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;width:100%;max-width:540px;margin:auto;overflow:hidden;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px 10px;border-bottom:1px solid var(--border);">
       <span style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);">Actualizar Listas</span>
       <button onclick="closeGlobalPanel()" style="background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;">✕</button>
