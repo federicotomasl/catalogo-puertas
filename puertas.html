@@ -311,6 +311,8 @@ select.finput{cursor:pointer;}
       <div class="topbar-inner">
         <!-- Fila 1: navegación + título + temporal -->
         <div style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;">
+          <button class="btn btn-ghost" onclick="backupJSON()" title="Descargar backup completo" style="font-size:11px;">⬇ Backup</button>
+          <label class="btn btn-ghost" style="cursor:pointer;font-size:11px;" title="Restaurar desde backup">⬆ Restaurar<input type="file" accept=".json" style="display:none;" onchange="restoreJSON(event)"></label>
           <a href="index.html" class="btn btn-ghost" style="text-decoration:none;">⌂</a>
           <button class="btn btn-ghost" onclick="doLogout()" style="color:var(--dim);" title="Cerrar sesión">Salir</button>
           <div class="topbar-title">Puertas</div>
@@ -328,9 +330,6 @@ select.finput{cursor:pointer;}
             <button id="vt-mosaic" onclick="setViewMode('mosaic')" title="Vista mosaico">⊟</button>
           </div>
           <button class="btn btn-ghost" onclick="toggleTheme()">&#9788;</button>
-          <div style="width:1px;height:20px;background:var(--border);margin:0 2px;flex-shrink:0;"></div>
-          <button class="btn btn-ghost" onclick="backupJSON()" title="Descargar backup completo">⬇ Backup</button>
-          <label class="btn btn-ghost" style="cursor:pointer;" title="Restaurar desde backup">⬆ Restaurar<input type="file" accept=".json" style="display:none;" onchange="restoreJSON(event)"></label>
           <div style="width:1px;height:20px;background:var(--border);margin:0 2px;flex-shrink:0;"></div>
           <button id="btn-nuevo" class="btn btn-accent" onclick="openForm(null)">+ Nuevo</button>
           <button class="btn btn-outline" onclick="openGlobalPanel()">Actualizar</button>
