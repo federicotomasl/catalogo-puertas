@@ -1238,10 +1238,12 @@ function gpAddLinea(fabIdx){
   if(!lineas[fab]) lineas[fab]=[];
   for(var i=0;i<lineas[fab].length;i++){if(lineas[fab][i].toLowerCase()===val.toLowerCase()){showToast('Ya existe');return;}}
   lineas[fab].push(val); saveLineas();
-  inp.value=''; inp.focus();
+  inp.value='';
   gpRenderFabricas();
   var panel=document.getElementById('gp-lineas-panel-'+fabIdx); if(panel) panel.classList.add('open');
   var toggle=document.getElementById('gp-fab-toggle-'+fabIdx); if(toggle) toggle.classList.add('open');
+  // Re-apuntar al nuevo input (el render recrea el DOM)
+  var newInp=document.getElementById('gp-linea-inp-'+fabIdx); if(newInp) newInp.focus();
   var cf=document.getElementById('ff-fabrica'); if(cf&&cf.value===fab) renderLineaChips(fab,(document.getElementById('ff-linea')||{}).value||'');
   var tf=document.getElementById('tff-fabrica'); if(tf&&tf.value===fab) renderTempLineaChips(fab,(document.getElementById('tff-linea')||{}).value||'');
   showToast('Línea "'+val+'" agregada');
