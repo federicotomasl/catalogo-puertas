@@ -468,8 +468,8 @@ select.finput{cursor:pointer;}
         <div id="sizes-container"></div>
       </div>
 
-      <div class="fgrp">
-        <div class="flabel">Foto</div>
+      <div class="fgrp-section">
+        <div class="flabel-section">Foto</div>
         <div style="display:flex;align-items:center;gap:8px;">
           <label style="cursor:pointer;">
             <span style="display:inline-flex;align-items:center;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:7px 14px;border-radius:4px;border:1px solid var(--border);color:var(--muted);background:var(--bg2);transition:all .15s;white-space:nowrap;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128247; Subir foto</span>
@@ -3373,7 +3373,8 @@ window.addEventListener('resize', updateTotalsBarTop);
 // Ctrl+Z / Ctrl+Y / Ctrl+Shift+Z keyboard shortcuts
 document.addEventListener('keydown', function(e){
   var tag=(document.activeElement||{}).tagName||'';
-  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
+  var inPanel = document.getElementById('global-panel-overlay') && document.getElementById('global-panel-overlay').contains(document.activeElement);
+  if((tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') && !inPanel) return;
   if((e.ctrlKey||e.metaKey) && e.key==='z' && !e.shiftKey){
     e.preventDefault(); performUndo();
   } else if((e.ctrlKey||e.metaKey) && (e.key==='y' || (e.key==='z' && e.shiftKey))){
