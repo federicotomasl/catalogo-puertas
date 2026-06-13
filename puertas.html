@@ -314,15 +314,15 @@ select.finput{cursor:pointer;}
   <div id="page-catalog">
     <div class="topbar">
       <div class="topbar-inner">
-        <div style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;">
+        <!-- Fila 1: navegación + título + temporal -->
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;">
           <a href="index.html" class="btn btn-ghost" style="text-decoration:none;">⌂</a>
+          <button class="btn btn-ghost" onclick="doLogout()" style="color:var(--dim);" title="Cerrar sesión">Salir</button>
           <div class="topbar-title">Puertas</div>
-          <button id="btn-nuevo" class="btn btn-accent" onclick="openForm(null)">+ Nuevo</button>
-          <button class="btn btn-outline" onclick="openGlobalPanel()">Actualizar</button>
           <button class="btn btn-outline" onclick="openTemporal()" id="btn-temporal" style="border-color:#7abf9e;color:#7abf9e;">⏱ Temporal</button>
-          <button class="btn btn-ghost" onclick="doLogout()" style="color:var(--dim);border-color:var(--border);" title="Cerrar sesión">Salir</button>
         </div>
-        <div class="topbar-actions">
+        <!-- Fila 2: acciones -->
+        <div style="display:flex;align-items:center;justify-content:center;gap:5px;width:100%;">
           <button class="btn btn-ghost" onclick="exportPDF()">PDF</button>
           <button class="btn btn-outline" onclick="exportCSV()">CSV</button>
           <button id="undo-btn" class="btn btn-ghost" onclick="performUndo()" disabled style="opacity:0.35;" title="Sin acciones para deshacer">&#8630;</button>
@@ -333,6 +333,9 @@ select.finput{cursor:pointer;}
             <button id="vt-mosaic" onclick="setViewMode('mosaic')" title="Vista mosaico">⊟</button>
           </div>
           <button class="btn btn-ghost" onclick="toggleTheme()">&#9788;</button>
+          <div style="width:1px;height:20px;background:var(--border);margin:0 2px;flex-shrink:0;"></div>
+          <button id="btn-nuevo" class="btn btn-accent" onclick="openForm(null)">+ Nuevo</button>
+          <button class="btn btn-outline" onclick="openGlobalPanel()">Actualizar</button>
         </div>
       </div>
     </div>
@@ -568,13 +571,13 @@ select.finput{cursor:pointer;}
 <div id="page-temporal" style="display:none;">
   <div class="topbar">
     <div class="topbar-inner">
-      <div style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;">
+      <!-- Fila 1: navegación + título -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;">
         <button class="btn btn-ghost" onclick="closeTemporal()">← Principal</button>
         <div class="topbar-title" style="color:#7abf9e;">Temporal</div>
-        <button class="btn btn-accent" onclick="openTempForm(null)">+ Nuevo</button>
-        <button class="btn btn-outline" onclick="openGlobalPanel()">Actualizar</button>
       </div>
-      <div class="topbar-actions">
+      <!-- Fila 2: acciones -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:5px;width:100%;">
         <button class="btn btn-ghost" onclick="exportTempPDF()">PDF</button>
         <button class="btn btn-ghost" onclick="exportTempCSV()">CSV</button>
         <button id="temp-undo-btn" class="btn btn-ghost" onclick="performTempUndo()" disabled style="opacity:0.35;">&#8630;</button>
@@ -584,6 +587,9 @@ select.finput{cursor:pointer;}
           <button id="tvt-table" onclick="setTempViewMode('table')" title="Vista tabla">☰</button>
         </div>
         <button class="btn btn-ghost" onclick="toggleTheme()">&#9788;</button>
+        <div style="width:1px;height:20px;background:var(--border);margin:0 2px;flex-shrink:0;"></div>
+        <button class="btn btn-accent" onclick="openTempForm(null)">+ Nuevo</button>
+        <button class="btn btn-outline" onclick="openGlobalPanel()">Actualizar</button>
       </div>
     </div>
   </div>
