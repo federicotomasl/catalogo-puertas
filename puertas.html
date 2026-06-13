@@ -779,6 +779,10 @@ function performUndo(){
   showToast('Deshecho: '+snap.label);
   updateUndoBtn();
   updateRedoBtn();
+  // Refrescar panel flotante si está abierto
+  if(document.getElementById('global-panel-overlay').style.display!=='none'){
+    gpRenderFabricas(); gpRenderColors(); gpRenderMarcos(); gpRenderMedidas();
+  }
 }
 
 function performRedo(){
@@ -814,6 +818,10 @@ function performRedo(){
   showToast('Rehecho: '+snap.label);
   updateUndoBtn();
   updateRedoBtn();
+  // Refrescar panel flotante si está abierto
+  if(document.getElementById('global-panel-overlay').style.display!=='none'){
+    gpRenderFabricas(); gpRenderColors(); gpRenderMarcos(); gpRenderMedidas();
+  }
 }
 
 function updateUndoBtn(){
