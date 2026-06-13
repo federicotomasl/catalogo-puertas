@@ -1218,9 +1218,16 @@ function gpToggleLineasPanel(fabIdx){
   var toggle=document.getElementById('gp-fab-toggle-'+fabIdx);
   if(!panel) return;
   var isOpen=panel.classList.contains('open');
-  panel.classList.toggle('open',!isOpen);
-  if(toggle) toggle.classList.toggle('open',!isOpen);
-  if(!isOpen){ var inp=document.getElementById('gp-linea-inp-'+fabIdx); if(inp) setTimeout(function(){inp.focus();},50); }
+  // Cerrar todos los paneles abiertos
+  var allPanels=document.querySelectorAll('.gp-lineas-panel');
+  var allToggles=document.querySelectorAll('.gp-fab-toggle');
+  for(var i=0;i<allPanels.length;i++){ allPanels[i].classList.remove('open'); }
+  for(var j=0;j<allToggles.length;j++){ allToggles[j].classList.remove('open'); }
+  // Si estaba cerrado, abrirlo
+  if(!isOpen){
+    panel.classList.add('open');
+    if(toggle) toggle.classList.add('open');
+  }
 }
 
 function gpAddLinea(fabIdx){
@@ -1231,7 +1238,8 @@ function gpAddLinea(fabIdx){
   if(!lineas[fab]) lineas[fab]=[];
   for(var i=0;i<lineas[fab].length;i++){if(lineas[fab][i].toLowerCase()===val.toLowerCase()){showToast('Ya existe');return;}}
   lineas[fab].push(val); saveLineas();
-  inp.value=''; inp.focus();
+  inp.value='';
+  if(document.activeElement) document.activeElement.blur();
   gpRenderFabricas();
   var panel=document.getElementById('gp-lineas-panel-'+fabIdx); if(panel) panel.classList.add('open');
   var toggle=document.getElementById('gp-fab-toggle-'+fabIdx); if(toggle) toggle.classList.add('open');
