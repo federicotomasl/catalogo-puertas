@@ -781,7 +781,18 @@ function performUndo(){
   updateRedoBtn();
   // Refrescar panel flotante si está abierto
   if(document.getElementById('global-panel-overlay').style.display!=='none'){
+    // Guardar qué subpanel de líneas está abierto
+    var openLineasIdx=-1;
+    var allLp=document.querySelectorAll('.gp-lineas-panel');
+    for(var li=0;li<allLp.length;li++){if(allLp[li].classList.contains('open')){openLineasIdx=li;break;}}
     gpRenderFabricas(); gpRenderColors(); gpRenderMarcos(); gpRenderMedidas();
+    // Restaurar el subpanel que estaba abierto
+    if(openLineasIdx>=0){
+      var rp=document.getElementById('gp-lineas-panel-'+openLineasIdx);
+      var rt=document.getElementById('gp-fab-toggle-'+openLineasIdx);
+      if(rp) rp.classList.add('open');
+      if(rt) rt.classList.add('open');
+    }
   }
 }
 
@@ -820,7 +831,16 @@ function performRedo(){
   updateRedoBtn();
   // Refrescar panel flotante si está abierto
   if(document.getElementById('global-panel-overlay').style.display!=='none'){
+    var openLineasIdx2=-1;
+    var allLp2=document.querySelectorAll('.gp-lineas-panel');
+    for(var li2=0;li2<allLp2.length;li2++){if(allLp2[li2].classList.contains('open')){openLineasIdx2=li2;break;}}
     gpRenderFabricas(); gpRenderColors(); gpRenderMarcos(); gpRenderMedidas();
+    if(openLineasIdx2>=0){
+      var rp2=document.getElementById('gp-lineas-panel-'+openLineasIdx2);
+      var rt2=document.getElementById('gp-fab-toggle-'+openLineasIdx2);
+      if(rp2) rp2.classList.add('open');
+      if(rt2) rt2.classList.add('open');
+    }
   }
 }
 
