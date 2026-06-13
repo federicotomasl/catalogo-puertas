@@ -1215,6 +1215,7 @@ function gpToggleLineasPanel(fabIdx){
 
 function gpAddLinea(fabIdx){
   if(isConsulta()) return;
+  var fab=fabricas[fabIdx]; if(!fab) return;
   var inp=document.getElementById('gp-linea-inp-'+fabIdx); if(!inp) return;
   var val=inp.value.trim(); if(!val) return;
   if(!lineas[fab]) lineas[fab]=[];
@@ -1231,6 +1232,7 @@ function gpAddLinea(fabIdx){
 
 function gpDelLinea(fabIdx, lineaIdx){
   if(isConsulta()) return;
+  var fab=fabricas[fabIdx]; if(!fab||!lineas[fab]) return;
   var name=lineas[fab][lineaIdx];
   pushUndo('Eliminar línea: '+name);
   lineas[fab].splice(lineaIdx,1);
@@ -1420,6 +1422,7 @@ function saveModel(){
 // ===== DUPLICATE =====
 function duplicateModel(id){
   if(isConsulta()) return;
+  var src=getModel(id); if(!src)return;
   var copy=JSON.parse(JSON.stringify(src));
   copy.id=String(Date.now()); copy.createdAt=Date.now();
   pushUndo('Duplicar modelo');
@@ -1428,7 +1431,9 @@ function duplicateModel(id){
 
 // ===== DELETE WITH UNDO =====
 function deleteModel(id){
-  if(isConsulta()) return; for(var i=0;i<models.length;i++){if(models[i].id===id){idx=i;break;}}
+  if(isConsulta()) return;
+  var idx=-1;
+  for(var i=0;i<models.length;i++){if(models[i].id===id){idx=i;break;}}
   if(idx===-1)return;
   pushUndo('Eliminar: '+(models[idx].fabrica||models[idx].descripcion||'modelo'));
   models.splice(idx,1); supaDelete(id); updateFilters(); renderList();
@@ -1437,7 +1442,9 @@ function deleteModel(id){
 
 // ===== QUICK STOCK (no re-render) =====
 function adjustStock(btn, modelId, sizeIdx, side, delta){
-  if(isConsulta()) return; if(!m||!m.sizes[sizeIdx])return;
+  if(isConsulta()) return;
+  var m=getModel(modelId);
+  if(!m||!m.sizes[sizeIdx])return;
   var sz=m.sizes[sizeIdx];
   pushUndo('Stock: '+esc(sz.medida)+' '+(side==='r'?'Der':'Izq')+' '+(delta>0?'+':'')+delta);
   if(side==='r') sz.r=Math.max(0,(sz.r||0)+delta);
@@ -2239,6 +2246,7 @@ function updateSelLabel(){
 // ===== DELETE SELECTED =====
 function deleteSelected(){
   if(isConsulta()) return;
+  var checked=document.querySelectorAll('.door-check:checked'), ids={};
   for(var i=0;i<checked.length;i++) ids[checked[i].getAttribute('data-id')]=true;
   var n=Object.keys(ids).length;
   if(n===0) return;
@@ -3177,7 +3185,9 @@ function gpRenderMarcos(){
 }
 
 function gpAddFabrica(){
-  if(isConsulta()) return; name=inp.value.trim();
+  if(isConsulta()) return;
+  var inp=document.getElementById('gp-new-fabrica');
+  var name=inp.value.trim();
   if(!name) return;
   for(var i=0;i<fabricas.length;i++){if(fabricas[i].toLowerCase()===name.toLowerCase()){showToast('Ya existe');return;}}
   fabricas.push(name); saveFabricas(); inp.value=''; inp.focus();
@@ -3185,7 +3195,9 @@ function gpAddFabrica(){
   showToast('Fábrica "'+name+'" agregada');
 }
 function gpAddColor(){
-  if(isConsulta()) return; name=inp.value.trim();
+  if(isConsulta()) return;
+  var inp=document.getElementById('gp-new-color');
+  var name=inp.value.trim();
   if(!name) return;
   for(var i=0;i<colors.length;i++){if(colors[i].toLowerCase()===name.toLowerCase()){showToast('Ya existe');return;}}
   colors.push(name); saveColors(); inp.value=''; inp.focus();
@@ -3193,7 +3205,9 @@ function gpAddColor(){
   showToast('Color "'+name+'" agregado');
 }
 function gpAddMarco(){
-  if(isConsulta()) return; name=inp.value.trim();
+  if(isConsulta()) return;
+  var inp=document.getElementById('gp-new-marco');
+  var name=inp.value.trim();
   if(!name) return;
   for(var i=0;i<marcos.length;i++){if(marcos[i].toLowerCase()===name.toLowerCase()){showToast('Ya existe');return;}}
   marcos.push(name); saveMarcos(); inp.value=''; inp.focus();
@@ -3203,6 +3217,7 @@ function gpAddMarco(){
 
 function gpDelFabrica(idx){
   if(isConsulta()) return;
+  var name=fabricas[idx];
   pushUndo('Eliminar fábrica: '+name);
   fabricas.splice(idx,1);
   if(lineas[name]) delete lineas[name];
@@ -3213,6 +3228,7 @@ function gpDelFabrica(idx){
 }
 function gpDelColor(idx){
   if(isConsulta()) return;
+  var name=colors[idx];
   pushUndo('Eliminar color: '+name);
   colors.splice(idx,1); saveColors();
   for(var i=0;i<models.length;i++){if(models[i].color===name){models[i].color='';supaUpsert(models[i].id,models[i]);}}
@@ -3221,6 +3237,7 @@ function gpDelColor(idx){
 }
 function gpDelMarco(idx){
   if(isConsulta()) return;
+  var name=marcos[idx];
   pushUndo('Eliminar marco: '+name);
   marcos.splice(idx,1); saveMarcos();
   for(var i=0;i<models.length;i++){if(models[i].marco===name){models[i].marco='';supaUpsert(models[i].id,models[i]);}}
@@ -3235,7 +3252,9 @@ function gpRenderMedidas(){
   c.innerHTML=h;
 }
 function gpAddMedida(){
-  if(isConsulta()) return; val=(inp.value||'').trim();
+  if(isConsulta()) return;
+  var inp=document.getElementById('gp-new-medida');
+  var val=(inp.value||'').trim();
   if(!val||val.length<3){showToast('Medida inválida');return;}
   for(var i=0;i<medidas.length;i++){if(medidas[i]===val){showToast('Ya existe');return;}}
   medidas.push(val); saveMedidas(); inp.value=''; inp.focus();
@@ -3247,6 +3266,7 @@ function gpAddMedida(){
 }
 function gpDelMedida(idx){
   if(isConsulta()) return;
+  var name=medidas[idx];
   pushUndo('Eliminar medida: '+name);
   medidas.splice(idx,1); saveMedidas();
   gpRenderMedidas();
