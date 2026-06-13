@@ -1182,7 +1182,7 @@ function gpRenderFabricas(){
   for(var i=0;i<fabricas.length;i++){
     var f=fabricas[i], fab_lineas=(lineas[f]||[]);
     var lineCount=fab_lineas.length>0?'<span style="font-size:10px;color:var(--accent);margin-left:4px;">'+fab_lineas.length+' línea'+(fab_lineas.length!==1?'s':'')+'</span>':'';
-    h+='<div style="margin-bottom:4px;">'
+    h+='<div class="gp-item" style="grid-column:1/-1;flex-direction:column;align-items:stretch;gap:0;padding:0;">'
       +'<div class="gp-fab-row">'
       +'<span class="gp-fab-name">'+esc(f)+lineCount+'</span>'
       +'<div style="display:flex;gap:4px;flex-shrink:0;">'
@@ -1201,6 +1201,9 @@ function gpRenderFabricas(){
     h+='</div></div></div>';
   }
   c.innerHTML=h;
+  c.style.display='grid';
+  c.style.gridTemplateColumns='1fr 1fr 1fr 1fr';
+  c.style.gap='3px';
 }
 
 function gpToggleLineasPanel(fabIdx){
