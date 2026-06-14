@@ -967,6 +967,7 @@ try { var tsm = localStorage.getItem('puertas_temp_models'); if(tsm) tempModels 
 // ===== NAVIGATION =====
 function openForm(id){
   if(isConsulta()) return;
+  editingId = id||null;
   formSizes = [];
   formPhoto = null;
 
