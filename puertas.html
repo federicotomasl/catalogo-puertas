@@ -352,6 +352,11 @@ select.finput{cursor:pointer;}
     </div>
 
     <div class="catalog-controls">
+      <!-- Filtro rápido de depósitos -->
+      <div id="deposito-filter-row" class="filter-tabs" style="margin-bottom:6px;align-items:center;flex-wrap:wrap;display:none;">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Depósito</span>
+        <button class="filter-tab active" id="dep-filter-all" onclick="setDepositoFilter('',this)">Todos</button>
+      </div>
       <div class="search-wrap" style="display:flex;align-items:center;gap:8px;">
         <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Buscar</span>
         <div style="position:relative;flex:1;">
@@ -429,10 +434,18 @@ select.finput{cursor:pointer;}
     </div>
 
     <div class="form-wrap">
-      <div class="fgrp-section">
-        <div class="flabel-section">Fábrica</div>
-        <input type="hidden" id="ff-fabrica" value="">
-        <div id="ff-fabrica-chips" class="medidas-chips" style="flex-wrap:wrap;"></div>
+      <!-- Fábrica + Depósito side by side -->
+      <div class="frow-section">
+        <div class="fgrp-half">
+          <div class="flabel-section">Fábrica</div>
+          <input type="hidden" id="ff-fabrica" value="">
+          <div id="ff-fabrica-chips" class="medidas-chips" style="flex-wrap:wrap;"></div>
+        </div>
+        <div class="fgrp-half" style="max-width:140px;">
+          <div class="flabel-section">Depósito</div>
+          <input type="hidden" id="ff-deposito" value="">
+          <div id="ff-deposito-chips" class="medidas-chips" style="flex-direction:column;flex-wrap:nowrap;gap:3px;overflow-x:visible;"></div>
+        </div>
       </div>
       <!-- Línea: solo aparece si la fábrica seleccionada tiene líneas definidas -->
       <div class="fgrp-section" id="ff-linea-wrap" style="display:none;">
@@ -543,6 +556,18 @@ select.finput{cursor:pointer;}
         <div id="gp-medida-list" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:3px;"></div>
       </div>
 
+      <div style="height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:2px 0;opacity:0.5;border-radius:1px;"></div>
+
+      <!-- DEPÓSITOS -->
+      <div>
+        <div class="flabel-section">Depósitos</div>
+        <div class="add-color-row" style="margin-bottom:8px;">
+          <input class="finput" id="gp-new-deposito" type="text" placeholder="Nombre del depósito..." style="flex:1;" onkeydown="if(event.keyCode===13){event.preventDefault();gpAddDeposito();}">
+          <button type="button" onclick="gpAddDeposito()" class="btn-panel-add">+ Agregar</button>
+        </div>
+        <div id="gp-deposito-list" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:3px;"></div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -637,10 +662,17 @@ select.finput{cursor:pointer;}
     </div>
   </div>
   <div class="form-wrap">
-    <div class="fgrp-section">
-      <div class="flabel-section">Fábrica</div>
-      <input type="hidden" id="tff-fabrica" value="">
-      <div id="tff-fabrica-chips" class="medidas-chips" style="flex-wrap:wrap;"></div>
+    <div class="frow-section">
+      <div class="fgrp-half">
+        <div class="flabel-section">Fábrica</div>
+        <input type="hidden" id="tff-fabrica" value="">
+        <div id="tff-fabrica-chips" class="medidas-chips" style="flex-wrap:wrap;"></div>
+      </div>
+      <div class="fgrp-half" style="max-width:140px;">
+        <div class="flabel-section">Depósito</div>
+        <input type="hidden" id="tff-deposito" value="">
+        <div id="tff-deposito-chips" class="medidas-chips" style="flex-direction:column;flex-wrap:nowrap;gap:3px;overflow-x:visible;"></div>
+      </div>
     </div>
     <div class="fgrp-section" id="tff-linea-wrap" style="display:none;">
       <div class="flabel-section">Línea</div>
@@ -679,6 +711,7 @@ var colors = [];
 var marcos = [];
 var fabricas = [];
 var medidas = [];
+var depositos = [];
 var lineas = {}; // { "NombreFabrica": ["Línea A", "Línea B", ...] }
 var editingId = null;
 var currentSort = 'original';
@@ -757,7 +790,7 @@ function _refreshFloatingPanel(){
   var openIdx=-1;
   var panels=document.querySelectorAll('.gp-lineas-panel');
   for(var i=0;i<panels.length;i++){ if(panels[i].classList.contains('open')){ openIdx=i; break; } }
-  gpRenderFabricas(); gpRenderColors(); gpRenderMarcos(); gpRenderMedidas();
+  gpRenderFabricas(); gpRenderColors(); gpRenderMarcos(); gpRenderMedidas(); gpRenderDepositos();
   if(openIdx>=0){
     var rp=document.getElementById('gp-lineas-panel-'+openIdx);
     var rt=document.getElementById('gp-fab-toggle-'+openIdx);
@@ -891,6 +924,7 @@ function saveColors(){  supaUpsert('config_colors',  colors); }
 function saveMarcos(){  supaUpsert('config_marcos',  marcos); }
 function saveFabricas(){ supaUpsert('config_fabricas', buildFabricasPayload()); }
 function saveMedidas(){ supaUpsert('config_medidas', medidas); }
+function saveDepositos(){ supaUpsert('config_depositos', depositos); }
 function saveLineas(){  saveFabricas(); } // lineas van dentro de fabricas
 
 function buildFabricasPayload(){
@@ -940,6 +974,7 @@ function openForm(id){
   document.getElementById('ff-desc').value = '';
   rebuildMarcoSelect('');
   rebuildColorSelect('');
+  rebuildDepositoSelect('');
   renderLineaChips('', '');
   document.getElementById('form-title-bar').textContent = id ? 'Editar Modelo' : 'Nuevo Modelo';
   document.getElementById('btn-save').textContent = id ? 'Guardar Cambios' : 'Guardar Modelo';
@@ -951,6 +986,7 @@ function openForm(id){
       document.getElementById('ff-desc').value    = m.descripcion||'';
       rebuildMarcoSelect(m.marco||'');
       rebuildColorSelect(m.color||'');
+      rebuildDepositoSelect(m.deposito||'');
       renderLineaChips(m.fabrica||'', m.linea||'');
       for(var i=0;i<(m.sizes||[]).length;i++) formSizes.push({medida:m.sizes[i].medida,r:m.sizes[i].r,l:m.sizes[i].l});
       formPhoto = m.photo||null;
@@ -1007,6 +1043,7 @@ function validateModel(m){
   out.color       = typeof m.color==='string'       ? m.color.slice(0,100)       : '';
   out.marco       = typeof m.marco==='string'       ? m.marco.slice(0,100)       : '';
   out.linea       = typeof m.linea==='string'       ? m.linea.slice(0,100)       : '';
+  out.deposito    = typeof m.deposito==='string'    ? m.deposito.slice(0,100)    : '';
   out.photo = (typeof m.photo==='string' && m.photo.indexOf('data:image/')===0) ? m.photo : null;
   out.createdAt = (typeof m.createdAt==='number') ? m.createdAt : Date.now();
   out.sizes=[];
@@ -1073,6 +1110,57 @@ function rebuildColorSelect(selected){
   var hidden = document.getElementById('ff-color');
   if(hidden) hidden.value = selected||'';
   renderColorChips(selected||'');
+}
+
+function rebuildDepositoSelect(selected){
+  var hidden = document.getElementById('ff-deposito');
+  if(hidden) hidden.value = selected||'';
+  renderDepositoChips(selected||'');
+  var thidden = document.getElementById('tff-deposito');
+  if(thidden) thidden.value = selected||'';
+  renderTempDepositoChips(selected||'');
+}
+
+function renderDepositoChips(selected){
+  var wrap = document.getElementById('ff-deposito-chips'); if(!wrap) return;
+  if(depositos.length===0){
+    wrap.innerHTML='<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;color:var(--dim);">Sin depósitos</span>';
+    return;
+  }
+  var html='';
+  for(var i=0;i<depositos.length;i++){
+    var d=depositos[i], sel=(d===selected);
+    html+='<button type="button" class="medida-chip'+(sel?' selected':'')+'" onclick="selectDepositoChip(\''+esc(d)+'\')">'+esc(d)+'</button>';
+  }
+  wrap.innerHTML=html;
+}
+
+function selectDepositoChip(val){
+  var cur=document.getElementById('ff-deposito').value;
+  var next=(cur===val)?'':val;
+  document.getElementById('ff-deposito').value=next;
+  renderDepositoChips(next);
+}
+
+function renderTempDepositoChips(selected){
+  var wrap = document.getElementById('tff-deposito-chips'); if(!wrap) return;
+  if(depositos.length===0){
+    wrap.innerHTML='<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;color:var(--dim);">Sin depósitos</span>';
+    return;
+  }
+  var html='';
+  for(var i=0;i<depositos.length;i++){
+    var d=depositos[i], sel=(d===selected);
+    html+='<button type="button" class="medida-chip'+(sel?' selected':'')+'" onclick="selectTempDepositoChip(\''+esc(d)+'\')">'+esc(d)+'</button>';
+  }
+  wrap.innerHTML=html;
+}
+
+function selectTempDepositoChip(val){
+  var cur=document.getElementById('tff-deposito').value;
+  var next=(cur===val)?'':val;
+  document.getElementById('tff-deposito').value=next;
+  renderTempDepositoChips(next);
 }
 
 function renderColorChips(selected){
@@ -1402,6 +1490,7 @@ function saveModel(){
     descripcion: document.getElementById('ff-desc').value.trim(),
     marco:       document.getElementById('ff-marco').value,
     color:       document.getElementById('ff-color').value,
+    deposito:    document.getElementById('ff-deposito').value,
     sizes:       formSizes.map(function(s){return{medida:s.medida,r:s.r,l:s.l};}),
     photo:       formPhoto,
     createdAt:   editingId ? (getModel(editingId)||{}).createdAt||Date.now() : Date.now()
@@ -1479,7 +1568,29 @@ function toggleCard(id){
 }
 
 // ===== FILTERS =====
-function updateFilters(){ updateFabricaFilter(); updateMarcoFilter(); updateColorFilter(); updateMedidaFilter(); }
+var currentDepositoFilter = '';
+
+function setDepositoFilter(val, btn){
+  currentDepositoFilter = val;
+  var btns = document.querySelectorAll('#deposito-filter-row .filter-tab');
+  for(var i=0;i<btns.length;i++) btns[i].classList.remove('active');
+  if(btn) btn.classList.add('active');
+  renderList();
+}
+
+function updateFilters(){ updateFabricaFilter(); updateMarcoFilter(); updateColorFilter(); updateMedidaFilter(); updateDepositoFilterRow(); }
+
+function updateDepositoFilterRow(){
+  var row = document.getElementById('deposito-filter-row'); if(!row) return;
+  if(depositos.length===0){ row.style.display='none'; return; }
+  row.style.display='flex';
+  var html='<button class="filter-tab'+(currentDepositoFilter===''?' active':'')+'" onclick="setDepositoFilter(\'\',this)">Todos</button>';
+  for(var i=0;i<depositos.length;i++){
+    var d=depositos[i];
+    html+='<button class="filter-tab'+(currentDepositoFilter===d?' active':'')+'" onclick="setDepositoFilter(\''+esc(d)+'\',this)">'+esc(d)+'</button>';
+  }
+  row.innerHTML='<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Depósito</span>'+html;
+}
 
 function setFchipValue(key, val, label){
   var sel=document.getElementById('f-'+key+'-filter');
@@ -1572,6 +1683,7 @@ function getFiltered(){
     if(ff && (m.fabrica||'')!==ff) continue;
     if(mf && (m.marco||'')!==mf) continue;
     if(cf && (m.color||'')!==cf) continue;
+    if(currentDepositoFilter && (m.deposito||'')!==currentDepositoFilter) continue;
     if(medf){var found=false;for(var j=0;j<(m.sizes||[]).length;j++){if(m.sizes[j].medida===medf){found=true;break;}} if(!found)continue;}
     out.push(m);
   }
@@ -2164,6 +2276,7 @@ function renderList(){
       +'<div class="door-header-row1">'
       +(m.fabrica?'<span class="ftag ftag-fab">'+esc(m.fabrica)+'</span>':'')
       +(m.linea?'<span class="ftag ftag-fab">'+esc(m.linea)+'</span>':'')
+      +(m.deposito?'<span class="ftag ftag-marco">'+esc(m.deposito)+'</span>':'')
       +(m.color?'<span class="ftag ftag-color">'+esc(m.color)+'</span>':'')
       +(m.marco?'<span class="ftag ftag-marco">'+esc(m.marco)+'</span>':'')
       +(hasBody?'<span class="cnt-lbl">'+(m.sizes||[]).length+' med.</span>':'')
@@ -2250,7 +2363,8 @@ function backupJSON(){
     marcos: marcos,
     fabricas: fabricas,
     lineas: lineas,
-    medidas: medidas
+    medidas: medidas,
+    depositos: depositos
   };
   var fecha=new Date().toISOString().slice(0,10);
   downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),'backup-puertas-'+fecha+'.json');
@@ -2280,6 +2394,7 @@ function restoreJSON(e){
       // Restaurar listas
       if(Array.isArray(raw.colors)) colors=raw.colors;
       if(Array.isArray(raw.marcos)) marcos=raw.marcos;
+      if(Array.isArray(raw.depositos)) depositos=raw.depositos;
       if(Array.isArray(raw.fabricas)){
         fabricas=raw.fabricas;
         lineas=(raw.lineas&&typeof raw.lineas==='object'&&!Array.isArray(raw.lineas))?raw.lineas:{};
@@ -2293,7 +2408,7 @@ function restoreJSON(e){
           if(b1!==a1) return b1-a1; return b2-a2;
         });
       }
-      saveColors(); saveMarcos(); saveFabricas(); saveLineas(); saveMedidas();
+      saveColors(); saveMarcos(); saveFabricas(); saveLineas(); saveMedidas(); saveDepositos();
       updateFilters(); renderList();
       var msg='Restaurado: '+restored+' modelo'+(restored!==1?'s':'');
       if(skipped) msg+=' ('+skipped+' inválido'+(skipped!==1?'s':'')+ ')';
@@ -2536,6 +2651,7 @@ function openTempForm(id){
   document.getElementById('tff-desc').value='';
   document.getElementById('tff-color').value='';
   document.getElementById('tff-marco').value='';
+  document.getElementById('tff-deposito').value='';
   renderTempLineaChips('','');
   document.getElementById('temp-form-title-bar').textContent=id?'Editar Modelo Temporal':'Nuevo Modelo Temporal';
   document.getElementById('temp-btn-save').textContent=id?'Guardar Cambios':'Guardar Modelo Temporal';
@@ -2546,6 +2662,7 @@ function openTempForm(id){
       document.getElementById('tff-desc').value=m.descripcion||'';
       document.getElementById('tff-color').value=m.color||'';
       document.getElementById('tff-marco').value=m.marco||'';
+      document.getElementById('tff-deposito').value=m.deposito||'';
       for(var i=0;i<(m.sizes||[]).length;i++) tempFormSizes.push({medida:m.sizes[i].medida,r:m.sizes[i].r,l:m.sizes[i].l});
       renderTempLineaChips(m.fabrica||'', m.linea||'');
     }
@@ -2553,6 +2670,7 @@ function openTempForm(id){
   renderTempFabricaChips(document.getElementById('tff-fabrica').value);
   renderTempColorChips(document.getElementById('tff-color').value);
   renderTempMarcoChips(document.getElementById('tff-marco').value);
+  renderTempDepositoChips(document.getElementById('tff-deposito').value);
   renderTempSizesForm();
   renderTempMedidasChips();
   document.getElementById('page-temporal').style.display='none';
@@ -2670,17 +2788,18 @@ function saveTempModel(){
   var color=document.getElementById('tff-color').value.trim();
   var marco=document.getElementById('tff-marco').value.trim();
   var linea=(document.getElementById('tff-linea')||{}).value||'';
+  var deposito=(document.getElementById('tff-deposito')||{}).value||'';
   if(!desc&&!fab){showTempToast('Ingresa al menos una descripción o fábrica');return;}
   pushTempUndo(tempEditingId?'Editar '+desc:'Agregar '+desc);
   if(tempEditingId){
     for(var i=0;i<tempModels.length;i++){
       if(tempModels[i].id===tempEditingId){
-        tempModels[i]={id:tempEditingId,fabrica:fab,linea:linea,descripcion:desc,color:color,marco:marco,sizes:tempFormSizes.slice()};
+        tempModels[i]={id:tempEditingId,fabrica:fab,linea:linea,descripcion:desc,color:color,marco:marco,deposito:deposito,sizes:tempFormSizes.slice()};
         break;
       }
     }
   } else {
-    tempModels.push({id:'t'+Date.now(),fabrica:fab,linea:linea,descripcion:desc,color:color,marco:marco,sizes:tempFormSizes.slice()});
+    tempModels.push({id:'t'+Date.now(),fabrica:fab,linea:linea,descripcion:desc,color:color,marco:marco,deposito:deposito,sizes:tempFormSizes.slice()});
   }
   saveTempModels();
   closeTempForm();
@@ -3068,7 +3187,7 @@ function openGlobalPanel(){
   var o=document.getElementById('global-panel-overlay');
   o.style.display='flex';
   document.body.style.overflow='hidden';
-  gpRenderFabricas(); gpRenderColors(); gpRenderMarcos(); gpRenderMedidas();
+  gpRenderFabricas(); gpRenderColors(); gpRenderMarcos(); gpRenderMedidas(); gpRenderDepositos();
   // Mostrar u ocultar inputs según el modo
   var addRows=document.querySelectorAll('#global-panel-overlay .add-color-row');
   for(var i=0;i<addRows.length;i++){
@@ -3204,7 +3323,38 @@ function gpDelMedida(idx){
   showToast('Medida "'+name+'" eliminada de la lista');
 }
 
-// ===== INIT =====
+function gpRenderDepositos(){
+  var c=document.getElementById('gp-deposito-list'); if(!c) return;
+  var h='';
+  for(var i=0;i<depositos.length;i++){
+    h+='<div class="gp-item"><span>'+esc(depositos[i])+'</span><button class="gp-item-del" onclick="gpDelDeposito('+i+')" aria-label="Eliminar depósito">✕</button></div>';
+  }
+  c.innerHTML=h||'<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;color:var(--dim);padding:4px 0;">Sin depósitos</span>';
+}
+
+function gpAddDeposito(){
+  if(isConsulta()) return;
+  var inp=document.getElementById('gp-new-deposito');
+  var name=inp.value.trim();
+  if(!name) return;
+  for(var i=0;i<depositos.length;i++){if(depositos[i].toLowerCase()===name.toLowerCase()){showToast('Ya existe');return;}}
+  pushUndo('Agregar depósito: '+name);
+  depositos.push(name); saveDepositos(); inp.value=''; inp.focus();
+  gpRenderDepositos(); updateDepositoFilterRow();
+  renderDepositoChips(document.getElementById('ff-deposito')?document.getElementById('ff-deposito').value:'');
+  renderTempDepositoChips(document.getElementById('tff-deposito')?document.getElementById('tff-deposito').value:'');
+  showToast('Depósito "'+name+'" agregado');
+}
+
+function gpDelDeposito(idx){
+  if(isConsulta()) return;
+  var name=depositos[idx];
+  pushUndo('Eliminar depósito: '+name);
+  depositos.splice(idx,1); saveDepositos();
+  for(var i=0;i<models.length;i++){if(models[i].deposito===name){models[i].deposito='';supaUpsert(models[i].id,models[i]);}}
+  gpRenderDepositos(); updateDepositoFilterRow(); renderList();
+  showToast('Depósito eliminado');
+}
 function initCatalog(){
   document.getElementById('door-list').innerHTML='<div style="text-align:center;padding:40px 20px;font-family:\'Barlow Condensed\',sans-serif;font-size:14px;color:var(--muted);letter-spacing:0.08em;">Cargando...</div>';
 
@@ -3224,6 +3374,8 @@ function initCatalog(){
           colors=Array.isArray(d)?d:[];
         } else if(row.id==='config_marcos'){
           marcos=Array.isArray(d)?d:[];
+        } else if(row.id==='config_depositos'){
+          depositos=Array.isArray(d)?d:[];
         } else if(row.id==='config_medidas'){
           medidasRowFound=true;
           medidas=Array.isArray(d)?d:[];
