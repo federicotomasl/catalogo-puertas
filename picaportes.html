@@ -80,13 +80,10 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .photo-expand img{max-width:100%;max-height:240px;object-fit:contain;border-radius:4px;border:1px solid var(--border);background:var(--bg3);}
 
 /* ACTION BUTTONS */
-.abtn{background:transparent;border:1px solid transparent;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:2px 6px;border-radius:3px;white-space:nowrap;transition:all .15s;}
+.abtn{background:transparent;border:1px solid transparent;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:2px 5px;border-radius:3px;white-space:nowrap;transition:all .15s;}
 .abtn-edit{color:var(--accent);border-color:var(--accent);}
 .abtn-edit:hover{background:var(--accent);color:#fff;}
 .abtn-edit:active{background:var(--al);border-color:var(--al);color:#fff;}
-.abtn-dup{color:var(--dim);border-color:var(--border);}
-.abtn-dup:hover{color:var(--muted);border-color:var(--muted);}
-.abtn-dup:active{color:var(--accent);border-color:var(--accent);}
 .abtn-del{color:var(--dim);border-color:var(--border);}
 .abtn-del:hover{color:#e05555;border-color:#e05555;}
 .abtn-del:active{background:#e05555;color:#fff;border-color:#e05555;}
@@ -99,26 +96,18 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 /* FORM */
 .form-wrap{padding:14px 12px 60px;}
 .fgrp{margin-bottom:12px;}
+.fgrp-section{margin-bottom:12px;border:1px solid var(--accent);border-radius:7px;padding:10px 12px;opacity:0.85;}
 .flabel{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.flabel-section{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;text-align:center;}
 .finput{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:9px 10px;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;outline:none;}
 .finput:focus{border-color:var(--accent);}
 .finput::placeholder{color:var(--dim);}
 
-/* SWITCH */
-.switch-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;margin-bottom:12px;cursor:pointer;user-select:none;}
-.switch-row:hover{border-color:var(--muted);}
-.switch-row.active{border-color:var(--accent);}
-.switch-track{width:36px;height:20px;border-radius:10px;background:var(--bg3);border:1px solid var(--border);flex-shrink:0;position:relative;transition:background .2s,border-color .2s;}
-.switch-track.on{background:var(--accent);border-color:var(--accent);}
-.switch-thumb{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--muted);transition:left .2s,background .2s;}
-.switch-track.on .switch-thumb{left:18px;background:#fff;}
-.switch-label{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);flex:1;}
-.switch-row.active .switch-label{color:var(--text);}
-.switch-hint{font-family:'Barlow',sans-serif;font-size:11px;color:var(--dim);font-style:italic;}
+.stock-adj-btn{background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--muted);cursor:pointer;font-size:16px;font-weight:700;width:32px;height:32px;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;transition:all .15s;flex-shrink:0;}
+.stock-adj-btn:hover{border-color:var(--accent);color:var(--accent);}
+.stock-adj-btn:active{background:var(--accent);border-color:var(--accent);color:#fff;}
 
 /* STOCK FORM */
-.stock-section{background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:12px;margin-bottom:12px;}
-.stock-section-title{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
 .stock-inputs{display:flex;align-items:center;gap:8px;justify-content:center;}
 .stock-input-group{display:flex;flex-direction:column;align-items:center;gap:4px;}
 .stock-input-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;}
@@ -129,6 +118,46 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 /* SAVE BTN */
 .btn-save{width:100%;padding:12px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;background:var(--accent);color:#fff;border:none;border-radius:5px;cursor:pointer;margin-top:4px;display:block;}
 .btn-save:active{background:var(--al);}
+
+/* MOSAIC */
+.mosaic-grid{padding:6px 8px 24px;display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.mosaic-grid.mosaic-small{grid-template-columns:1fr 1fr 1fr;}
+.mosaic-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:border-color .15s;}
+.mosaic-card:hover{border-color:var(--accent);}
+.mosaic-card.no-photo{border-style:dashed;opacity:0.65;}
+.mosaic-img-wrap{width:100%;aspect-ratio:4/3;background:var(--bg3);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+.mosaic-img-wrap img{width:100%;height:100%;object-fit:cover;}
+.mosaic-no-img{font-size:28px;color:var(--dim);}
+.mosaic-grid.mosaic-small .mosaic-no-img{font-size:20px;}
+.mosaic-info{padding:6px 8px 7px;display:flex;flex-direction:column;gap:2px;}
+.mosaic-grid.mosaic-small .mosaic-info{padding:4px 5px 5px;}
+.mosaic-code{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;}
+.mosaic-desc{font-family:'Barlow',sans-serif;font-size:12px;font-weight:500;color:var(--text);line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.mosaic-grid.mosaic-small .mosaic-desc{font-size:10px;}
+.mosaic-stock{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;color:var(--muted);}
+.mosaic-grid.mosaic-small .mosaic-stock{font-size:10px;}
+
+/* MOSAIC MODAL */
+.mosaic-modal{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.85);align-items:center;justify-content:center;padding:16px;}
+.mosaic-modal.open{display:flex;}
+.mosaic-modal-inner{max-width:520px;width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;position:relative;}
+.mosaic-modal-img{width:100%;max-height:55vh;object-fit:contain;background:var(--bg3);}
+.mosaic-modal-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px;}
+.mosaic-modal-desc{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--text);}
+.mosaic-modal-meta{display:flex;gap:5px;flex-wrap:wrap;align-items:center;}
+.mosaic-modal-actions{display:flex;gap:6px;margin-top:4px;}
+.mosaic-modal-close{position:absolute;top:10px;right:12px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-size:16px;cursor:pointer;border-radius:4px;padding:3px 9px;font-family:'Barlow Condensed',sans-serif;font-weight:700;}
+.mosaic-modal-close:hover{border-color:var(--accent);color:var(--accent);}
+.mosaic-tag{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;padding:1px 6px;border-radius:3px;background:var(--tbg);border:1px solid var(--tbd);color:var(--muted);}
+
+/* VIEW TOGGLE */
+.view-toggle{display:inline-flex;border:1px solid var(--border);border-radius:4px;overflow:hidden;flex-shrink:0;}
+.view-toggle button{background:transparent;border:none;padding:5px 9px;font-family:'Barlow Condensed',sans-serif;font-size:13px;cursor:pointer;color:var(--muted);line-height:1;}
+.view-toggle button.active{background:var(--accent);color:#fff;}
+.view-toggle button:not(.active):hover{color:var(--accent);}
+
+.inline-btn{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--muted);background:transparent;cursor:pointer;white-space:nowrap;transition:all .15s;}
+.inline-btn:hover{border-color:var(--accent);color:var(--accent);}
 
 /* TOAST */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg3);border:1px solid var(--accent);color:var(--text);padding:7px 16px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-size:12px;z-index:999;transition:transform .25s;white-space:nowrap;pointer-events:none;}
@@ -156,6 +185,10 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
         <button class="btn btn-outline" onclick="exportCSV()">CSV</button>
         <button id="undo-btn" class="btn btn-ghost" onclick="performUndo()" disabled style="opacity:0.35;" title="Sin acciones para deshacer">&#8630;</button>
         <button id="redo-btn" class="btn btn-ghost" onclick="performRedo()" disabled style="opacity:0.35;" title="Sin acciones para rehacer">&#8631;</button>
+        <div class="view-toggle">
+          <button id="vt-table" class="active" onclick="setViewMode('table')" title="Vista tabla">☰</button>
+          <button id="vt-mosaic" onclick="setViewMode('mosaic')" title="Vista mosaico">⊟</button>
+        </div>
         <button class="btn btn-ghost" onclick="toggleTheme()">&#9788;</button>
       </div>
     </div>
@@ -175,7 +208,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
       </div>
     </div>
   </div>
-
   <div class="divider" style="margin-top:8px;"></div>
   <div id="item-list" class="tbl-wrap"></div>
 </div>
@@ -190,53 +222,59 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
   </div>
   <div class="form-wrap">
 
-    <!-- DESCRIPCION + CODIGO -->
-    <div style="display:flex;gap:8px;margin-bottom:12px;">
-      <div style="flex:1;min-width:0;">
-        <div class="flabel">Descripcion</div>
-        <input class="finput" id="ff-desc" type="text" placeholder="ej: Picaporte 20cm inox...">
-      </div>
-      <div style="flex-shrink:0;width:80px;">
-        <div class="flabel">Codigo</div>
-        <input class="finput" id="ff-codigo" type="text" placeholder="ej: A12" maxlength="4" style="text-transform:uppercase;">
-      </div>
-    </div>
-
-    <!-- SWITCH MEDIO PICAPORTE -->
-    <div class="switch-row" id="switch-row" onclick="toggleMedio()">
-      <div class="switch-track" id="switch-track"><div class="switch-thumb"></div></div>
-      <div>
-        <div class="switch-label" id="switch-label">Medio picaporte</div>
-        <div class="switch-hint">Activar para diferenciar Derecha / Izquierda</div>
+    <!-- CODIGO + DESCRIPCION -->
+    <div class="fgrp-section">
+      <div class="flabel-section">Identificacion</div>
+      <div style="display:flex;gap:8px;">
+        <div style="flex-shrink:0;width:80px;">
+          <div class="flabel">Codigo</div>
+          <input class="finput" id="ff-codigo" type="text" placeholder="ej: A12" maxlength="4" style="text-transform:uppercase;">
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div class="flabel">Descripcion</div>
+          <input class="finput" id="ff-desc" type="text" placeholder="ej: Picaporte 20cm inox...">
+        </div>
       </div>
     </div>
 
     <!-- STOCK -->
-    <div class="stock-section">
-      <div class="stock-section-title">Stock</div>
-      <div id="stock-simple-inputs" class="stock-inputs">
-        <div class="stock-input-group">
+    <div class="fgrp-section">
+      <div class="flabel-section">Stock</div>
+      <div style="display:flex;gap:16px;justify-content:center;align-items:center;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
           <div class="stock-input-lbl" style="color:var(--muted);">Unidades</div>
-          <input class="stock-number" id="ff-stock" type="number" value="0" min="0">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <button type="button" class="stock-adj-btn" onclick="adjFormStock('ff-stock',-1)">−</button>
+            <input class="stock-number" id="ff-stock" type="number" value="0" min="0">
+            <button type="button" class="stock-adj-btn" onclick="adjFormStock('ff-stock',1)">+</button>
+          </div>
+        </div>
+        <div style="color:var(--dim);font-size:20px;font-weight:300;padding-top:18px;">/</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+          <div class="stock-input-lbl" style="color:var(--muted);">Cajas</div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <button type="button" class="stock-adj-btn" onclick="adjFormStock('ff-cajas',-1)">−</button>
+            <input class="stock-number" id="ff-cajas" type="number" value="0" min="0">
+            <button type="button" class="stock-adj-btn" onclick="adjFormStock('ff-cajas',1)">+</button>
+          </div>
         </div>
       </div>
-      <div id="stock-medio-inputs" class="stock-inputs" style="display:none;">
-        <div class="stock-input-group">
-          <div class="stock-input-lbl" style="color:#7abf9e;">Derecha</div>
-          <input class="stock-number" id="ff-stock-r" type="number" value="0" min="0">
-        </div>
-        <div class="stock-sep">/</div>
-        <div class="stock-input-group">
-          <div class="stock-input-lbl" style="color:#9ab3d4;">Izquierda</div>
-          <input class="stock-number" id="ff-stock-l" type="number" value="0" min="0">
+      <!-- CANTIDAD x CAJA -->
+      <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:10px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;text-align:center;">Cantidad x Caja</div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;">
+          <input class="stock-number" id="ff-cxc-new" type="number" min="1" placeholder="ej: 5" style="width:70px;font-size:14px;padding:6px 8px;">
+          <button type="button" onclick="addCxcOption()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:6px 12px;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;white-space:nowrap;" onmouseover="this.style.background='var(--accent)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='var(--accent)'">+ Agregar</button>
+          <div id="cxc-chips" style="display:flex;gap:5px;flex-wrap:wrap;"></div>
+          <button type="button" onclick="deleteCxcOption()" title="Eliminar opción seleccionada" style="background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--dim);cursor:pointer;font-size:13px;font-weight:700;width:26px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;transition:all .15s;" onmouseover="this.style.borderColor='#e05555';this.style.color='#e05555'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--dim)'">✕</button>
         </div>
       </div>
     </div>
 
     <!-- FOTO -->
-    <div class="fgrp">
-      <div class="flabel">Foto</div>
-      <div style="display:flex;align-items:center;gap:8px;">
+    <div class="fgrp-section">
+      <div class="flabel-section">Foto</div>
+      <div style="display:flex;align-items:center;gap:8px;justify-content:center;">
         <label style="cursor:pointer;">
           <span style="display:inline-flex;align-items:center;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:7px 14px;border-radius:4px;border:1px solid var(--border);color:var(--muted);background:var(--bg2);transition:all .15s;white-space:nowrap;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#128247; Subir foto</span>
           <input type="file" id="ff-photo" accept="image/*" onchange="handlePhoto(event)" style="display:none;">
@@ -252,6 +290,22 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
   </div>
 </div>
 
+<!-- MOSAIC MODAL -->
+<div class="mosaic-modal" id="mosaic-modal" onclick="closeMosaicModal(event)">
+  <div class="mosaic-modal-inner" id="mosaic-modal-inner">
+    <img class="mosaic-modal-img" id="mosaic-modal-img" src="" alt="" style="display:none;">
+    <button class="mosaic-modal-close" onclick="closeMosaicModal()">✕</button>
+    <div class="mosaic-modal-body">
+      <div class="mosaic-modal-desc" id="mosaic-modal-desc"></div>
+      <div class="mosaic-modal-meta" id="mosaic-modal-meta"></div>
+      <div class="mosaic-modal-actions">
+        <button class="abtn abtn-edit" id="mosaic-modal-edit">Editar</button>
+        <button class="abtn abtn-del" id="mosaic-modal-del">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -259,8 +313,12 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 var models = [];
 var editingId = null;
 var formPhoto = null;
-var formMedio = false;
+var formCxc = 20;
 var darkMode = true;
+var viewMode = 'table';
+
+var DEFAULT_CXC_OPTIONS = [10, 20];
+var cxcOptions = [];
 
 // ===== UNDO =====
 var UNDO_LIMIT = 20;
@@ -305,21 +363,21 @@ function updateRedoBtn(){
 // ===== STORAGE =====
 try{var s=localStorage.getItem('picaportes_models');if(s)models=JSON.parse(s);}catch(e){}
 try{var t=localStorage.getItem('picaportes_theme');if(t==='light'){darkMode=false;document.body.classList.add('light');}}catch(e){}
+try{var vm=localStorage.getItem('picaportes_viewmode');if(vm==='mosaic')viewMode='mosaic';}catch(e){}
+try{var co=localStorage.getItem('picaportes_cxc_options');if(co)cxcOptions=JSON.parse(co);}catch(e){}
+if(!cxcOptions.length) cxcOptions=DEFAULT_CXC_OPTIONS.slice();
 function saveModels(){try{localStorage.setItem('picaportes_models',JSON.stringify(models));}catch(e){}}
 
 // ===== HELPERS =====
 function getModel(id){for(var i=0;i<models.length;i++){if(models[i].id===id)return models[i];}return null;}
 function esc(str){if(str==null)return'';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
-// ===== SWITCH =====
-function toggleMedio(){formMedio=!formMedio;applyMedioUI();}
-function applyMedioUI(){
-  var track=document.getElementById('switch-track');
-  var row=document.getElementById('switch-row');
-  var simple=document.getElementById('stock-simple-inputs');
-  var medio=document.getElementById('stock-medio-inputs');
-  if(formMedio){track.className='switch-track on';row.className='switch-row active';simple.style.display='none';medio.style.display='flex';}
-  else{track.className='switch-track';row.className='switch-row';simple.style.display='flex';medio.style.display='none';}
+// ===== FORM STOCK ADJ =====
+function adjFormStock(fieldId, delta){
+  var inp=document.getElementById(fieldId);
+  if(!inp)return;
+  var val=Math.max(0,(parseInt(inp.value)||0)+delta);
+  inp.value=val;
 }
 
 // ===== PHOTO =====
@@ -334,14 +392,50 @@ function renderPhotoPreview(){
 }
 function removePhoto(){formPhoto=null;renderPhotoPreview();}
 
+// ===== CXC CHIPS =====
+function renderCxcChips(){
+  var wrap=document.getElementById('cxc-chips');if(!wrap)return;
+  var html='';
+  for(var i=0;i<cxcOptions.length;i++){
+    var v=cxcOptions[i];
+    var active=v===formCxc;
+    html+='<button type="button" onclick="selectCxc('+v+')" style="font-family:\'Barlow Condensed\',sans-serif;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;border:1px solid '+(active?'var(--accent)':'var(--border)')+';background:'+(active?'var(--accent)':'transparent')+';color:'+(active?'#fff':'var(--muted)')+';cursor:pointer;transition:all .15s;">'+v+'</button>';
+  }
+  wrap.innerHTML=html;
+}
+function selectCxc(v){
+  formCxc=v;
+  renderCxcChips();
+}
+function deleteCxcOption(){
+  if(cxcOptions.length<=1){showToast('Debe quedar al menos una opción');return;}
+  var idx=cxcOptions.indexOf(formCxc);
+  if(idx===-1)return;
+  cxcOptions.splice(idx,1);
+  try{localStorage.setItem('picaportes_cxc_options',JSON.stringify(cxcOptions));}catch(e){}
+  formCxc=cxcOptions[Math.max(0,idx-1)];
+  renderCxcChips();
+}
+function addCxcOption(){
+  var inp=document.getElementById('ff-cxc-new');
+  var v=parseInt(inp.value);
+  if(!v||v<1){showToast('Ingresa un número válido');return;}
+  if(cxcOptions.indexOf(v)!==-1){selectCxc(v);inp.value='';return;}
+  cxcOptions.push(v);
+  cxcOptions.sort(function(a,b){return a-b;});
+  try{localStorage.setItem('picaportes_cxc_options',JSON.stringify(cxcOptions));}catch(e){}
+  formCxc=v;
+  inp.value='';
+  renderCxcChips();
+}
+
 // ===== NAVIGATION =====
 function openForm(id){
-  editingId=id||null;formPhoto=null;formMedio=false;
+  editingId=id||null;formPhoto=null;formCxc=20;
   document.getElementById('ff-desc').value='';
   document.getElementById('ff-codigo').value='';
   document.getElementById('ff-stock').value=0;
-  document.getElementById('ff-stock-r').value=0;
-  document.getElementById('ff-stock-l').value=0;
+  document.getElementById('ff-cajas').value=0;
   document.getElementById('form-title-bar').textContent=id?'Editar Picaporte':'Nuevo Picaporte';
   document.getElementById('btn-save').textContent=id?'Guardar Cambios':'Guardar Picaporte';
   if(id){
@@ -349,13 +443,14 @@ function openForm(id){
     if(m){
       document.getElementById('ff-desc').value=m.descripcion||'';
       document.getElementById('ff-codigo').value=m.codigo||'';
-      formMedio=!!m.medio;
-      if(m.medio){document.getElementById('ff-stock-r').value=m.stockR||0;document.getElementById('ff-stock-l').value=m.stockL||0;}
-      else{document.getElementById('ff-stock').value=m.stock||0;}
+      document.getElementById('ff-stock').value=m.stock||0;
+      document.getElementById('ff-cajas').value=m.cajas||0;
+      formCxc=m.cxc||20;
       formPhoto=m.photo||null;
     }
   }
-  applyMedioUI();renderPhotoPreview();
+  renderCxcChips();
+  renderPhotoPreview();
   document.getElementById('page-catalog').style.display='none';
   document.getElementById('page-form').style.display='block';
   window.scrollTo(0,0);
@@ -374,12 +469,12 @@ function saveModel(){
     id:editingId||String(Date.now()),
     descripcion:desc,
     codigo:(document.getElementById('ff-codigo').value.trim().toUpperCase())||'',
-    medio:formMedio,
+    stock:parseInt(document.getElementById('ff-stock').value)||0,
+    cajas:parseInt(document.getElementById('ff-cajas').value)||0,
+    cxc:formCxc,
     photo:formPhoto,
     createdAt:editingId?(getModel(editingId)||{}).createdAt||Date.now():Date.now()
   };
-  if(formMedio){m.stockR=parseInt(document.getElementById('ff-stock-r').value)||0;m.stockL=parseInt(document.getElementById('ff-stock-l').value)||0;}
-  else{m.stock=parseInt(document.getElementById('ff-stock').value)||0;}
   if(editingId){
     for(var i=0;i<models.length;i++){if(models[i].id===editingId){pushUndo('Editar: '+desc);models[i]=m;break;}}
     showToast('Picaporte actualizado');
@@ -388,15 +483,6 @@ function saveModel(){
     showToast('Picaporte guardado');
   }
   saveModels();renderList();closeForm();
-}
-
-// ===== DUPLICATE =====
-function duplicateModel(id){
-  var src=getModel(id);if(!src)return;
-  var copy=JSON.parse(JSON.stringify(src));
-  copy.id=String(Date.now());copy.createdAt=Date.now();
-  pushUndo('Duplicar: '+(src.descripcion||'picaporte'));
-  models.push(copy);saveModels();renderList();showToast('Picaporte duplicado');
 }
 
 // ===== DELETE =====
@@ -409,26 +495,26 @@ function deleteModel(id){
 }
 
 // ===== QUICK STOCK =====
-function adjustStock(btn,modelId,side,delta){
+function adjustStock(btn,modelId,field,delta){
   var m=getModel(modelId);if(!m)return;
-  var label='';
-  if(m.medio){
-    if(side==='r'){m.stockR=Math.max(0,(m.stockR||0)+delta);label='D '+(delta>0?'+':'')+delta;}
-    else{m.stockL=Math.max(0,(m.stockL||0)+delta);label='I '+(delta>0?'+':'')+delta;}
-  } else {
-    m.stock=Math.max(0,(m.stock||0)+delta);label=(delta>0?'+':'')+delta;
-  }
-  pushUndo('Stock: '+esc(m.descripcion)+' '+label);
+  if(field==='cajas') m.cajas=Math.max(0,(m.cajas||0)+delta);
+  else m.stock=Math.max(0,(m.stock||0)+delta);
+  pushUndo('Stock: '+esc(m.descripcion)+' '+(field==='cajas'?'Cajas':'Uds')+' '+(delta>0?'+':'')+delta);
   saveModels();
   var span=btn.parentNode.querySelector('.qval');
   if(span){
-    var newVal=m.medio?(side==='r'?m.stockR:m.stockL):m.stock;
+    var newVal=field==='cajas'?m.cajas:m.stock;
     span.textContent=newVal;
-    if(newVal===0) span.className='qval stock-zero';
-    else if(m.medio) span.className='qval '+(side==='r'?'stock-r':'stock-l');
-    else span.className='qval stock-u';
+    span.className='qval '+(newVal===0?'stock-zero':'stock-u');
   }
   renderSummary();
+  var tc=document.getElementById('tbl-total-'+modelId);
+  if(tc){
+    var cxc=m.cxc||20;
+    var t=(m.cajas||0)*cxc+(m.stock||0);
+    tc.textContent=t;
+    tc.className=t===0?'stock-zero':'stock-u';
+  }
 }
 
 // ===== PHOTO TOGGLE =====
@@ -447,10 +533,7 @@ function resetAllStock(){
   if(resetStockPending){
     resetStockPending=false;
     pushUndo('Reset stock general');
-    for(var i=0;i<models.length;i++){
-      if(models[i].medio){models[i].stockR=0;models[i].stockL=0;}
-      else{models[i].stock=0;}
-    }
+    for(var i=0;i<models.length;i++){models[i].stock=0;models[i].cajas=0;}
     saveModels();renderList();showToast('Stock reseteado a cero');return;
   }
   resetStockPending=true;
@@ -467,14 +550,18 @@ function cancelResetStock(e){
 
 // ===== SUMMARY =====
 function renderSummary(){
-  var total=models.length,units=0;
+  var total=models.length,units=0,cajas=0,totalUds=0;
   for(var i=0;i<models.length;i++){
-    var m=models[i];
-    units+=m.medio?((m.stockR||0)+(m.stockL||0)):(m.stock||0);
+    var mi=models[i];
+    units+=(mi.stock||0);
+    cajas+=(mi.cajas||0);
+    totalUds+=(mi.cajas||0)*(mi.cxc||20)+(mi.stock||0);
   }
   document.getElementById('summary-bar').innerHTML=
     '<div class="summary-chip">Modelos: <span>'+total+'</span></div>'+
     '<div class="summary-chip">Unidades: <span>'+units+'</span></div>'+
+    '<div class="summary-chip">Cajas: <span>'+cajas+'</span></div>'+
+    '<div class="summary-chip">Total: <span>'+totalUds+'</span></div>'+
     '<div class="summary-chip alert" id="reset-stock-chip" title="Resetear todo el stock a cero">Reset stock</div>';
   var rc=document.getElementById('reset-stock-chip');
   if(rc)rc.addEventListener('click',resetAllStock);
@@ -501,11 +588,84 @@ function getFiltered(){
 var searchTimer=null;
 function debouncedRender(){if(searchTimer)clearTimeout(searchTimer);searchTimer=setTimeout(renderList,180);}
 
+// ===== VIEW MODE =====
+function setViewMode(mode){
+  viewMode=mode;
+  try{localStorage.setItem('picaportes_viewmode',mode);}catch(e){}
+  document.getElementById('vt-table').className=mode==='table'?'active':'';
+  document.getElementById('vt-mosaic').className=mode==='mosaic'?'active':'';
+  var il=document.getElementById('item-list');
+  if(il)il.className=mode==='mosaic'?'':'tbl-wrap';
+  renderList();
+}
+
+// ===== RENDER MOSAIC =====
+function renderMosaic(filtered){
+  var list=document.getElementById('item-list');
+  if(filtered.length===0){
+    list.innerHTML='<div class="empty-state"><div class="empty-icon">&#128273;</div><p>'+(models.length===0?'No hay picaportes cargados.<br>Toca <b>+ Agregar</b> para empezar.':'No hay resultados.')+'</p></div>';
+    return;
+  }
+  var html='<div class="mosaic-grid mosaic-small">';
+  for(var j=0;j<filtered.length;j++){
+    var m=filtered[j],mid=m.id;
+    var hasPhoto=!!m.photo;
+    var imgHtml=hasPhoto
+      ?'<img src="'+m.photo+'" loading="lazy" alt="'+esc(m.descripcion||'')+'">'
+      :'<span class="mosaic-no-img">&#128273;</span>';
+    var stockStr='Uds: '+(m.stock||0)+'  Cajas: '+(m.cajas||0);
+    html+='<div class="mosaic-card'+(hasPhoto?'':' no-photo')+'" onclick="openMosaicModal(\''+mid+'\')">'
+      +'<div class="mosaic-img-wrap">'+imgHtml+'</div>'
+      +'<div class="mosaic-info">'
+      +(m.codigo?'<div class="mosaic-code">'+esc(m.codigo)+'</div>':'')
+      +'<div class="mosaic-desc">'+(m.descripcion?esc(m.descripcion):'Sin descripcion')+'</div>'
+      +'<div class="mosaic-stock">'+stockStr+'</div>'
+      +'</div>'
+      +'</div>';
+  }
+  html+='</div>';
+  list.innerHTML=html;
+}
+
+// ===== MOSAIC MODAL =====
+function openMosaicModal(id){
+  var m=getModel(id);if(!m)return;
+  var modal=document.getElementById('mosaic-modal');
+  var imgEl=document.getElementById('mosaic-modal-img');
+  var descEl=document.getElementById('mosaic-modal-desc');
+  var metaEl=document.getElementById('mosaic-modal-meta');
+  var editBtn=document.getElementById('mosaic-modal-edit');
+  var delBtn=document.getElementById('mosaic-modal-del');
+  if(m.photo){imgEl.src=m.photo;imgEl.style.display='block';}
+  else{imgEl.src='';imgEl.style.display='none';}
+  descEl.textContent=(m.descripcion||'Sin descripcion');
+  var metaHtml='';
+  if(m.codigo) metaHtml+='<span class="mosaic-tag">'+esc(m.codigo)+'</span>';
+  metaHtml+='<span class="mosaic-tag" style="color:var(--text);">Uds: '+(m.stock||0)+'</span>';
+  metaHtml+='<span class="mosaic-tag" style="color:var(--text);">Cajas: '+(m.cajas||0)+'</span>';
+  metaEl.innerHTML=metaHtml;
+  editBtn.onclick=function(){closeMosaicModal();openForm(id);};
+  delBtn.onclick=function(){closeMosaicModal();deleteModel(id);};
+  modal.className='mosaic-modal open';
+  document.body.style.overflow='hidden';
+}
+function closeMosaicModal(e){
+  if(e&&e.target!==document.getElementById('mosaic-modal'))return;
+  document.getElementById('mosaic-modal').className='mosaic-modal';
+  document.body.style.overflow='';
+}
+
 // ===== RENDER =====
 function renderList(){
   renderSummary();
   var filtered=getFiltered();
   var list=document.getElementById('item-list');
+  if(viewMode==='mosaic'){
+    list.className='';
+    renderMosaic(filtered);
+    return;
+  }
+  list.className='tbl-wrap';
   if(filtered.length===0){
     list.innerHTML='<div class="empty-state"><div class="empty-icon">&#128273;</div><p>'+(models.length===0?'No hay picaportes cargados.<br>Toca <b>+ Agregar</b> para empezar.':'No hay resultados.')+'</p></div>';
     return;
@@ -514,7 +674,9 @@ function renderList(){
   var html='<table class="tbl"><thead><tr>'
     +'<th>Cod</th>'
     +'<th>Descripcion</th>'
-    +'<th>Stock</th>'
+    +'<th>Uds</th>'
+    +'<th>Cajas</th>'
+    +'<th>Total</th>'
     +'<th></th>'
     +'</tr></thead><tbody>';
 
@@ -523,43 +685,35 @@ function renderList(){
     var isOdd=(j%2===1);
     var oddCls=isOdd?'tbl-main tbl-odd':'tbl-main';
 
-    // Stock cell
-    var stockCell='';
-    if(m.medio){
-      var rCls=(m.stockR||0)===0?'stock-zero':'stock-r';
-      var lCls=(m.stockL||0)===0?'stock-zero':'stock-l';
-      stockCell='<div class="medio-stock">'
-        +'<span class="medio-lbl" style="color:#7abf9e;">D</span>'
-        +'<div class="qbtns"><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'r\',-1)">-</button><span class="qval '+rCls+'">'+(m.stockR||0)+'</span><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'r\',1)">+</button></div>'
-        +'<span style="color:var(--dim);font-size:10px;">|</span>'
-        +'<span class="medio-lbl" style="color:#9ab3d4;">I</span>'
-        +'<div class="qbtns"><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'l\',-1)">-</button><span class="qval '+lCls+'">'+(m.stockL||0)+'</span><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'l\',1)">+</button></div>'
-        +'</div>';
-    } else {
-      var uCls=(m.stock||0)===0?'stock-zero':'stock-u';
-      stockCell='<div class="qbtns"><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'u\',-1)">-</button><span class="qval '+uCls+'">'+(m.stock||0)+'</span><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'u\',1)">+</button></div>';
-    }
+    var uCls=(m.stock||0)===0?'stock-zero':'stock-u';
+    var cCls=(m.cajas||0)===0?'stock-zero':'stock-u';
+    var stockCell='<div class="qbtns"><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'stock\',-1)">-</button><span class="qval '+uCls+'">'+(m.stock||0)+'</span><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'stock\',1)">+</button></div>';
+    var cajasCell='<div class="qbtns"><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'cajas\',-1)">-</button><span class="qval '+cCls+'">'+(m.cajas||0)+'</span><button class="qbtn" onclick="adjustStock(this,\''+mid+'\',\'cajas\',1)">+</button></div>';
 
     // Actions cell
     var photoBtn=m.photo?'<button class="photo-btn" id="phbtn-'+mid+'" onclick="togglePhoto(\''+mid+'\')">▼ Foto</button>':'';
     var actCell='<div style="display:flex;gap:3px;align-items:center;flex-wrap:nowrap;">'
       +photoBtn
       +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')">Editar</button>'
-      +'<button class="abtn abtn-dup" onclick="duplicateModel(\''+mid+'\')">Copiar</button>'
       +'<button class="abtn abtn-del" onclick="deleteModel(\''+mid+'\')">Eliminar</button>'
       +'</div>';
+
+    var total=(m.cajas||0)*(m.cxc||20)+(m.stock||0);
+    var totalCls=total===0?'stock-zero':'stock-u';
 
     html+='<tr class="'+oddCls+'">'
       +'<td class="td-code">'+(m.codigo?esc(m.codigo):'<span style="color:var(--dim)">—</span>')+'</td>'
       +'<td class="td-desc">'+esc(m.descripcion||'—')+'</td>'
       +'<td style="white-space:nowrap;">'+stockCell+'</td>'
+      +'<td style="white-space:nowrap;">'+cajasCell+'</td>'
+      +'<td style="text-align:center;font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:12px;" id="tbl-total-'+mid+'" class="'+totalCls+'">'+total+'</td>'
       +'<td>'+actCell+'</td>'
       +'</tr>';
 
     // Photo expand row (only if has photo)
     if(m.photo){
       var photoBg=isOdd?'background:var(--bg3);':'';
-      html+='<tr class="tbl-photo-row"><td colspan="4" style="'+photoBg+'">'
+      html+='<tr class="tbl-photo-row"><td colspan="6" style="'+photoBg+'">'
         +'<div class="photo-expand" id="ph-'+mid+'">'
         +'<img src="'+m.photo+'" alt="'+esc(m.descripcion||'')+'" loading="lazy">'
         +'</div>'
@@ -614,11 +768,10 @@ function importJSON(e){
 function exportCSV(){
   try{
     var data=getExportModels();
-    var rows=[['Codigo','Descripcion','Tipo','Derecha / Unidades','Izquierda','Total']];
+    var rows=[['Codigo','Descripcion','Unidades','Cajas']];
     for(var i=0;i<data.length;i++){
       var m=data[i];
-      if(m.medio)rows.push([m.codigo||'',m.descripcion||'','Medio picaporte',m.stockR||0,m.stockL||0,(m.stockR||0)+(m.stockL||0)]);
-      else rows.push([m.codigo||'',m.descripcion||'','Completo',m.stock||0,'',m.stock||0]);
+      rows.push([m.codigo||'',m.descripcion||'',m.stock||0,m.cajas||0]);
     }
     var csv=rows.map(function(r){return r.map(function(c){var s=String(c);return s.indexOf(',')!==-1||s.indexOf('"')!==-1||s.indexOf('\n')!==-1?'"'+s.replace(/"/g,'""')+'"':s;}).join(',');}).join('\r\n');
     var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
@@ -634,10 +787,7 @@ function exportPDF(){
   var rows='';
   for(var i=0;i<data.length;i++){
     var m=data[i],rc=(i%2===1)?'even':'';
-    var stockHtml='';
-    if(m.medio)stockHtml='D: '+(m.stockR||0)+'&nbsp;&nbsp;I: '+(m.stockL||0)+'&nbsp;&nbsp;Total: '+((m.stockR||0)+(m.stockL||0));
-    else stockHtml='Unidades: '+(m.stock||0);
-    rows+='<tr class="'+rc+'"><td>'+(m.codigo?esc(m.codigo):'—')+'</td><td>'+esc(m.descripcion||'-')+'</td><td>'+(m.medio?'Medio':'Completo')+'</td><td>'+stockHtml+'</td></tr>';
+    rows+='<tr class="'+rc+'"><td>'+(m.codigo?esc(m.codigo):'—')+'</td><td>'+esc(m.descripcion||'-')+'</td><td>'+(m.stock||0)+'</td><td>'+(m.cajas||0)+'</td></tr>';
   }
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Catalogo de Picaportes</title><style>'
     +'body{font-family:Arial,sans-serif;padding:20px;font-size:12px;max-width:640px;margin:0 auto;}'
@@ -646,7 +796,7 @@ function exportPDF(){
     +'td{padding:5px 6px;border-bottom:1px solid #eee;vertical-align:middle;}tr.even td{background:#fdf5ef;}'
     +'</style></head><body>'
     +'<h1>Catalogo de Picaportes <span>'+data.length+' modelo'+(data.length!==1?'s':'')+'</span></h1>'
-    +'<table><thead><tr><th>Cod</th><th>Descripcion</th><th>Tipo</th><th>Stock</th></tr></thead><tbody>'+rows+'</tbody></table></body></html>';
+    +'<table><thead><tr><th>Cod</th><th>Descripcion</th><th>Unidades</th><th>Cajas</th></tr></thead><tbody>'+rows+'</tbody></table></body></html>';
   var win=window.open('','_blank');
   if(win){win.document.write(html);win.document.close();}
   else{var blob=new Blob([html],{type:'text/html'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='catalogo-picaportes.html';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(url);},1000);}
@@ -675,6 +825,10 @@ document.addEventListener('keydown',function(e){
 });
 
 // ===== INIT =====
+if(viewMode==='mosaic'){
+  document.getElementById('vt-table').className='';
+  document.getElementById('vt-mosaic').className='active';
+}
 renderList();
 </script>
 </body>
