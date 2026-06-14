@@ -7,7 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTQwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iIzExMSIgcng9IjgiLz48cmVjdCB4PSIxMiIgeT0iMTIiIHdpZHRoPSI3NiIgaGVpZ2h0PSIxMTYiIGZpbGw9IndoaXRlIi8+PHBvbHlnb24gcG9pbnRzPSIxMiwxMiA1NSwxMiAxMiw1MiIgZmlsbD0iIzRhOGZkNCIvPjxkZWZzPjxjbGlwUGF0aCBpZD0iYyI+PHJlY3QgeD0iMTIiIHk9IjEyIiB3aWR0aD0iNzYiIGhlaWdodD0iMTE2Ii8+PC9jbGlwUGF0aD48L2RlZnM+PGcgY2xpcC1wYXRoPSJ1cmwoI2MpIj48bGluZSB4MT0iLTEwIiB5MT0iMTAwIiB4Mj0iMTEwIiB5Mj0iLTIwIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjgiLz48bGluZSB4MT0iLTEwIiB5MT0iMTMwIiB4Mj0iMTEwIiB5Mj0iMTAiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iOCIvPjxsaW5lIHgxPSItMTAiIHkxPSIxNjAiIHgyPSIxMTAiIHkyPSI0MCIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSI4Ii8+PC9nPjwvc3ZnPg==">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Barlow:wght@400;500&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0f0f0f;--bg2:#181818;--bg3:#222;--border:#2e2e2e;--accent:#d4711f;--al:#e8833a;--text:#e8e0d8;--muted:#7a7268;--dim:#4a4540;--tbg:#2a2218;--tbd:#3d3020;--zero:#8c3a3a;}
+:root{--bg:#0f0f0f;--bg2:#181818;--bg3:#222;--border:#2e2e2e;--accent:#d4711f;--al:#e8833a;--text:#e8e0d8;--muted:#7a7268;--dim:#4a4540;--tbg:#2a2218;--tbd:#3d3020;--zero:#8c3a3a;--color-fab:#d4921f;--color-danger:#e05555;--color-stock-r:#7abf9e;--color-stock-l:#9ab3d4;--color-marco:#7a9dc8;}
 body.light{--bg:#f4f1ed;--bg2:#fff;--bg3:#ede9e3;--border:#d8d2c8;--text:#2a2218;--muted:#7a6a58;--dim:#b0a090;--tbg:#f0ebe3;--tbd:#d8cfc4;--zero:#c0392b;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;min-height:100vh;}
@@ -53,8 +53,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .filter-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;}
 .inline-btn{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--muted);background:transparent;cursor:pointer;white-space:nowrap;transition:all .15s;min-width:80px;text-align:center;}
 .inline-btn:hover{border-color:var(--accent);color:var(--accent);}
-.filter-selects{display:flex;flex-direction:column;gap:5px;margin-top:7px;}
-.fsel{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:7px 10px;color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:12px;outline:none;cursor:pointer;}
 .divider{height:1px;background:var(--border);margin:0 12px;}
 
 /* CARDS */
@@ -73,28 +71,21 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .door-desc-row{font-size:13px;color:var(--text);font-style:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .ftag{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;padding:1px 6px;border-radius:3px;background:var(--tbg);border:1px solid var(--tbd);color:var(--muted);flex-shrink:0;}
 /* Fábrica + Línea: naranja */
-.ftag-fab{background:rgba(212,113,31,0.12);border-color:rgba(212,113,31,0.4);color:#d4921f;}
+.ftag-fab{background:rgba(212,113,31,0.12);border-color:rgba(212,113,31,0.4);color:var(--color-fab);}
 /* Marco: azul */
-.ftag-marco{background:rgba(80,120,200,0.12);border-color:rgba(80,120,200,0.4);color:#7a9dc8;}
+.ftag-marco{background:rgba(80,120,200,0.12);border-color:rgba(80,120,200,0.4);color:var(--color-marco);}
 /* Color: verde */
-.ftag-color{background:rgba(90,160,100,0.12);border-color:rgba(90,160,100,0.4);color:#7abf9e;}
+.ftag-color{background:rgba(90,160,100,0.12);border-color:rgba(90,160,100,0.4);color:var(--color-stock-r);}
 /* tabla tags */
 .tbl-ftag{font-size:9px;font-weight:600;padding:1px 4px;border-radius:2px;background:var(--tbg);border:1px solid var(--tbd);color:var(--muted);white-space:nowrap;display:inline-block;}
-.tbl-ftag-fab{background:rgba(212,113,31,0.12);border-color:rgba(212,113,31,0.4);color:#d4921f;}
-.tbl-ftag-marco{background:rgba(80,120,200,0.12);border-color:rgba(80,120,200,0.4);color:#7a9dc8;}
-.tbl-ftag-color{background:rgba(90,160,100,0.12);border-color:rgba(90,160,100,0.4);color:#7abf9e;}
+.tbl-ftag-fab{background:rgba(212,113,31,0.12);border-color:rgba(212,113,31,0.4);color:var(--color-fab);}
+.tbl-ftag-marco{background:rgba(80,120,200,0.12);border-color:rgba(80,120,200,0.4);color:var(--color-marco);}
+.tbl-ftag-color{background:rgba(90,160,100,0.12);border-color:rgba(90,160,100,0.4);color:var(--color-stock-r);}
 /* subpanel de líneas en panel flotante */
 .gp-lineas-panel{display:none;margin-top:6px;padding:8px;background:var(--bg3);border-radius:4px;border:1px solid var(--border);}
 .gp-lineas-panel.open{display:block;}
-.gp-fab-row{display:flex;align-items:center;justify-content:space-between;padding:5px 6px;border-radius:4px;background:var(--bg3);}
-.gp-fab-name{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .gp-fab-toggle{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
 .gp-fab-toggle:hover,.gp-fab-toggle.open{border-color:var(--accent);color:var(--accent);}
-.gp-fab-del{background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:11px;padding:0 0 0 4px;line-height:1;flex-shrink:0;}
-.gp-fab-del:hover{color:#e05555;}
-
-
-
 
 .door-name{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;color:var(--text);flex-shrink:0;}
 .cnt-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--dim);flex-shrink:0;}
@@ -105,14 +96,13 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .size-chip{font-family:'Barlow Condensed',sans-serif;font-size:9px;display:flex;align-items:center;gap:2px;padding:2px 4px;background:var(--bg2);}
 .size-val{color:var(--text);font-weight:700;}
 .ssep{color:var(--dim);font-size:8px;}
-.stock-r{color:#7abf9e;}
-.stock-l{color:#9ab3d4;}
+.stock-r{color:var(--color-stock-r);}
+.stock-l{color:var(--color-stock-l);}
 .stock-zero{color:var(--zero);font-weight:700;}
 .qbtns{display:flex;align-items:center;gap:1px;}
 .qbtn{background:var(--bg3);border:1px solid var(--border);border-radius:2px;color:var(--muted);cursor:pointer;font-size:9px;font-weight:700;width:14px;height:14px;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;}
 .qbtn:active{background:var(--accent);color:#fff;border-color:var(--accent);}
 .qval{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;min-width:12px;text-align:center;}
-.card-photo-img{width:100%;max-height:200px;object-fit:contain;border-radius:4px;border:1px solid var(--border);background:var(--bg3);margin-top:6px;}
 
 /* CARD ACTIONS */
 .abtn{background:transparent;border:1px solid transparent;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:3px 7px;border-radius:3px;white-space:nowrap;transition:all .15s;}
@@ -123,8 +113,8 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .abtn-dup:hover{color:var(--muted);border-color:var(--muted);}
 .abtn-dup:active{color:var(--accent);border-color:var(--accent);}
 .abtn-del{color:var(--dim);border-color:var(--border);}
-.abtn-del:hover{color:#e05555;border-color:#e05555;}
-.abtn-del:active{background:#e05555;color:#fff;border-color:#e05555;}
+.abtn-del:hover{color:var(--color-danger);border-color:var(--color-danger);}
+.abtn-del:active{background:var(--color-danger);color:#fff;border-color:var(--color-danger);}
 .abtn-exp{color:var(--dim);border-color:var(--border);font-size:12px;padding:3px 6px;}
 .abtn-exp:hover{color:var(--muted);border-color:var(--muted);}
 .abtn-exp.open{color:var(--accent);border-color:var(--accent);}
@@ -137,7 +127,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .totals-grid{display:flex;flex-wrap:wrap;gap:5px;}
 .tchip{font-family:'Barlow Condensed',sans-serif;font-size:11px;padding:3px 9px;border-radius:3px;border:1px solid var(--border);background:var(--bg3);color:var(--muted);}
 .tchip b{color:var(--text);}
-.tr{color:#7abf9e;}.tl{color:#9ab3d4;}
+.tr{color:var(--color-stock-r);}.tl{color:var(--color-stock-l);}
 
 /* EMPTY */
 .empty-state{text-align:center;padding:40px 20px;}
@@ -171,11 +161,11 @@ select.finput{cursor:pointer;}
 .ssep2{color:var(--dim);font-size:10px;flex-shrink:0;}
 .stinput-wrap{display:flex;align-items:stretch;border:1px solid var(--border);border-radius:3px;overflow:hidden;flex-shrink:0;width:62px;}
 .stinput-lbl{background:var(--bg2);border-right:1px solid var(--border);padding:0 5px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:var(--muted);display:flex;align-items:center;flex-shrink:0;}
-.stinput-lbl.lbl-r{color:#7abf9e;}
-.stinput-lbl.lbl-l{color:#9ab3d4;}
+.stinput-lbl.lbl-r{color:var(--color-stock-r);}
+.stinput-lbl.lbl-l{color:var(--color-stock-l);}
 .stinput-bare{background:var(--bg3);border:none;padding:6px 4px;color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:12px;outline:none;width:100%;text-align:center;}
 .rmbtn{background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px;padding:2px 4px;flex-shrink:0;}
-.rmbtn:active{color:#e05555;}
+.rmbtn:active{color:var(--color-danger);}
 .addbtn{background:transparent;border:1px solid var(--accent);color:var(--accent);border-radius:3px;width:30px;height:30px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .addbtn:active{background:var(--accent);color:#fff;}
 
@@ -190,7 +180,7 @@ select.finput{cursor:pointer;}
 .manage-list{margin-top:8px;display:flex;flex-direction:column;gap:4px;}
 .manage-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--text);}
 .manage-del{background:none;border:none;color:var(--dim);cursor:pointer;font-size:13px;font-weight:700;padding:2px 6px;flex-shrink:0;}
-.manage-del:active{color:#e05555;}
+.manage-del:active{color:var(--color-danger);}
 .manage-empty{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--dim);font-style:italic;padding:4px 0;}
 
 /* TOAST */
@@ -290,24 +280,22 @@ select.finput{cursor:pointer;}
 .gp-item{display:flex;align-items:center;justify-content:space-between;padding:4px 6px;border-radius:4px;background:var(--bg3);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;color:var(--text);overflow:hidden;}
 .gp-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
 .gp-item-del{background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:11px;padding:0 0 0 3px;line-height:1;flex-shrink:0;}
-.gp-item-del:hover{color:#e05555;}
+.gp-item-del:hover{color:var(--color-danger);}
 
 /* SHARED BUTTON CLASSES */
 .btn-panel-add{padding:0 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:4px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
 .btn-panel-add:hover{background:var(--accent);color:#fff;}
-.pill-danger{border-color:#e05555 !important;color:#e05555 !important;cursor:pointer !important;}
-.pill-danger:hover{background:#e05555 !important;color:#fff !important;}
+.pill-danger{border-color:var(--color-danger) !important;color:var(--color-danger) !important;cursor:pointer !important;}
+.pill-danger:hover{background:var(--color-danger) !important;color:#fff !important;}
 /* MEDIDAS CHIPS */
 .medidas-chips{display:flex;flex-wrap:nowrap;gap:4px;margin-bottom:8px;overflow-x:auto;}
 .medida-chip{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;padding:3px 7px;border-radius:4px;border:1px solid var(--border);background:var(--bg3);color:var(--muted);cursor:pointer;transition:all .15s;letter-spacing:0.04em;white-space:nowrap;flex-shrink:0;}
 .medida-chip:hover{border-color:var(--accent);color:var(--accent);}
 .medida-chip.selected{background:var(--accent);border-color:var(--accent);color:#fff;}
-.medida-chip.custom-chip{border-style:dashed;}
 
 /* FABRICA DROPDOWN CUSTOM */
 .fabrica-opt{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;padding:5px 8px;border-radius:4px;border:none;background:transparent;color:var(--muted);cursor:pointer;text-align:left;transition:all .12s;width:100%;}
 .fabrica-opt:hover{background:var(--bg3);color:var(--text);}
-.fabrica-opt.fabrica-opt-sel{background:var(--accent);color:#fff;}
 .mosaic-grid.mosaic-small{grid-template-columns:1fr 1fr 1fr;}
 .mosaic-grid.mosaic-small .mosaic-desc{font-size:10px;}
 .mosaic-grid.mosaic-small .mosaic-fab{font-size:9px;}
@@ -320,14 +308,14 @@ select.finput{cursor:pointer;}
 </head>
 <body>
   <!-- ===== CATALOG PAGE ===== -->
-  <div id="page-catalog">
+  <div id="page-catalog" role="main">
     <div class="topbar">
       <div class="topbar-inner">
         <!-- Fila 1: navegación + título + temporal -->
         <div style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;">
-          <button class="btn btn-ghost" onclick="backupJSON()" title="Descargar backup completo" style="font-size:11px;">⬇ Backup</button>
+          <button class="btn btn-ghost" onclick="backupJSON()" title="Descargar backup completo" aria-label="Descargar backup completo" style="font-size:11px;">⬇ Backup</button>
           <label class="btn btn-ghost" style="cursor:pointer;font-size:11px;" title="Restaurar desde backup">⬆ Restaurar<input type="file" accept=".json" style="display:none;" onchange="restoreJSON(event)"></label>
-          <a href="index.html" class="btn btn-ghost" style="text-decoration:none;">⌂</a>
+          <a href="index.html" class="btn btn-ghost" style="text-decoration:none;" aria-label="Ir al inicio">⌂</a>
           <button class="btn btn-ghost" onclick="doLogout()" style="color:var(--dim);" title="Cerrar sesión">Salir</button>
           <div class="topbar-title">Puertas</div>
           <button class="btn btn-outline" onclick="openTemporal()" id="btn-temporal" style="border-color:#7abf9e;color:#7abf9e;">⏱ Temporal</button>
@@ -336,14 +324,14 @@ select.finput{cursor:pointer;}
         <div style="display:flex;align-items:center;justify-content:center;gap:5px;width:100%;">
           <button class="btn btn-ghost" onclick="exportPDF()">PDF</button>
           <button class="btn btn-outline" onclick="exportCSV()">CSV</button>
-          <button id="undo-btn" class="btn btn-ghost" onclick="performUndo()" disabled style="opacity:0.35;" title="Sin acciones para deshacer">&#8630;</button>
-          <button id="redo-btn" class="btn btn-ghost" onclick="performRedo()" disabled style="opacity:0.35;" title="Sin acciones para rehacer">&#8631;</button>
+          <button id="undo-btn" class="btn btn-ghost" onclick="performUndo()" disabled style="opacity:0.35;" title="Sin acciones para deshacer" aria-label="Deshacer">&#8630;</button>
+          <button id="redo-btn" class="btn btn-ghost" onclick="performRedo()" disabled style="opacity:0.35;" title="Sin acciones para rehacer" aria-label="Rehacer">&#8631;</button>
           <div class="view-toggle">
-            <button id="vt-cards" class="active" onclick="setViewMode('cards')" title="Vista cards">▦</button>
-            <button id="vt-table" onclick="setViewMode('table')" title="Vista tabla">☰</button>
-            <button id="vt-mosaic" onclick="setViewMode('mosaic')" title="Vista mosaico">⊟</button>
+            <button id="vt-cards" class="active" onclick="setViewMode('cards')" title="Vista cards" aria-label="Vista de tarjetas">▦</button>
+            <button id="vt-table" onclick="setViewMode('table')" title="Vista tabla" aria-label="Vista de tabla">☰</button>
+            <button id="vt-mosaic" onclick="setViewMode('mosaic')" title="Vista mosaico" aria-label="Vista de mosaico">⊟</button>
           </div>
-          <button class="btn btn-ghost" onclick="toggleTheme()">&#9788;</button>
+          <button class="btn btn-ghost" onclick="toggleTheme()" aria-label="Cambiar tema claro/oscuro">&#9788;</button>
           <div style="width:1px;height:20px;background:var(--border);margin:0 2px;flex-shrink:0;"></div>
           <button id="btn-nuevo" class="btn btn-accent" onclick="openForm(null)">+ Nuevo</button>
           <button class="btn btn-outline" onclick="openGlobalPanel()">Actualizar</button>
@@ -424,17 +412,17 @@ select.finput{cursor:pointer;}
       </div>
     </div>
     <div class="divider"></div>
-    <div class="door-list" id="door-list"></div>
+    <div class="door-list" id="door-list" role="list" aria-label="Catálogo de puertas"></div>
   </div>
 
   <!-- ===== FORM PAGE ===== -->
-  <div id="page-form">
+  <div id="page-form" role="main">
     <div class="topbar">
       <div class="topbar-inner" style="flex-direction:row;justify-content:space-between;">
         <div class="topbar-title" id="form-title-bar">Nuevo Modelo</div>
         <div class="topbar-actions">
           <button class="btn btn-outline" onclick="openGlobalPanel()">Actualizar</button>
-          <button class="btn btn-ghost" onclick="toggleTheme()">&#9788;</button>
+          <button class="btn btn-ghost" onclick="toggleTheme()" aria-label="Cambiar tema claro/oscuro">&#9788;</button>
           <button class="btn btn-ghost" onclick="closeForm()">&#8592; Volver</button>
         </div>
       </div>
@@ -488,7 +476,7 @@ select.finput{cursor:pointer;}
           <button id="remove-photo-btn" onclick="removePhoto()" style="display:none;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;padding:7px 10px;border:1px solid var(--border);color:var(--dim);background:transparent;border-radius:4px;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='#e05555';this.style.color='#e05555'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--dim)'">&#10005; Quitar</button>
         </div>
         <div id="photo-wrap" style="display:none;margin-top:6px;">
-          <img id="photo-preview" style="width:100%;max-height:160px;object-fit:contain;border-radius:4px;border:1px solid var(--border);background:var(--bg3);">
+          <img id="photo-preview" alt="Vista previa de la foto del modelo" style="width:100%;max-height:160px;object-fit:contain;border-radius:4px;border:1px solid var(--border);background:var(--bg3);">
         </div>
       </div>
 
@@ -502,9 +490,9 @@ select.finput{cursor:pointer;}
     <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px 10px;border-bottom:1px solid var(--border);">
       <span style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);">Actualizar Listas</span>
       <div style="display:flex;align-items:center;gap:6px;">
-        <button id="gp-undo-btn" onclick="performUndo()" class="btn btn-ghost" style="opacity:0.35;" disabled title="Deshacer">&#8630;</button>
-        <button id="gp-redo-btn" onclick="performRedo()" class="btn btn-ghost" style="opacity:0.35;" disabled title="Rehacer">&#8631;</button>
-        <button onclick="closeGlobalPanel()" style="background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;">✕</button>
+        <button id="gp-undo-btn" onclick="performUndo()" class="btn btn-ghost" style="opacity:0.35;" disabled title="Deshacer" aria-label="Deshacer">&#8630;</button>
+        <button id="gp-redo-btn" onclick="performRedo()" class="btn btn-ghost" style="opacity:0.35;" disabled title="Rehacer" aria-label="Rehacer">&#8631;</button>
+        <button onclick="closeGlobalPanel()" aria-label="Cerrar panel" style="background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;">✕</button>
       </div>
     </div>
     <div style="padding:14px;display:flex;flex-direction:column;gap:18px;">
@@ -564,7 +552,7 @@ select.finput{cursor:pointer;}
   <div class="pdf-preview-box">
     <div class="pdf-preview-header">
       <span class="pdf-preview-title" id="pdf-preview-title">Vista previa</span>
-      <button onclick="closePdfPreview()" style="background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;">✕</button>
+      <button onclick="closePdfPreview()" aria-label="Cerrar vista previa" style="background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;">✕</button>
     </div>
     <div class="pdf-preview-body">
       <table class="pdf-preview-table" id="pdf-preview-table"></table>
@@ -611,11 +599,11 @@ select.finput{cursor:pointer;}
       <div style="display:flex;align-items:center;justify-content:center;gap:5px;width:100%;">
         <button class="btn btn-ghost" onclick="exportTempPDF()">PDF</button>
         <button class="btn btn-ghost" onclick="exportTempCSV()">CSV</button>
-        <button id="temp-undo-btn" class="btn btn-ghost" onclick="performTempUndo()" disabled style="opacity:0.35;">&#8630;</button>
-        <button id="temp-redo-btn" class="btn btn-ghost" onclick="performTempRedo()" disabled style="opacity:0.35;">&#8631;</button>
+        <button id="temp-undo-btn" class="btn btn-ghost" onclick="performTempUndo()" disabled style="opacity:0.35;" aria-label="Deshacer">&#8630;</button>
+        <button id="temp-redo-btn" class="btn btn-ghost" onclick="performTempRedo()" disabled style="opacity:0.35;" aria-label="Rehacer">&#8631;</button>
         <div class="view-toggle">
-          <button id="tvt-cards" class="active" onclick="setTempViewMode('cards')" title="Vista cards">▦</button>
-          <button id="tvt-table" onclick="setTempViewMode('table')" title="Vista tabla">☰</button>
+          <button id="tvt-cards" class="active" onclick="setTempViewMode('cards')" title="Vista cards" aria-label="Vista de tarjetas">▦</button>
+          <button id="tvt-table" onclick="setTempViewMode('table')" title="Vista tabla" aria-label="Vista de tabla">☰</button>
         </div>
         <button class="btn btn-ghost" onclick="toggleTheme()">&#9788;</button>
         <div style="width:1px;height:20px;background:var(--border);margin:0 2px;flex-shrink:0;"></div>
@@ -637,7 +625,7 @@ select.finput{cursor:pointer;}
 </div>
 
 <!-- ===== TEMPORAL FORM PAGE ===== -->
-<div id="page-temp-form" style="display:none;">
+<div id="page-temp-form" style="display:none;" role="main">
   <div class="topbar">
     <div class="topbar-inner" style="flex-direction:row;justify-content:space-between;">
       <div class="topbar-title" id="temp-form-title-bar" style="color:#7abf9e;">Nuevo Modelo Temporal</div>
@@ -717,21 +705,12 @@ var viewMode = 'cards';
 var groupBy = 'none';
 
 // ===== UNDO HISTORY =====
-var UNDO_LIMIT = 10;
+const UNDO_LIMIT = 10;
 var undoHistory = [];
 var redoHistory = [];
 
 function pushUndo(label){
-  undoHistory.push({
-    label: label,
-    models: cloneModelsLight(models),
-    colors: colors.slice(),
-    marcos: marcos.slice(),
-    fabricas: fabricas.slice(),
-    lineas: JSON.parse(JSON.stringify(lineas)),
-    medidas: medidas.slice(),
-    tempModels: cloneModelsLight(tempModels)
-  });
+  undoHistory.push(_captureState(label));
   if(undoHistory.length > UNDO_LIMIT) undoHistory.shift();
   redoHistory = [];
   updateUndoBtn();
@@ -759,11 +738,9 @@ function restoreOpenCards(open){
   }
 }
 
-function performUndo(){
-  if(undoHistory.length===0) return;
-  var open=getOpenCards();
-  redoHistory.push({
-    label: undoHistory[undoHistory.length-1].label,
+function _captureState(label){
+  return {
+    label: label,
     models: cloneModelsLight(models),
     colors: colors.slice(),
     marcos: marcos.slice(),
@@ -771,16 +748,41 @@ function performUndo(){
     lineas: JSON.parse(JSON.stringify(lineas)),
     medidas: medidas.slice(),
     tempModels: cloneModelsLight(tempModels)
-  });
-  if(redoHistory.length > UNDO_LIMIT) redoHistory.shift();
-  var snap = undoHistory.pop();
+  };
+}
+
+function _refreshFloatingPanel(){
+  var overlay=document.getElementById('global-panel-overlay');
+  if(!overlay || overlay.style.display==='none') return;
+  var openIdx=-1;
+  var panels=document.querySelectorAll('.gp-lineas-panel');
+  for(var i=0;i<panels.length;i++){ if(panels[i].classList.contains('open')){ openIdx=i; break; } }
+  gpRenderFabricas(); gpRenderColors(); gpRenderMarcos(); gpRenderMedidas();
+  if(openIdx>=0){
+    var rp=document.getElementById('gp-lineas-panel-'+openIdx);
+    var rt=document.getElementById('gp-fab-toggle-'+openIdx);
+    if(rp) rp.classList.add('open');
+    if(rt) rt.classList.add('open');
+  }
+}
+
+function _applyHistorySnap(fromHistory, toHistory, verbo){
+  if(fromHistory.length===0) return;
+  var open=getOpenCards();
+  toHistory.push(_captureState(fromHistory[fromHistory.length-1].label));
+  if(toHistory.length > UNDO_LIMIT) toHistory.shift();
+  var snap = fromHistory.pop();
   var prevModels = models.slice();
   var prevColors = colors.slice(), prevMarcos = marcos.slice();
   var prevFabricas = fabricas.slice(), prevLineas = JSON.parse(JSON.stringify(lineas)), prevMedidas = medidas.slice();
   models = snap.models;
   colors = snap.colors; marcos = snap.marcos;
   fabricas = snap.fabricas||[]; lineas = snap.lineas||{}; medidas = snap.medidas||[];
-  if(snap.tempModels !== undefined){ tempModels=snap.tempModels; saveTempModels(); renderTempList(); var tb=document.getElementById('btn-temporal'); if(tb) tb.textContent=tempModels.length>0?'⏱ Temporal ('+tempModels.length+')':'⏱ Temporal'; }
+  if(snap.tempModels !== undefined){
+    tempModels=snap.tempModels; saveTempModels(); renderTempList();
+    var tb=document.getElementById('btn-temporal');
+    if(tb) tb.textContent=tempModels.length>0?'⏱ Temporal ('+tempModels.length+')':'⏱ Temporal';
+  }
   syncModelsToSupa(prevModels, models);
   if(JSON.stringify(prevColors)!==JSON.stringify(colors)) saveColors();
   if(JSON.stringify(prevMarcos)!==JSON.stringify(marcos)) saveMarcos();
@@ -789,94 +791,43 @@ function performUndo(){
   updateFilters(); renderList();
   restoreOpenCards(open);
   updateSelLabel();
-  showToast('Deshecho: '+snap.label);
+  showToast(verbo+': '+snap.label);
   updateUndoBtn();
   updateRedoBtn();
-  if(document.getElementById('global-panel-overlay').style.display!=='none'){
-    var openLineasIdx=-1;
-    var allLp=document.querySelectorAll('.gp-lineas-panel');
-    for(var li=0;li<allLp.length;li++){if(allLp[li].classList.contains('open')){openLineasIdx=li;break;}}
-    gpRenderFabricas(); gpRenderColors(); gpRenderMarcos(); gpRenderMedidas();
-    if(openLineasIdx>=0){
-      var rp=document.getElementById('gp-lineas-panel-'+openLineasIdx);
-      var rt=document.getElementById('gp-fab-toggle-'+openLineasIdx);
-      if(rp) rp.classList.add('open');
-      if(rt) rt.classList.add('open');
-    }
-  }
+  _refreshFloatingPanel();
 }
 
-function performRedo(){
-  if(redoHistory.length===0) return;
-  var open=getOpenCards();
-  undoHistory.push({
-    label: redoHistory[redoHistory.length-1].label,
-    models: cloneModelsLight(models),
-    colors: colors.slice(),
-    marcos: marcos.slice(),
-    fabricas: fabricas.slice(),
-    lineas: JSON.parse(JSON.stringify(lineas)),
-    medidas: medidas.slice(),
-    tempModels: cloneModelsLight(tempModels)
-  });
-  if(undoHistory.length > UNDO_LIMIT) undoHistory.shift();
-  var snap = redoHistory.pop();
-  var prevModels2 = models.slice();
-  var prevColors2 = colors.slice(), prevMarcos2 = marcos.slice();
-  var prevFabricas2 = fabricas.slice(), prevLineas2 = JSON.parse(JSON.stringify(lineas)), prevMedidas2 = medidas.slice();
-  models = snap.models;
-  colors = snap.colors; marcos = snap.marcos;
-  fabricas = snap.fabricas||[]; lineas = snap.lineas||{}; medidas = snap.medidas||[];
-  if(snap.tempModels !== undefined){ tempModels=snap.tempModels; saveTempModels(); renderTempList(); var tb2=document.getElementById('btn-temporal'); if(tb2) tb2.textContent=tempModels.length>0?'⏱ Temporal ('+tempModels.length+')':'⏱ Temporal'; }
-  syncModelsToSupa(prevModels2, models);
-  if(JSON.stringify(prevColors2)!==JSON.stringify(colors)) saveColors();
-  if(JSON.stringify(prevMarcos2)!==JSON.stringify(marcos)) saveMarcos();
-  if(JSON.stringify(prevFabricas2)!==JSON.stringify(fabricas)||JSON.stringify(prevLineas2)!==JSON.stringify(lineas)) saveFabricas();
-  if(JSON.stringify(prevMedidas2)!==JSON.stringify(medidas)) saveMedidas();
-  updateFilters(); renderList();
-  restoreOpenCards(open);
-  updateSelLabel();
-  showToast('Rehecho: '+snap.label);
-  updateUndoBtn();
-  updateRedoBtn();
-  if(document.getElementById('global-panel-overlay').style.display!=='none'){
-    var openLineasIdx2=-1;
-    var allLp2=document.querySelectorAll('.gp-lineas-panel');
-    for(var li2=0;li2<allLp2.length;li2++){if(allLp2[li2].classList.contains('open')){openLineasIdx2=li2;break;}}
-    gpRenderFabricas(); gpRenderColors(); gpRenderMarcos(); gpRenderMedidas();
-    if(openLineasIdx2>=0){
-      var rp2=document.getElementById('gp-lineas-panel-'+openLineasIdx2);
-      var rt2=document.getElementById('gp-fab-toggle-'+openLineasIdx2);
-      if(rp2) rp2.classList.add('open');
-      if(rt2) rt2.classList.add('open');
-    }
+function performUndo(){ _applyHistorySnap(undoHistory, redoHistory, 'Deshecho'); }
+function performRedo(){ _applyHistorySnap(redoHistory, undoHistory, 'Rehecho'); }
+
+function _syncHistoryBtn(btnId, history, labelPrefix, fullStyle){
+  var has=history.length>0;
+  var btn=document.getElementById(btnId);
+  if(!btn) return;
+  btn.disabled=!has;
+  btn.style.opacity=has?'1':'0.35';
+  if(fullStyle){
+    btn.style.cursor=has?'pointer':'default';
+    btn.title=has?labelPrefix+': '+history[history.length-1].label:'Sin acciones para '+labelPrefix.toLowerCase();
   }
 }
 
 function updateUndoBtn(){
-  var has=undoHistory.length>0;
-  var btn=document.getElementById('undo-btn');
-  if(btn){ btn.disabled=!has; btn.style.opacity=has?'1':'0.35'; btn.style.cursor=has?'pointer':'default'; btn.title=has?'Deshacer: '+undoHistory[undoHistory.length-1].label:'Sin acciones para deshacer'; }
-  var tbtn=document.getElementById('temp-undo-btn');
-  if(tbtn){ tbtn.disabled=!has; tbtn.style.opacity=has?'1':'0.35'; }
-  var gpbtn=document.getElementById('gp-undo-btn');
-  if(gpbtn){ gpbtn.disabled=!has; gpbtn.style.opacity=has?'1':'0.35'; gpbtn.title=has?'Deshacer: '+undoHistory[undoHistory.length-1].label:'Sin acciones para deshacer'; }
+  _syncHistoryBtn('undo-btn', undoHistory, 'Deshacer', true);
+  _syncHistoryBtn('temp-undo-btn', undoHistory, 'Deshacer', false);
+  _syncHistoryBtn('gp-undo-btn', undoHistory, 'Deshacer', true);
 }
 
 function updateRedoBtn(){
-  var has=redoHistory.length>0;
-  var btn=document.getElementById('redo-btn');
-  if(btn){ btn.disabled=!has; btn.style.opacity=has?'1':'0.35'; btn.style.cursor=has?'pointer':'default'; btn.title=has?'Rehacer: '+redoHistory[redoHistory.length-1].label:'Sin acciones para rehacer'; }
-  var tbtn=document.getElementById('temp-redo-btn');
-  if(tbtn){ tbtn.disabled=!has; tbtn.style.opacity=has?'1':'0.35'; }
-  var gpbtn=document.getElementById('gp-redo-btn');
-  if(gpbtn){ gpbtn.disabled=!has; gpbtn.style.opacity=has?'1':'0.35'; gpbtn.title=has?'Rehacer: '+redoHistory[redoHistory.length-1].label:'Sin acciones para rehacer'; }
+  _syncHistoryBtn('redo-btn', redoHistory, 'Rehacer', true);
+  _syncHistoryBtn('temp-redo-btn', redoHistory, 'Rehacer', false);
+  _syncHistoryBtn('gp-redo-btn', redoHistory, 'Rehacer', true);
 }
 
 // ===== SUPABASE CONFIG =====
-var SUPA_URL = 'https://ddowemygrrbjoqkyguhq.supabase.co';
-var SUPA_KEY = 'sb_publishable_TF6bRm78aN2sWLKSLIiObg_1fKt5oQb';
-var SUPA_TABLE = 'puertas';
+const SUPA_URL = 'https://ddowemygrrbjoqkyguhq.supabase.co';
+const SUPA_KEY = 'sb_publishable_TF6bRm78aN2sWLKSLIiObg_1fKt5oQb';
+const SUPA_TABLE = 'puertas';
 
 var _session = localStorage.getItem('torri_session');
 var _mode = localStorage.getItem('torri_mode');
@@ -895,33 +846,43 @@ function doLogout(){
 }
 
 function supaHeaders(){
-  var h = {
+  return {
     'apikey': SUPA_KEY,
     'Authorization': 'Bearer '+(_session || SUPA_KEY),
     'Content-Type': 'application/json'
   };
-  return h;
 }
 
+function fetchWithTimeout(url, options, ms){
+  ms = ms || 10000;
+  var ctrl = new AbortController();
+  var timer = setTimeout(function(){ ctrl.abort(); }, ms);
+  return fetch(url, Object.assign({}, options, {signal: ctrl.signal}))
+    .finally(function(){ clearTimeout(timer); });
+}
 
 function supaUpsert(id, data){
-  return fetch(SUPA_URL+'/rest/v1/'+SUPA_TABLE, {
+  return fetchWithTimeout(SUPA_URL+'/rest/v1/'+SUPA_TABLE, {
     method: 'POST',
     headers: Object.assign({}, supaHeaders(), {'Prefer': 'resolution=merge-duplicates'}),
     body: JSON.stringify({id: id, data: data})
   }).then(function(res){
     if(res.status===401){handleSessionExpired();return;}
     if(!res.ok) res.json().then(function(e){showToast('Error al guardar: '+(e.message||res.statusText));});
+  }).catch(function(err){
+    if(err.name==='AbortError') showToast('Tiempo de espera agotado al guardar');
   });
 }
 
 function supaDelete(id){
-  return fetch(SUPA_URL+'/rest/v1/'+SUPA_TABLE+'?id=eq.'+encodeURIComponent(id), {
+  return fetchWithTimeout(SUPA_URL+'/rest/v1/'+SUPA_TABLE+'?id=eq.'+encodeURIComponent(id), {
     method: 'DELETE',
     headers: supaHeaders()
   }).then(function(res){
     if(res.status===401){handleSessionExpired();return;}
     if(!res.ok) res.json().then(function(e){showToast('Error al eliminar: '+(e.message||res.statusText));});
+  }).catch(function(err){
+    if(err.name==='AbortError') showToast('Tiempo de espera agotado al eliminar');
   });
 }
 
@@ -1410,7 +1371,7 @@ function sortSizes(arr){
 }
 
 // ===== PHOTO FORM =====
-var MAX_PHOTO_BYTES = 2*1024*1024; // 2MB
+const MAX_PHOTO_BYTES = 2*1024*1024; // 2MB
 function handlePhoto(e){
   var f=e.target.files[0]; if(!f)return;
   if(f.size > MAX_PHOTO_BYTES){
@@ -2142,7 +2103,7 @@ function renderList(){
     var chips='';
     var numSizes=(m.sizes||[]).length;
     var numRows=Math.ceil(numSizes/2);
-    // Build chips in column-first order: left col (0..numRows-1), right col (numRows..end)
+    // Construir chips en orden por columna: izquierda (0..numRows-1), derecha (numRows..fin)
     var leftCol=[], rightCol=[];
     for(var s=0;s<numSizes;s++){
       if(s<numRows) leftCol.push(s); else rightCol.push(s);
@@ -2346,7 +2307,7 @@ function restoreJSON(e){
 function exportCSV(){
   try{
     var data=getExportModels();
-    // Build flat rows: one row per size entry, repeated model fields
+    // Construir filas planas: una por cada medida, repitiendo campos del modelo
     var rows=[['Fabrica','Descripcion','Marco','Color','Medida','Derechas','Izquierdas','Total medida']];
     for(var i=0;i<data.length;i++){
       var m=data[i];
@@ -2367,6 +2328,7 @@ function exportCSV(){
   }catch(e){showToast('Error al exportar CSV');}
 }
 
+var _pdfExportData = null;
 function exportPDF(){
   var data=getExportModels();
   if(data.length===0){showToast('Sin modelos para exportar');return;}
@@ -2408,16 +2370,16 @@ function exportPDF(){
   document.getElementById('pdf-preview-title').textContent='Puertas — '+data.length+' modelo'+(data.length!==1?'s':'');
   document.getElementById('pdf-preview-modal').className='open';
   // Guardar datos para la descarga
-  window._pdfExportData={data:data, groups:groups, tipo:'principal'};
+  _pdfExportData={data:data, groups:groups, tipo:'principal'};
 }
 
 function closePdfPreview(){
   document.getElementById('pdf-preview-modal').className='';
-  window._pdfExportData=null;
+  _pdfExportData=null;
 }
 
 function executePdfDownload(){
-  var ctx=window._pdfExportData; if(!ctx) return;
+  var ctx=_pdfExportData; if(!ctx) return;
   if(ctx.tipo==='temporal') _executeTempPdfDownload();
   else _executePrincipalPdfDownload(ctx.data, ctx.groups);
 }
@@ -2510,7 +2472,7 @@ function openTemporal(){
   document.getElementById('page-catalog').style.display='none';
   document.getElementById('page-form').style.display='none';
   document.getElementById('page-temporal').style.display='block';
-  // Update button indicator
+  // Actualizar indicador del botón
   var btn=document.getElementById('btn-temporal');
   if(btn && tempModels.length>0) btn.textContent='⏱ Temporal ('+tempModels.length+')';
   renderTempList();
@@ -2520,7 +2482,7 @@ function openTemporal(){
 function closeTemporal(){
   document.getElementById('page-temporal').style.display='none';
   document.getElementById('page-catalog').style.display='block';
-  // Update indicator
+  // Actualizar indicador
   var btn=document.getElementById('btn-temporal');
   if(btn) btn.textContent=tempModels.length>0?'⏱ Temporal ('+tempModels.length+')':'⏱ Temporal';
   window.scrollTo(0,0);
@@ -2542,7 +2504,7 @@ function cancelDiscardTemp(e){
   var b=document.getElementById('discard-temp-btn');
   if(b && b.contains(e.target)){
     discardTempPending=false;
-    // Check if any selected
+    // Verificar si hay alguno seleccionado
     var checks=document.querySelectorAll('.temp-check:checked'), ids={};
     for(var i=0;i<checks.length;i++) ids[checks[i].getAttribute('data-id')]=true;
     var hasSelected=Object.keys(ids).length>0;
@@ -2963,7 +2925,7 @@ function renderTempTable(list){
   html+='</tbody></table></div>';
   list.innerHTML=html;
   updateTempSelLabel();
-  // Grouped hover
+  // Hover agrupado
   var tbody=list.querySelector('tbody');
   if(tbody){
     tbody.addEventListener('mouseover',function(e){
@@ -3019,7 +2981,7 @@ function exportTempPDF(){
   document.getElementById('pdf-preview-table').innerHTML=html;
   document.getElementById('pdf-preview-title').textContent='Temporal — '+tempModels.length+' modelo'+(tempModels.length!==1?'s':'');
   document.getElementById('pdf-preview-modal').className='open';
-  window._pdfExportData={tipo:'temporal'};
+  _pdfExportData={tipo:'temporal'};
 }
 
 function _executeTempPdfDownload(){
@@ -3246,7 +3208,7 @@ function gpDelMedida(idx){
 function initCatalog(){
   document.getElementById('door-list').innerHTML='<div style="text-align:center;padding:40px 20px;font-family:\'Barlow Condensed\',sans-serif;font-size:14px;color:var(--muted);letter-spacing:0.08em;">Cargando...</div>';
 
-  fetch(SUPA_URL+'/rest/v1/'+SUPA_TABLE+'?select=*', {headers: supaHeaders()})
+  fetchWithTimeout(SUPA_URL+'/rest/v1/'+SUPA_TABLE+'?select=*', {headers: supaHeaders()})
     .then(function(res){
       if(res.status===401){handleSessionExpired();return;}
       if(!res.ok) throw new Error(res.statusText);
@@ -3308,7 +3270,7 @@ if(_session || _mode === 'consulta'){
   initCatalog();
 }
 
-// Set totals-bar top to match topbar height
+// Ajustar la posición de la barra de totales según la altura de la topbar
 function updateTotalsBarTop(){
   var tb=document.querySelector('.topbar');
   if(tb) document.documentElement.style.setProperty('--topbar-h', tb.offsetHeight+'px');
