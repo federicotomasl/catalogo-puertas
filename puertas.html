@@ -2424,13 +2424,13 @@ function exportPDF(){
       for(var g=0;g<groups.length;g++){
         var grp=groups[g];
         if(grp.key!==null){
-          rows.push([{content:grp.key+' — '+grp.models.length+' modelo'+(grp.models.length!==1?'s':''), colSpan:5, styles:{fillColor:[240,232,224],textColor:[200,98,26],fontStyle:'bold',fontSize:8}}]);
+          rows.push([{content:grp.key+' — '+grp.models.length+' modelo'+(grp.models.length!==1?'s':''), colSpan:7, styles:{fillColor:[240,232,224],textColor:[200,98,26],fontStyle:'bold',fontSize:8}}]);
         }
         for(var i=0;i<grp.models.length;i++){
           var m=grp.models[i];
           var fabLinea=(m.fabrica||'—')+'  '+(m.linea||'—');
           if((m.sizes||[]).length===0){
-            rows.push([fabLinea, m.descripcion||'—', m.color||'—', m.marco||'—', '—']);
+            rows.push([fabLinea, m.descripcion||'—', m.color||'—', m.marco||'—', '—', '—', '—']);
           } else {
             for(var s=0;s<m.sizes.length;s++){
               var sz=m.sizes[s];
@@ -2439,7 +2439,9 @@ function exportPDF(){
                 s===0?(m.descripcion||'—'):'',
                 s===0?(m.color||'—'):'',
                 s===0?(m.marco||'—'):'',
-                sz.medida+'  D:'+(parseInt(sz.r)||0)+' I:'+(parseInt(sz.l)||0)
+                sz.medida||'—',
+                String(parseInt(sz.r)||0),
+                String(parseInt(sz.l)||0)
               ]);
             }
           }
@@ -2448,18 +2450,20 @@ function exportPDF(){
 
       doc.autoTable({
         startY: 22,
-        head: [['Fábrica / Línea','Descripción','Color','Marco','Medida / Stock']],
+        head: [['Fábrica / Línea','Descripción','Color','Marco','Medida','D','I']],
         body: rows,
         theme: 'grid',
         headStyles: {fillColor:[200,98,26], textColor:255, fontSize:9, fontStyle:'bold'},
         bodyStyles: {fontSize:8, textColor:50},
         alternateRowStyles: {fillColor:[253,245,239]},
         columnStyles: {
-          0:{cellWidth:38},
+          0:{cellWidth:35},
           1:{cellWidth:'auto'},
-          2:{cellWidth:20},
-          3:{cellWidth:20},
-          4:{cellWidth:32}
+          2:{cellWidth:18},
+          3:{cellWidth:18},
+          4:{cellWidth:16},
+          5:{cellWidth:10, halign:'center'},
+          6:{cellWidth:10, halign:'center'}
         },
         margin:{left:14, right:14},
         didDrawPage: function(d){
@@ -3011,7 +3015,7 @@ function exportTempPDF(){
         var m=tempModels[i];
         var fabLinea=(m.fabrica||'—')+'  '+(m.linea||'—');
         if((m.sizes||[]).length===0){
-          rows.push([fabLinea, m.descripcion||'—', m.color||'—', m.marco||'—', '—']);
+          rows.push([fabLinea, m.descripcion||'—', m.color||'—', m.marco||'—', '—', '—', '—']);
         } else {
           for(var s=0;s<m.sizes.length;s++){
             var sz=m.sizes[s];
@@ -3020,7 +3024,9 @@ function exportTempPDF(){
               s===0?(m.descripcion||'—'):'',
               s===0?(m.color||'—'):'',
               s===0?(m.marco||'—'):'',
-              sz.medida+'  D:'+(parseInt(sz.r)||0)+' I:'+(parseInt(sz.l)||0)
+              sz.medida||'—',
+              String(parseInt(sz.r)||0),
+              String(parseInt(sz.l)||0)
             ]);
           }
         }
@@ -3028,14 +3034,20 @@ function exportTempPDF(){
 
       doc.autoTable({
         startY: 26,
-        head: [['Fábrica / Línea','Descripción','Color','Marco','Medida / Stock']],
+        head: [['Fábrica / Línea','Descripción','Color','Marco','Medida','D','I']],
         body: rows,
         theme: 'grid',
         headStyles: {fillColor:[122,191,158], textColor:255, fontSize:9, fontStyle:'bold'},
         bodyStyles: {fontSize:8, textColor:50},
         alternateRowStyles: {fillColor:[245,251,247]},
         columnStyles: {
-          0:{cellWidth:38}, 1:{cellWidth:60}, 2:{cellWidth:28}, 3:{cellWidth:28}, 4:{cellWidth:32}
+          0:{cellWidth:35},
+          1:{cellWidth:'auto'},
+          2:{cellWidth:18},
+          3:{cellWidth:18},
+          4:{cellWidth:16},
+          5:{cellWidth:10, halign:'center'},
+          6:{cellWidth:10, halign:'center'}
         },
         margin:{left:14, right:14},
         didDrawPage: function(d){
