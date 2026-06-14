@@ -166,15 +166,15 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
   <div class="topbar">
     <div class="topbar-inner">
       <div style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;">
+        <button class="btn btn-outline" onclick="exportBackup()">&#8595; Backup</button>
+        <label class="btn btn-outline" id="btn-restaurar" style="cursor:pointer;">&#8593; Restaurar<input type="file" accept=".json" style="display:none" onchange="importBackup(event)"></label>
         <a href="index.html" class="btn btn-ghost" style="text-decoration:none;">&#8962;</a>
-        <div class="topbar-title">Catalogo de Picaportes</div>
-        <button class="btn btn-accent" id="btn-agregar" onclick="openForm(null)">+ Agregar</button>
+        <div class="topbar-title">Picaportes</div>
+        <button class="btn btn-accent" id="btn-agregar" onclick="openForm(null)">+ Nuevo</button>
       </div>
       <div class="topbar-actions">
         <button class="btn btn-ghost" onclick="exportPDF()">PDF</button>
         <button class="btn btn-outline" onclick="exportCSV()">CSV</button>
-        <button class="btn btn-outline" onclick="exportBackup()">&#8595; Backup</button>
-        <label class="btn btn-outline" id="btn-restaurar" style="cursor:pointer;">&#8593; Restaurar<input type="file" accept=".json" style="display:none" onchange="importBackup(event)"></label>
         <button id="undo-btn" class="btn btn-ghost" onclick="performUndo()" disabled style="opacity:0.35;" title="Sin acciones para deshacer">&#8630;</button>
         <button id="redo-btn" class="btn btn-ghost" onclick="performRedo()" disabled style="opacity:0.35;" title="Sin acciones para rehacer">&#8631;</button>
         <div class="view-toggle">
