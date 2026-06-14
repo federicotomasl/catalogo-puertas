@@ -93,8 +93,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .gp-fab-del{background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:11px;padding:0 0 0 4px;line-height:1;flex-shrink:0;}
 .gp-fab-del:hover{color:#e05555;}
 
-/* EXPORT DROPDOWN */
-/* EXPORT DROPDOWN — eliminado */
+
 
 
 .door-name{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;color:var(--text);flex-shrink:0;}
@@ -705,27 +704,13 @@ function isConsulta(){ return consultaMode; }
 
 function applyConsultaMode(){
   if(!consultaMode) return;
-  // Botones fijos del topbar y controles
-  var ids=['btn-nuevo','del-sel-btn','undo-btn','redo-btn'];
-  for(var i=0;i<ids.length;i++){
-    var el=document.getElementById(ids[i]);
+  var staticIds=['btn-nuevo','del-sel-btn','undo-btn','redo-btn','reset-stock-chip'];
+  for(var i=0;i<staticIds.length;i++){
+    var el=document.getElementById(staticIds[i]);
     if(el) el.classList.add('consulta-disabled');
   }
-  // Reset stock chip
-  var resetBtn=document.getElementById('reset-stock-chip');
-  if(resetBtn) resetBtn.classList.add('consulta-disabled');
-  // Botones dinámicos en las cards/tabla
-  var clss=['.abtn-edit','.abtn-dup','.abtn-del','.qbtn'];
-  for(var j=0;j<clss.length;j++){
-    var els=document.querySelectorAll(clss[j]);
-    for(var k=0;k<els.length;k++) els[k].classList.add('consulta-disabled');
-  }
-  // Botones del temporal
-  var tempClss=['.btn-promote','.btn-discard'];
-  for(var t=0;t<tempClss.length;t++){
-    var tels=document.querySelectorAll(tempClss[t]);
-    for(var tk=0;tk<tels.length;tk++) tels[tk].classList.add('consulta-disabled');
-  }
+  var dinamicos=document.querySelectorAll('.abtn-edit,.abtn-dup,.abtn-del,.qbtn,.btn-promote,.btn-discard');
+  for(var j=0;j<dinamicos.length;j++) dinamicos[j].classList.add('consulta-disabled');
 }
 var filtersOpen = false;
 var viewMode = 'cards';
@@ -807,14 +792,11 @@ function performUndo(){
   showToast('Deshecho: '+snap.label);
   updateUndoBtn();
   updateRedoBtn();
-  // Refrescar panel flotante si está abierto
   if(document.getElementById('global-panel-overlay').style.display!=='none'){
-    // Guardar qué subpanel de líneas está abierto
     var openLineasIdx=-1;
     var allLp=document.querySelectorAll('.gp-lineas-panel');
     for(var li=0;li<allLp.length;li++){if(allLp[li].classList.contains('open')){openLineasIdx=li;break;}}
     gpRenderFabricas(); gpRenderColors(); gpRenderMarcos(); gpRenderMedidas();
-    // Restaurar el subpanel que estaba abierto
     if(openLineasIdx>=0){
       var rp=document.getElementById('gp-lineas-panel-'+openLineasIdx);
       var rt=document.getElementById('gp-fab-toggle-'+openLineasIdx);
@@ -857,7 +839,6 @@ function performRedo(){
   showToast('Rehecho: '+snap.label);
   updateUndoBtn();
   updateRedoBtn();
-  // Refrescar panel flotante si está abierto
   if(document.getElementById('global-panel-overlay').style.display!=='none'){
     var openLineasIdx2=-1;
     var allLp2=document.querySelectorAll('.gp-lineas-panel');
@@ -897,7 +878,6 @@ var SUPA_URL = 'https://ddowemygrrbjoqkyguhq.supabase.co';
 var SUPA_KEY = 'sb_publishable_TF6bRm78aN2sWLKSLIiObg_1fKt5oQb';
 var SUPA_TABLE = 'puertas';
 
-// Verificar sesión
 var _session = localStorage.getItem('torri_session');
 var _mode = localStorage.getItem('torri_mode');
 if(!_session && _mode !== 'consulta'){ window.location.replace('index.html'); }
@@ -923,14 +903,6 @@ function supaHeaders(){
   return h;
 }
 
-function handleSupaError(res){
-  if(res.status === 401){
-    handleSessionExpired();
-    throw new Error('Session expired');
-  }
-  if(!res.ok) return res.json().then(function(e){ throw new Error(e.message||res.statusText); });
-  return Promise.resolve();
-}
 
 function supaUpsert(id, data){
   return fetch(SUPA_URL+'/rest/v1/'+SUPA_TABLE, {
@@ -954,10 +926,6 @@ function supaDelete(id){
 }
 
 // ===== SAVE FUNCTIONS (Supabase) =====
-function saveModels(changedModel){
-  // Solo guarda el modelo que cambió; si no se pasa, no hace nada
-  if(changedModel) supaUpsert(changedModel.id, changedModel);
-}
 function saveColors(){  supaUpsert('config_colors',  colors); }
 function saveMarcos(){  supaUpsert('config_marcos',  marcos); }
 function saveFabricas(){ supaUpsert('config_fabricas', buildFabricasPayload()); }
@@ -965,7 +933,6 @@ function saveMedidas(){ supaUpsert('config_medidas', medidas); }
 function saveLineas(){  saveFabricas(); } // lineas van dentro de fabricas
 
 function buildFabricasPayload(){
-  // Formato: { "Roma": ["Lisa","Vidriada"], "Aluar": [] }
   var payload = {};
   for(var i=0;i<fabricas.length;i++){
     var f=fabricas[i];
@@ -975,17 +942,22 @@ function buildFabricasPayload(){
 }
 
 function syncModelsToSupa(prevModels, nextModels){
-  // Upsert modelos que cambiaron o son nuevos
   var prevMap={};
   for(var i=0;i<prevModels.length;i++) prevMap[prevModels[i].id]=prevModels[i];
   var nextMap={};
   for(var j=0;j<nextModels.length;j++){
     nextMap[nextModels[j].id]=true;
     var p=prevMap[nextModels[j].id];
-    var changed=!p||JSON.stringify(p)!==JSON.stringify(nextModels[j]);
+    // Comparar sin foto (base64 es costoso de serializar)
+    var changed=!p;
+    if(!changed){
+      var nj=nextModels[j];
+      changed=(p.fabrica!==nj.fabrica||p.linea!==nj.linea||p.descripcion!==nj.descripcion||
+               p.color!==nj.color||p.marco!==nj.marco||p.photo!==nj.photo||
+               JSON.stringify(p.sizes)!==JSON.stringify(nj.sizes));
+    }
     if(changed) supaUpsert(nextModels[j].id, nextModels[j]);
   }
-  // Eliminar modelos que ya no existen
   for(var id in prevMap){
     if(prevMap.hasOwnProperty(id) && !nextMap[id]) supaDelete(id);
   }
@@ -1061,12 +1033,10 @@ function lsSet(key, val){
   }
 }
 
-// Solo caracteres seguros en IDs (evita romper atributos onclick)
 function sanitizeId(id){
   return String(id||'').replace(/[^a-zA-Z0-9_-]/g,'');
 }
 
-// Valida y sanitiza un modelo importado desde JSON externo
 function validateModel(m){
   if(!m || typeof m!=='object') return null;
   var out={};
@@ -1090,16 +1060,16 @@ function validateModel(m){
   return out;
 }
 
-// Clona modelos compartiendo la referencia de la foto (strings son inmutables,
-// no se duplica memoria). El resto del objeto se clona profundo.
 function cloneModelsLight(arr){
   var out=[];
   for(var i=0;i<arr.length;i++){
-    var m=arr[i], copy={};
-    for(var k in m){ if(k!=='photo' && m.hasOwnProperty(k)) copy[k]=m[k]; }
-    var cloned=JSON.parse(JSON.stringify(copy));
-    cloned.photo = m.photo || null; // referencia compartida, sin copia
-    out.push(cloned);
+    var m=arr[i];
+    var copy=JSON.parse(JSON.stringify({
+      id:m.id, fabrica:m.fabrica, linea:m.linea, descripcion:m.descripcion,
+      color:m.color, marco:m.marco, sizes:m.sizes, createdAt:m.createdAt
+    }));
+    copy.photo = m.photo||null;
+    out.push(copy);
   }
   return out;
 }
@@ -1259,7 +1229,6 @@ function gpRenderFabricas(){
       +'</div>';
   }
   h+='</div>';
-  // Subpaneles fuera del grid, uno por fábrica
   for(var i=0;i<fabricas.length;i++){
     var f=fabricas[i], fab_lineas=(lineas[f]||[]);
     h+='<div class="gp-lineas-panel" id="gp-lineas-panel-'+i+'" style="margin-top:4px;">'
@@ -1285,12 +1254,10 @@ function gpToggleLineasPanel(fabIdx){
   var toggle=document.getElementById('gp-fab-toggle-'+fabIdx);
   if(!panel) return;
   var isOpen=panel.classList.contains('open');
-  // Cerrar todos los paneles abiertos
   var allPanels=document.querySelectorAll('.gp-lineas-panel');
   var allToggles=document.querySelectorAll('.gp-fab-toggle');
   for(var i=0;i<allPanels.length;i++){ allPanels[i].classList.remove('open'); }
   for(var j=0;j<allToggles.length;j++){ allToggles[j].classList.remove('open'); }
-  // Si estaba cerrado, abrirlo
   if(!isOpen){
     panel.classList.add('open');
     if(toggle) toggle.classList.add('open');
@@ -1309,7 +1276,6 @@ function gpAddLinea(fabIdx){
   gpRenderFabricas();
   var panel=document.getElementById('gp-lineas-panel-'+fabIdx); if(panel) panel.classList.add('open');
   var toggle=document.getElementById('gp-fab-toggle-'+fabIdx); if(toggle) toggle.classList.add('open');
-  // Re-apuntar al nuevo input (el render recrea el DOM)
   var newInp=document.getElementById('gp-linea-inp-'+fabIdx); if(newInp) newInp.focus();
   var cf=document.getElementById('ff-fabrica'); if(cf&&cf.value===fab) renderLineaChips(fab,(document.getElementById('ff-linea')||{}).value||'');
   var tf=document.getElementById('tff-fabrica'); if(tf&&tf.value===fab) renderTempLineaChips(fab,(document.getElementById('tff-linea')||{}).value||'');
@@ -1331,17 +1297,6 @@ function gpDelLinea(fabIdx, lineaIdx){
   showToast('Línea "'+name+'" eliminada');
 }
 
-function updateFabricaFilter(){
-  var sel=document.getElementById('f-fabrica-filter'); if(!sel) return;
-  var cur=sel.value;
-  sel.innerHTML='<option value="">Todas</option>';
-  var fab={};
-  for(var i=0;i<models.length;i++){var f=models[i].fabrica||'';if(f)fab[f]=true;}
-  var keys=Object.keys(fab).sort();
-  for(var j=0;j<keys.length;j++) sel.innerHTML+='<option value="'+esc(keys[j])+'"'+(keys[j]===cur?' selected':'')+'>'+esc(keys[j])+'</option>';
-  renderFchipOpts('fabrica',keys,cur,'Todas las fábricas');
-}
-
 // ===== MEDIDAS ESTÁNDAR =====
 function renderMedidasChips(){
   var wrap = document.getElementById('medidas-chips-wrap'); if(!wrap) return;
@@ -1356,7 +1311,6 @@ function renderMedidasChips(){
 }
 
 function toggleMedidaChip(medida){
-  // Si ya está en formSizes, removerla; si no, agregarla con stock 0/0
   var idx=-1;
   for(var i=0;i<formSizes.length;i++){if(formSizes[i].medida===medida){idx=i;break;}}
   if(idx>=0){
@@ -1536,7 +1490,6 @@ function adjustStock(btn, modelId, sizeIdx, side, delta){
   if(side==='r') sz.r=Math.max(0,(sz.r||0)+delta);
   else           sz.l=Math.max(0,(sz.l||0)+delta);
   supaUpsert(m.id, m);
-  // Update only the touched span — works for both card (.qval) and table (.tbl-qval)
   var span=btn.parentNode.querySelector('.qval')||btn.parentNode.querySelector('.tbl-qval');
   if(span){
     var newVal = side==='r' ? sz.r : sz.l;
@@ -1544,10 +1497,8 @@ function adjustStock(btn, modelId, sizeIdx, side, delta){
     var base=span.className.indexOf('tbl-qval')!==-1?'tbl-qval':'qval';
     span.className=base+' '+(newVal===0?'stock-zero':(side==='r'?'stock-r':'stock-l'));
   }
-  // Refresh totals only
   renderTotals(getFiltered());
   renderSummary();
-  // Update model total cell in table view
   var totalCell=document.getElementById('tbl-total-'+modelId);
   if(totalCell){
     var mt=0; for(var ti=0;ti<m.sizes.length;ti++) mt+=(m.sizes[ti].r||0)+(m.sizes[ti].l||0);
@@ -1578,7 +1529,6 @@ function setFchipValue(key, val, label){
     chip.innerHTML=(val?esc(label||val):defaults[key])+' <span class="fchip-arrow">'+(openFchip===key?'▲':'▼')+'</span>';
     val ? chip.classList.add('active') : chip.classList.remove('active');
   }
-  // Update selected state in opts list
   var opts=document.querySelectorAll('#fchip-opts-'+key+' .fchip-opt');
   for(var i=0;i<opts.length;i++) opts[i].classList.toggle('selected', opts[i].getAttribute('data-val')===val);
   renderList();
@@ -1683,7 +1633,6 @@ function renderSummary(){
     for(var j=0;j<(m.sizes||[]).length;j++){units+=(m.sizes[j].r||0)+(m.sizes[j].l||0);if((m.sizes[j].r||0)>0||(m.sizes[j].l||0)>0)any=true;}
     if((m.sizes||[]).length>0&&!any){noStock++;noStockIds.push(m.id);}
   }
-  // Count distinct medidas across filtered models
   var filtered=getFiltered();
   var medSet={};
   for(var fi=0;fi<filtered.length;fi++){
@@ -1702,10 +1651,8 @@ function renderSummary(){
     medidasChip+
     resetChip+
     sinStockChip;
-  // Keep totals grid visibility in sync
   var grid=document.getElementById('totals-grid');
   if(grid) grid.style.display=medidasExpanded?'':'none';
-  // Attach listeners after innerHTML render
   var rc=document.getElementById('reset-stock-chip');
   if(rc) rc.addEventListener('click', resetAllStock);
   var mc=document.getElementById('medidas-chip');
@@ -1731,7 +1678,6 @@ var resetStockPending = false;
 function resetAllStock(){
   if(isConsulta()) return;
   if(resetStockPending){
-    // Second click: execute
     resetStockPending=false;
     pushUndo('Reset stock general');
     for(var i=0;i<models.length;i++){
@@ -1745,7 +1691,6 @@ function resetAllStock(){
     showToast('Stock reseteado a cero');
     return;
   }
-  // First click: change chip text to "Seguro?"
   resetStockPending=true;
   var chip=document.getElementById('reset-stock-chip');
   if(chip){
@@ -1754,7 +1699,6 @@ function resetAllStock(){
     chip.style.color='#fff';
     chip.style.borderColor='var(--zero)';
   }
-  // Cancel if clicking anywhere else
   setTimeout(function(){
     document.addEventListener('click', cancelResetStock, {once:true, capture:true});
   }, 0);
@@ -1779,7 +1723,6 @@ function expandNoStock(){
   var exps=document.querySelectorAll('.abtn-exp');
 
   if(noStockExpanded){
-    // Collapse all back
     for(var b=0;b<bodies.length;b++){bodies[b].className='card-body';}
     for(var e=0;e<exps.length;e++){exps[e].className='abtn abtn-exp';exps[e].textContent='▼';}
     noStockExpanded=false;
@@ -1787,7 +1730,6 @@ function expandNoStock(){
     return;
   }
 
-  // Collapse all, then expand only no-stock ones
   var idSet={};
   for(var i=0;i<noStockIds.length;i++) idSet[noStockIds[i]]=true;
   for(var b2=0;b2<bodies.length;b2++){bodies[b2].className='card-body';}
@@ -1832,7 +1774,6 @@ function resetFilters(){
   document.getElementById('search-input').value='';
   var ids=['f-fabrica-filter','f-marco-filter','f-color-filter','f-medida-filter'];
   for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el)el.value='';}
-  // Reset chip labels
   var labels={fabrica:'Fábrica',marco:'Marco',color:'Color',medida:'Medida'};
   var keys=Object.keys(labels);
   for(var k=0;k<keys.length;k++){
@@ -1866,7 +1807,6 @@ function toggleFchip(key){
   var chip = document.getElementById('fchip-'+key);
   if(!drop) return;
   var isOpen = drop.classList.contains('open');
-  // Close any open chip first
   if(openFchip && openFchip !== key){
     var od=document.getElementById('fchip-drop-'+openFchip);
     var oc=document.getElementById('fchip-'+openFchip);
@@ -1883,7 +1823,6 @@ function toggleFchip(key){
     chip.classList.add('active');
     chip.querySelector('.fchip-arrow').textContent='▲';
     openFchip=key;
-    // Close on outside click
     setTimeout(function(){
       document.addEventListener('click', function closeFchip(e){
         var wrap=document.getElementById('fchip-drop-'+key);
@@ -1908,13 +1847,12 @@ function updateFchipLabel(key){
   var val=sel.value;
   var arrow=chip.querySelector('.fchip-arrow').outerHTML;
   if(val){
-    chip.innerHTML=val+' '+arrow;
+    chip.innerHTML=esc(val)+' '+arrow;
     chip.classList.add('active');
   } else {
     chip.innerHTML=labels[key]+' '+arrow;
     chip.classList.remove('active');
   }
-  // Reattach arrow span reference
   chip.querySelector('.fchip-arrow').textContent= openFchip===key?'▲':'▼';
   updateResetBtn();
 }
@@ -2074,7 +2012,6 @@ function renderTable(filtered){
   html+='</tbody></table></div>';
   list.innerHTML=html;
 
-  // Grouped hover: highlight all rows of same model together
   var tbody = list.querySelector('tbody');
   if(tbody){
     tbody.addEventListener('mouseover', function(e){
@@ -2158,7 +2095,6 @@ function openMosaicModal(id){
   if(m.fabrica) metaHtml+='<span class="mosaic-tag">'+esc(m.fabrica)+'</span>';
   if(m.color)   metaHtml+='<span class="mosaic-tag">'+esc(m.color)+'</span>';
   if(m.marco)   metaHtml+='<span class="mosaic-tag">'+esc(m.marco)+'</span>';
-  // Stock total
   var total=0; for(var i=0;i<(m.sizes||[]).length;i++) total+=(m.sizes[i].r||0)+(m.sizes[i].l||0);
   if((m.sizes||[]).length>0) metaHtml+='<span class="mosaic-tag" style="color:var(--text);">Stock: '+total+'</span>';
   metaEl.innerHTML=metaHtml;
@@ -2345,7 +2281,6 @@ function getExportModels(){
   return out;
 }
 
-// ===== EXPORT DROPDOWN =====
 // ===== BACKUP / RESTORE =====
 function backupJSON(){
   var payload={
@@ -2549,8 +2484,6 @@ var tempEditingId = null;
 var tempFormSizes = [];
 var tempViewMode = 'cards';
 var discardTempPending = false;
-
-try { var ts = localStorage.getItem('puertas_temp_models'); if(ts) tempModels = JSON.parse(ts); } catch(e){ tempModels=[]; }
 
 function saveTempModels(){ lsSet('puertas_temp_models', JSON.stringify(tempModels)); }
 
