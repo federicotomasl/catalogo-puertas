@@ -307,11 +307,18 @@ var SUPA_TABLE = 'picaportes';
 
 // ===== SESSION CHECK =====
 var torriSession = localStorage.getItem('torri_session');
-if(!torriSession){ window.location.href='index.html'; }
-
-// ===== MODE =====
 var torriMode = localStorage.getItem('torri_mode')||'completo';
 var isConsulta = (torriMode==='consulta');
+if(!torriSession && torriMode !== 'consulta'){ window.location.replace('index.html'); }
+
+// ===== SUPABASE HELPERS =====
+function supaHeaders(){
+  return {
+    'apikey': SUPA_KEY,
+    'Authorization': 'Bearer '+(torriSession||SUPA_KEY),
+    'Content-Type': 'application/json'
+  };
+}
 
 // ===== STATE =====
 var models = [];
@@ -371,7 +378,7 @@ try{var vm=localStorage.getItem('picaportes_viewmode');if(vm==='mosaic')viewMode
 function supaHeaders(){
   return {
     'apikey': SUPA_KEY,
-    'Authorization': 'Bearer '+torriSession,
+    'Authorization': 'Bearer '+(torriSession||SUPA_KEY),
     'Content-Type': 'application/json'
   };
 }
@@ -933,7 +940,9 @@ if(viewMode==='mosaic'){
   document.getElementById('vt-table').className='';
   document.getElementById('vt-mosaic').className='active';
 }
-loadFromSupabase();
+if(torriSession || torriMode==='consulta'){
+  loadFromSupabase();
+}
 </script>
 </body>
 </html>
