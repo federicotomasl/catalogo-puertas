@@ -1038,7 +1038,7 @@ function sanitizeId(id){
 function validateModel(m){
   if(!m || typeof m!=='object') return null;
   var out={};
-  out.id = sanitizeId(m.id) || String(Date.now())+'_'+Math.floor(Math.random()*10000);
+  out.id = (m.id && String(m.id).trim()) ? String(m.id).trim() : String(Date.now())+'_'+Math.floor(Math.random()*10000);
   out.fabrica     = typeof m.fabrica==='string'     ? m.fabrica.slice(0,100)     : '';
   out.descripcion = typeof m.descripcion==='string' ? m.descripcion.slice(0,300) : '';
   out.color       = typeof m.color==='string'       ? m.color.slice(0,100)       : '';
@@ -1449,7 +1449,7 @@ function removePhoto(){
 function saveModel(){
   if(isConsulta()) return;
   var m = {
-    id: sanitizeId(editingId)||String(Date.now()),
+    id: editingId ? String(editingId) : sanitizeId(String(Date.now())),
     fabrica:     document.getElementById('ff-fabrica').value.trim(),
     linea:       document.getElementById('ff-linea').value.trim(),
     descripcion: document.getElementById('ff-desc').value.trim(),
