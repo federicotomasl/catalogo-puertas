@@ -169,8 +169,8 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
         <button class="btn btn-outline" onclick="exportBackup()">&#8595; Backup</button>
         <label class="btn btn-outline" id="btn-restaurar" style="cursor:pointer;">&#8593; Restaurar<input type="file" accept=".json" style="display:none" onchange="importBackup(event)"></label>
         <a href="index.html" class="btn btn-ghost" style="text-decoration:none;">&#8962;</a>
+        <button class="btn btn-ghost" onclick="salir()" title="Cerrar sesión">Salir</button>
         <div class="topbar-title">Picaportes</div>
-        <button class="btn btn-accent" id="btn-agregar" onclick="openForm(null)">+ Nuevo</button>
       </div>
       <div class="topbar-actions">
         <button class="btn btn-ghost" onclick="exportPDF()">PDF</button>
@@ -182,6 +182,8 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
           <button id="vt-mosaic" onclick="setViewMode('mosaic')" title="Vista mosaico">⊟</button>
         </div>
         <button class="btn btn-ghost" onclick="toggleTheme()">&#9788;</button>
+        <div style="width:1px;height:20px;background:var(--border);flex-shrink:0;"></div>
+        <button class="btn btn-accent" id="btn-agregar" onclick="openForm(null)">+ Nuevo</button>
       </div>
     </div>
   </div>
@@ -918,6 +920,13 @@ function toggleTheme(){
   darkMode=!darkMode;
   document.body.classList.toggle('light',!darkMode);
   try{localStorage.setItem('picaportes_theme',darkMode?'dark':'light');}catch(e){}
+}
+
+// ===== SALIR =====
+function salir(){
+  localStorage.removeItem('torri_session');
+  localStorage.removeItem('torri_mode');
+  window.location.replace('index.html');
 }
 
 // ===== TOAST =====
