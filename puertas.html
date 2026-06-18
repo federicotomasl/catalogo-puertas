@@ -58,6 +58,16 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 /* CARDS */
 .door-list{padding:3px 8px 20px;display:flex;flex-direction:column;gap:2px;}
 .door-card{background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:7px 8px;display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;}
+
+/* REORDENAR MANUAL */
+#reorder-toggle-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.door-card.reorder-mode{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;transition:transform .15s,box-shadow .15s;}
+.door-card.reorder-mode:active{cursor:grabbing;}
+.door-card.dragging{opacity:0.4;}
+.door-card.drag-over-top{box-shadow:0 -3px 0 var(--accent);}
+.door-card.drag-over-bottom{box-shadow:0 3px 0 var(--accent);}
+.reorder-handle{display:none;font-size:14px;color:var(--muted);padding:2px 4px;flex-shrink:0;align-self:center;}
+.door-card.reorder-mode .reorder-handle{display:inline-block;}
 .door-top{flex:1;min-width:0;display:flex;align-items:flex-start;gap:5px;flex-wrap:wrap;}
 .door-top .door-header{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
 .door-top .door-actions{flex-shrink:0;display:flex;flex-direction:row;gap:3px;align-items:center;}
@@ -377,6 +387,7 @@ select.finput{cursor:pointer;}
         <button class="filter-tab" onclick="setSort('fabrica',this)">Fabrica</button>
         <button class="filter-tab" onclick="setSort('marco',this)">Marco</button>
         <button class="filter-tab" onclick="setSort('color',this)">Color</button>
+        <button class="filter-tab" id="reorder-toggle-btn" onclick="toggleReorderMode()" style="margin-left:auto;" title="Reordenar manualmente las cards">⇅ Ordenar manual</button>
       </div>
       <div style="display:flex;gap:5px;margin-top:7px;align-items:center;flex-wrap:wrap;position:relative;">
         <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Filtrar</span>
@@ -715,6 +726,7 @@ var depositos = [];
 var lineas = {}; // { "NombreFabrica": ["Línea A", "Línea B", ...] }
 var editingId = null;
 var currentSort = 'original';
+var reorderMode = false;
 var formSizes = [];
 var formPhoto = null;
 var darkMode = true;
@@ -725,7 +737,7 @@ function isConsulta(){ return consultaMode; }
 
 function applyConsultaMode(){
   if(!consultaMode) return;
-  var staticIds=['btn-nuevo','del-sel-btn','undo-btn','redo-btn','reset-stock-chip'];
+  var staticIds=['btn-nuevo','del-sel-btn','undo-btn','redo-btn','reset-stock-chip','reorder-toggle-btn'];
   for(var i=0;i<staticIds.length;i++){
     var el=document.getElementById(staticIds[i]);
     if(el) el.classList.add('consulta-disabled');
@@ -1046,6 +1058,7 @@ function validateModel(m){
   out.deposito    = typeof m.deposito==='string'    ? m.deposito.slice(0,100)    : '';
   out.photo = (typeof m.photo==='string' && m.photo.indexOf('data:image/')===0) ? m.photo : null;
   out.createdAt = (typeof m.createdAt==='number') ? m.createdAt : Date.now();
+  out.order = (typeof m.order==='number') ? m.order : out.createdAt;
   out.sizes=[];
   if(Array.isArray(m.sizes)){
     for(var i=0;i<m.sizes.length;i++){
@@ -1058,13 +1071,22 @@ function validateModel(m){
   return out;
 }
 
+function getNextOrder(){
+  var max=0;
+  for(var i=0;i<models.length;i++){
+    var o=(typeof models[i].order==='number')?models[i].order:0;
+    if(o>max) max=o;
+  }
+  return max+1;
+}
+
 function cloneModelsLight(arr){
   var out=[];
   for(var i=0;i<arr.length;i++){
     var m=arr[i];
     var copy=JSON.parse(JSON.stringify({
       id:m.id, fabrica:m.fabrica, linea:m.linea, descripcion:m.descripcion,
-      color:m.color, marco:m.marco, sizes:m.sizes, createdAt:m.createdAt
+      color:m.color, marco:m.marco, deposito:m.deposito, sizes:m.sizes, createdAt:m.createdAt, order:m.order
     }));
     copy.photo = m.photo||null;
     out.push(copy);
@@ -1493,7 +1515,8 @@ function saveModel(){
     deposito:    document.getElementById('ff-deposito').value,
     sizes:       formSizes.map(function(s){return{medida:s.medida,r:s.r,l:s.l};}),
     photo:       formPhoto,
-    createdAt:   editingId ? (getModel(editingId)||{}).createdAt||Date.now() : Date.now()
+    createdAt:   editingId ? (getModel(editingId)||{}).createdAt||Date.now() : Date.now(),
+    order:       editingId ? (getModel(editingId)||{}).order : getNextOrder()
   };
   if(editingId){
     for(var i=0;i<models.length;i++){if(models[i].id===editingId){
@@ -1514,7 +1537,7 @@ function duplicateModel(id){
   if(isConsulta()) return;
   var src=getModel(id); if(!src)return;
   var copy=JSON.parse(JSON.stringify(src));
-  copy.id=String(Date.now()); copy.createdAt=Date.now();
+  copy.id=String(Date.now()); copy.createdAt=Date.now(); copy.order=getNextOrder();
   pushUndo('Duplicar modelo');
   models.push(copy); supaUpsert(copy.id, copy); updateFilters(); renderList(); showToast('Modelo duplicado');
 }
@@ -1661,6 +1684,140 @@ function setSort(sort,el){
   var tabs=document.querySelectorAll('#sort-tabs .filter-tab');
   for(var i=0;i<tabs.length;i++) tabs[i].classList.remove('active');
   el.classList.add('active');
+  if(sort!=='original' && reorderMode) toggleReorderMode();
+  renderList();
+}
+
+// ===== REORDENAR MANUAL =====
+function toggleReorderMode(){
+  if(isConsulta()) return;
+  var hasSearch=(document.getElementById('search-input').value||'').trim().length>0;
+  if(!reorderMode && (currentSort!=='original' || viewMode!=='cards' || groupBy!=='none' || hasSearch)){
+    showToast('El orden manual solo está disponible en vista Cards, sin búsqueda, filtros de orden ni agrupamiento');
+    return;
+  }
+  reorderMode=!reorderMode;
+  var btn=document.getElementById('reorder-toggle-btn');
+  if(btn) btn.classList.toggle('active', reorderMode);
+  renderList();
+  if(reorderMode) showToast('Modo reordenar activado: arrastrá las cards para moverlas');
+}
+
+var _dragSrcId=null;
+
+function attachReorderListeners(){
+  if(!reorderMode) return;
+  var cards=document.querySelectorAll('.door-card.reorder-mode');
+  for(var i=0;i<cards.length;i++){
+    var card=cards[i];
+    card.addEventListener('dragstart', _onDragStart);
+    card.addEventListener('dragover', _onDragOver);
+    card.addEventListener('dragleave', _onDragLeave);
+    card.addEventListener('drop', _onDrop);
+    card.addEventListener('dragend', _onDragEnd);
+    card.addEventListener('touchstart', _onTouchStart, {passive:false});
+    card.addEventListener('touchmove', _onTouchMove, {passive:false});
+    card.addEventListener('touchend', _onTouchEnd);
+  }
+}
+
+var _touchSrcEl=null, _touchCurrentOver=null;
+
+function _onTouchStart(e){
+  _touchSrcEl=this;
+  _dragSrcId=this.getAttribute('data-order-id');
+  this.classList.add('dragging');
+}
+
+function _onTouchMove(e){
+  if(!_touchSrcEl) return;
+  e.preventDefault();
+  var touch=e.touches[0];
+  var el=document.elementFromPoint(touch.clientX, touch.clientY);
+  var card=el ? el.closest('.door-card.reorder-mode') : null;
+  if(_touchCurrentOver && _touchCurrentOver!==card){
+    _touchCurrentOver.classList.remove('drag-over-top','drag-over-bottom');
+  }
+  if(card && card!==_touchSrcEl){
+    var rect=card.getBoundingClientRect();
+    var midY=rect.top+rect.height/2;
+    card.classList.remove('drag-over-top','drag-over-bottom');
+    card.classList.add(touch.clientY<midY ? 'drag-over-top' : 'drag-over-bottom');
+    _touchCurrentOver=card;
+  }
+}
+
+function _onTouchEnd(e){
+  if(!_touchSrcEl) return;
+  if(_touchCurrentOver && _touchCurrentOver!==_touchSrcEl){
+    var targetId=_touchCurrentOver.getAttribute('data-order-id');
+    var rect=_touchCurrentOver.getBoundingClientRect();
+    var touch=e.changedTouches[0];
+    var before=(touch.clientY<rect.top+rect.height/2);
+    _touchCurrentOver.classList.remove('drag-over-top','drag-over-bottom');
+    _reorderModels(_dragSrcId, targetId, before);
+  }
+  _touchSrcEl.classList.remove('dragging');
+  _touchSrcEl=null; _touchCurrentOver=null; _dragSrcId=null;
+}
+
+function _onDragStart(e){
+  _dragSrcId=this.getAttribute('data-order-id');
+  this.classList.add('dragging');
+  e.dataTransfer.effectAllowed='move';
+  try{ e.dataTransfer.setData('text/plain', _dragSrcId); }catch(err){}
+}
+
+function _onDragOver(e){
+  e.preventDefault();
+  if(this.getAttribute('data-order-id')===_dragSrcId) return;
+  var rect=this.getBoundingClientRect();
+  var midY=rect.top+rect.height/2;
+  this.classList.remove('drag-over-top','drag-over-bottom');
+  this.classList.add(e.clientY<midY ? 'drag-over-top' : 'drag-over-bottom');
+}
+
+function _onDragLeave(){
+  this.classList.remove('drag-over-top','drag-over-bottom');
+}
+
+function _onDrop(e){
+  e.preventDefault();
+  var targetId=this.getAttribute('data-order-id');
+  this.classList.remove('drag-over-top','drag-over-bottom');
+  if(!_dragSrcId || _dragSrcId===targetId) return;
+  var rect=this.getBoundingClientRect();
+  var midY=rect.top+rect.height/2;
+  var before=(e.clientY<midY);
+  _reorderModels(_dragSrcId, targetId, before);
+}
+
+function _onDragEnd(){
+  this.classList.remove('dragging');
+  var all=document.querySelectorAll('.door-card');
+  for(var i=0;i<all.length;i++) all[i].classList.remove('drag-over-top','drag-over-bottom');
+  _dragSrcId=null;
+}
+
+function _reorderModels(srcId, targetId, before){
+  var ordered=getFiltered();
+  var srcIdx=-1, targetIdx=-1;
+  for(var i=0;i<ordered.length;i++){
+    if(ordered[i].id===srcId) srcIdx=i;
+    if(ordered[i].id===targetId) targetIdx=i;
+  }
+  if(srcIdx===-1||targetIdx===-1) return;
+  pushUndo('Reordenar modelos');
+  var moved=ordered.splice(srcIdx,1)[0];
+  var insertAt=ordered.indexOf(ordered.filter(function(m){return m.id===targetId;})[0]);
+  if(!before) insertAt+=1;
+  ordered.splice(insertAt,0,moved);
+  for(var j=0;j<ordered.length;j++){
+    ordered[j].order=j;
+    for(var k=0;k<models.length;k++){
+      if(models[k].id===ordered[j].id){ models[k].order=j; supaUpsert(models[k].id, models[k]); break; }
+    }
+  }
   renderList();
 }
 
@@ -1690,7 +1847,11 @@ function getFiltered(){
   if(currentSort==='fabrica') out.sort(function(a,b){return(a.fabrica||'').localeCompare(b.fabrica||'');});
   else if(currentSort==='marco') out.sort(function(a,b){return(a.marco||'').localeCompare(b.marco||'');});
   else if(currentSort==='color') out.sort(function(a,b){return(a.color||'').localeCompare(b.color||'');});
-  else out.sort(function(a,b){return(a.createdAt||0)-(b.createdAt||0);});
+  else out.sort(function(a,b){
+    var oa=(a.order!==undefined&&a.order!==null)?a.order:(a.createdAt||0);
+    var ob=(b.order!==undefined&&b.order!==null)?b.order:(b.createdAt||0);
+    return oa-ob;
+  });
   return out;
 }
 
@@ -1955,6 +2116,7 @@ function collapseAll(){
 var searchTimer=null;
 function debouncedRender(){
   if(searchTimer) clearTimeout(searchTimer);
+  if(reorderMode){ toggleReorderMode(); return; }
   searchTimer=setTimeout(renderList,180);
 }
 
@@ -1964,6 +2126,7 @@ function setGroup(val, btn){
   var tabs = document.querySelectorAll('#grp-none,#grp-fabrica,#grp-marco,#grp-color');
   for(var i=0;i<tabs.length;i++) tabs[i].classList.remove('active');
   if(btn) btn.classList.add('active');
+  if(val!=='none' && reorderMode) toggleReorderMode();
   renderList();
 }
 
@@ -1992,6 +2155,7 @@ function setViewMode(mode){
   document.getElementById('vt-table').className  = mode==='table'  ? 'active' : '';
   document.getElementById('vt-mosaic').className = mode==='mosaic' ? 'active' : '';
   document.getElementById('card-only-btns').style.display = mode==='cards' ? 'inline-flex' : 'none';
+  if(mode!=='cards' && reorderMode) toggleReorderMode();
   renderList();
 }
 
@@ -2268,7 +2432,8 @@ function renderList(){
     var hasSizes=(m.sizes||[]).length>0;
     var hasBody=hasSizes||!!m.photo;
     var photoHtml=''; // fotos solo en mosaico
-    html+='<div class="door-card">'
+    html+='<div class="door-card'+(reorderMode?' reorder-mode':'')+'" data-order-id="'+esc(mid)+'" draggable="'+(reorderMode?'true':'false')+'">'
+      +(reorderMode?'<span class="reorder-handle" aria-hidden="true">⠿</span>':'')
       +'<input type="checkbox" class="door-check" data-id="'+mid+'" onchange="updateSelLabel()">'
       +'<div class="door-top">'
       +'<div class="door-header">'
@@ -2303,6 +2468,7 @@ function renderList(){
   }
   updateResetBtn();
   if(consultaMode) applyConsultaMode();
+  if(reorderMode) attachReorderListeners();
 }
 
 // ===== SELECT ALL =====
