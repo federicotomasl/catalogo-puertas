@@ -615,7 +615,6 @@ select.finput{cursor:pointer;}
       <div class="mosaic-modal-meta" id="mosaic-modal-meta"></div>
       <div class="mosaic-modal-actions">
         <button class="abtn abtn-edit" id="mosaic-modal-edit">Editar</button>
-        <button class="abtn abtn-dup" id="mosaic-modal-dup">Copiar</button>
         <button class="abtn abtn-del" id="mosaic-modal-del">Eliminar</button>
       </div>
     </div>
@@ -2320,7 +2319,6 @@ function openMosaicModal(id){
   var descEl=document.getElementById('mosaic-modal-desc');
   var metaEl=document.getElementById('mosaic-modal-meta');
   var editBtn=document.getElementById('mosaic-modal-edit');
-  var dupBtn=document.getElementById('mosaic-modal-dup');
   var delBtn=document.getElementById('mosaic-modal-del');
 
   if(m.photo){ imgEl.src=m.photo; imgEl.style.display='block'; }
@@ -2337,7 +2335,6 @@ function openMosaicModal(id){
   metaEl.innerHTML=metaHtml;
 
   editBtn.onclick=function(){ closeMosaicModal(); openForm(id); };
-  dupBtn.onclick=function(){ closeMosaicModal(); duplicateModel(id); };
   delBtn.onclick=function(){ closeMosaicModal(); deleteModel(id); };
 
   modal.className='mosaic-modal open';
@@ -2450,7 +2447,7 @@ function renderList(){
       +'<div class="door-actions">'
       +(hasBody?'<button class="abtn abtn-exp" onclick="toggleCard(\'cb-'+mid+'\')">▼</button>':'')
       +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')">Editar</button>'
-      +'<button class="abtn abtn-dup" onclick="duplicateModel(\''+mid+'\')">Copiar</button>'
+      +'<button class="abtn abtn-dup" onclick="duplicateModel(\''+mid+'\')" aria-label="Duplicar" title="Duplicar"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><rect x="3" y="7" width="13" height="15" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-3"/></svg></button>'
       +'<button class="abtn abtn-del" onclick="deleteModel(\''+mid+'\')">Eliminar</button>'
       +'</div>'
       +'</div>'
@@ -3140,7 +3137,7 @@ function renderTempList(){
       +'<div class="door-actions">'
       +'<button class="abtn abtn-exp" onclick="toggleCard(\'tcb-'+mid+'\')">▼</button>'
       +'<button class="abtn abtn-edit" onclick="openTempForm(\''+mid+'\')">Editar</button>'
-      +'<button class="abtn abtn-dup" onclick="duplicateTempModel(\''+mid+'\')">Copiar</button>'
+      +'<button class="abtn abtn-dup" onclick="duplicateTempModel(\''+mid+'\')" aria-label="Duplicar" title="Duplicar"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><rect x="3" y="7" width="13" height="15" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-3"/></svg></button>'
       +'<button class="abtn abtn-del" onclick="deleteTempModel(\''+mid+'\')">Eliminar</button>'
       +'</div>'
       +(hasBody?'<div class="card-body" id="tcb-'+mid+'"><div class="sizes-row-wrap"><div class="sizes-row">'+chips+'</div></div></div>':'')
@@ -3167,7 +3164,6 @@ function renderTempTable(list){
     var descHtml=m.descripcion?esc(m.descripcion):'—';
     var actHtml='<div class="tbl-acts">'
       +'<button class="abtn abtn-edit" onclick="openTempForm(\''+mid+'\')">Editar</button>'
-      +'<button class="abtn abtn-dup" onclick="duplicateTempModel(\''+mid+'\')">Copiar</button>'
       +'<button class="abtn abtn-del" onclick="deleteTempModel(\''+mid+'\')">Eliminar</button>'
       +'</div>';
     if(sizes.length===0){
