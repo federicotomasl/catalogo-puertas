@@ -51,6 +51,14 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .tbl tbody tr.tbl-main:hover td{background:var(--tbg);}
 .tbl tbody tr.tbl-odd td{background:var(--bg3);}
 .tbl tbody tr.tbl-photo-row td{padding:0;border-bottom:1px solid var(--border);}
+#reorder-toggle-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.tbl tbody tr.tbl-main.reorder-mode{cursor:grab;touch-action:none;}
+.tbl tbody tr.tbl-main.reorder-mode:active{cursor:grabbing;}
+.tbl tbody tr.tbl-main.dragging{opacity:0.4;}
+.tbl tbody tr.tbl-main.drag-over-top{box-shadow:inset 0 2px 0 var(--accent);}
+.tbl tbody tr.tbl-main.drag-over-bottom{box-shadow:inset 0 -2px 0 var(--accent);}
+.reorder-handle{display:none;color:var(--muted);font-size:13px;padding-right:2px;}
+.tbl tbody tr.tbl-main.reorder-mode .reorder-handle{display:inline-block;}
 .tbl td{padding:4px 5px;vertical-align:middle;color:var(--text);line-height:1.3;border-right:1px solid var(--border);}
 .tbl td:last-child{border-right:none;}
 .tbl td.td-desc{font-size:12px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -200,6 +208,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
         <span class="search-icon">&#128269;</span>
         <input class="search-box" id="search-input" type="text" placeholder="Buscar descripcion o codigo..." oninput="debouncedRender()">
       </div>
+      <button class="btn btn-ghost" id="reorder-toggle-btn" onclick="toggleReorderMode()" title="Reordenar manualmente las filas">⇅</button>
     </div>
   </div>
   <div class="divider" style="margin-top:8px;"></div>
@@ -339,6 +348,7 @@ var darkMode = true;
 var viewMode = 'table';
 var DEFAULT_CXC_OPTIONS = [10,20];
 var cxcOptions = [];
+var reorderMode = false;
 
 // ===== UNDO =====
 var UNDO_LIMIT = 20;
@@ -471,6 +481,8 @@ function applyConsultaMode(){
   if(btnAgregar) btnAgregar.classList.add('btn-consulta');
   var btnRestaura=document.getElementById('btn-restaurar');
   if(btnRestaura) btnRestaura.classList.add('btn-consulta');
+  var btnReorder=document.getElementById('reorder-toggle-btn');
+  if(btnReorder) btnReorder.classList.add('btn-consulta');
 }
 
 // ===== FORM STOCK ADJ =====
@@ -630,6 +642,16 @@ function togglePhoto(id){
   var btn=document.getElementById('phbtn-'+id);
   if(!expand)return;
   var open=expand.className==='photo-expand open';
+  // Close any other open photo first
+  var allExpands=document.querySelectorAll('.photo-expand.open');
+  for(var i=0;i<allExpands.length;i++){
+    if(allExpands[i].id!=='ph-'+id){
+      allExpands[i].className='photo-expand';
+      var otherId=allExpands[i].id.replace('ph-','');
+      var otherBtn=document.getElementById('phbtn-'+otherId);
+      if(otherBtn){otherBtn.className='photo-btn';otherBtn.textContent='▼ Foto';}
+    }
+  }
   expand.className=open?'photo-expand':'photo-expand open';
   if(btn){btn.className=open?'photo-btn':'photo-btn open';btn.textContent=open?'▼ Foto':'▲ Foto';}
 }
@@ -692,18 +714,33 @@ function getFiltered(){
     }
     out.push(m);
   }
-  out.sort(function(a,b){return(a.createdAt||0)-(b.createdAt||0);});
+  out.sort(function(a,b){
+    if(a.order!=null && b.order!=null) return a.order-b.order;
+    return(a.createdAt||0)-(b.createdAt||0);
+  });
   return out;
 }
 
 // ===== DEBOUNCE =====
 var searchTimer=null;
-function debouncedRender(){if(searchTimer)clearTimeout(searchTimer);searchTimer=setTimeout(renderList,180);}
+function debouncedRender(){
+  if(reorderMode){
+    reorderMode=false;
+    var rb=document.getElementById('reorder-toggle-btn');
+    if(rb) rb.classList.remove('active');
+  }
+  if(searchTimer)clearTimeout(searchTimer);searchTimer=setTimeout(renderList,180);
+}
 
 // ===== VIEW MODE =====
 function setViewMode(mode){
   viewMode=mode;
   try{localStorage.setItem('picaportes_viewmode',mode);}catch(e){}
+  if(mode==='mosaic' && reorderMode){
+    reorderMode=false;
+    var rb=document.getElementById('reorder-toggle-btn');
+    if(rb) rb.classList.remove('active');
+  }
   document.getElementById('vt-table').className=mode==='table'?'active':'';
   document.getElementById('vt-mosaic').className=mode==='mosaic'?'active':'';
   var il=document.getElementById('item-list');
@@ -787,13 +824,15 @@ function renderList(){
     return;
   }
   var qc=isConsulta?' consulta':'';
+  var rmCls=reorderMode?' reorder-mode':'';
+  var handleTh=reorderMode?'<th></th>':'';
   var html='<table class="tbl"><thead><tr>'
-    +'<th>Cod</th><th>Descripcion</th><th>Uds</th><th>Cajas</th><th>Total</th><th></th>'
+    +handleTh+'<th>Cod</th><th>Descripcion</th><th>Uds</th><th>Cajas</th><th>Total</th><th></th>'
     +'</tr></thead><tbody>';
   for(var j=0;j<filtered.length;j++){
     var m=filtered[j],mid=m.id;
     var isOdd=(j%2===1);
-    var oddCls=isOdd?'tbl-main tbl-odd':'tbl-main';
+    var oddCls=(isOdd?'tbl-main tbl-odd':'tbl-main')+rmCls;
     var uCls=(m.stock||0)===0?'stock-zero':'stock-u';
     var cCls=(m.cajas||0)===0?'stock-zero':'stock-u';
     var stockCell='<div class="qbtns">'
@@ -812,9 +851,12 @@ function renderList(){
     var actCell='<div style="display:flex;gap:3px;align-items:center;flex-wrap:nowrap;">'
       +photoBtn
       +'<button class="abtn abtn-edit'+qc+'" onclick="openForm(\''+mid+'\')">Editar</button>'
-      +'<button class="abtn abtn-del'+qc+'" onclick="deleteModel(\''+mid+'\')">Eliminar</button>'
+      +'<button class="abtn abtn-del'+qc+'" onclick="deleteModel(\''+mid+'\')" title="Eliminar">✕</button>'
       +'</div>';
-    html+='<tr class="'+oddCls+'">'
+    var handleTd=reorderMode?'<td class="reorder-handle">&#8942;&#8942;</td>':'';
+    var draggableAttr=reorderMode?' draggable="true" data-order-id="'+mid+'"':'';
+    html+='<tr class="'+oddCls+'"'+draggableAttr+'>'
+      +handleTd
       +'<td class="td-code">'+(m.codigo?esc(m.codigo):'<span style="color:var(--dim)">—</span>')+'</td>'
       +'<td class="td-desc">'+esc(m.descripcion||'—')+'</td>'
       +'<td style="white-space:nowrap;">'+stockCell+'</td>'
@@ -824,7 +866,8 @@ function renderList(){
       +'</tr>';
     if(m.photo){
       var photoBg=isOdd?'background:var(--bg3);':'';
-      html+='<tr class="tbl-photo-row"><td colspan="6" style="'+photoBg+'">'
+      var colspan=reorderMode?7:6;
+      html+='<tr class="tbl-photo-row"><td colspan="'+colspan+'" style="'+photoBg+'">'
         +'<div class="photo-expand" id="ph-'+mid+'">'
         +'<img src="'+m.photo+'" alt="'+esc(m.descripcion||'')+'" loading="lazy">'
         +'</div></td></tr>';
@@ -832,6 +875,137 @@ function renderList(){
   }
   html+='</tbody></table>';
   list.innerHTML=html;
+  attachReorderListeners();
+}
+
+// ===== REORDENAR MANUAL =====
+function toggleReorderMode(){
+  if(isConsulta) return;
+  var hasSearch=(document.getElementById('search-input').value||'').trim().length>0;
+  if(!reorderMode && (viewMode!=='table' || hasSearch)){
+    showToast('El orden manual solo está disponible en vista Tabla, sin búsqueda activa');
+    return;
+  }
+  reorderMode=!reorderMode;
+  var btn=document.getElementById('reorder-toggle-btn');
+  if(btn) btn.classList.toggle('active', reorderMode);
+  renderList();
+  if(reorderMode) showToast('Modo reordenar activado: arrastrá las filas para moverlas');
+}
+
+var _dragSrcId=null;
+var _touchSrcEl=null, _touchCurrentOver=null;
+
+function attachReorderListeners(){
+  if(!reorderMode) return;
+  var rows=document.querySelectorAll('.tbl-main.reorder-mode');
+  for(var i=0;i<rows.length;i++){
+    var row=rows[i];
+    row.addEventListener('dragstart', _onDragStart);
+    row.addEventListener('dragover', _onDragOver);
+    row.addEventListener('dragleave', _onDragLeave);
+    row.addEventListener('drop', _onDrop);
+    row.addEventListener('dragend', _onDragEnd);
+    row.addEventListener('touchstart', _onTouchStart, {passive:false});
+    row.addEventListener('touchmove', _onTouchMove, {passive:false});
+    row.addEventListener('touchend', _onTouchEnd);
+  }
+}
+
+function _onTouchStart(e){
+  _touchSrcEl=this;
+  _dragSrcId=this.getAttribute('data-order-id');
+  this.classList.add('dragging');
+}
+function _onTouchMove(e){
+  if(!_touchSrcEl) return;
+  e.preventDefault();
+  var touch=e.touches[0];
+  var el=document.elementFromPoint(touch.clientX, touch.clientY);
+  var row=el ? el.closest('.tbl-main.reorder-mode') : null;
+  if(_touchCurrentOver && _touchCurrentOver!==row){
+    _touchCurrentOver.classList.remove('drag-over-top','drag-over-bottom');
+  }
+  if(row && row!==_touchSrcEl){
+    var rect=row.getBoundingClientRect();
+    var midY=rect.top+rect.height/2;
+    row.classList.remove('drag-over-top','drag-over-bottom');
+    row.classList.add(touch.clientY<midY ? 'drag-over-top' : 'drag-over-bottom');
+    _touchCurrentOver=row;
+  }
+}
+function _onTouchEnd(e){
+  if(!_touchSrcEl) return;
+  if(_touchCurrentOver && _touchCurrentOver!==_touchSrcEl){
+    var targetId=_touchCurrentOver.getAttribute('data-order-id');
+    var rect=_touchCurrentOver.getBoundingClientRect();
+    var touch=e.changedTouches[0];
+    var before=(touch.clientY<rect.top+rect.height/2);
+    _touchCurrentOver.classList.remove('drag-over-top','drag-over-bottom');
+    _reorderModels(_dragSrcId, targetId, before);
+  }
+  _touchSrcEl.classList.remove('dragging');
+  _touchSrcEl=null; _touchCurrentOver=null; _dragSrcId=null;
+}
+function _onDragStart(e){
+  _dragSrcId=this.getAttribute('data-order-id');
+  this.classList.add('dragging');
+  e.dataTransfer.effectAllowed='move';
+  try{ e.dataTransfer.setData('text/plain', _dragSrcId); }catch(err){}
+}
+function _onDragOver(e){
+  e.preventDefault();
+  if(this.getAttribute('data-order-id')===_dragSrcId) return;
+  var rect=this.getBoundingClientRect();
+  var midY=rect.top+rect.height/2;
+  this.classList.remove('drag-over-top','drag-over-bottom');
+  this.classList.add(e.clientY<midY ? 'drag-over-top' : 'drag-over-bottom');
+}
+function _onDragLeave(){
+  this.classList.remove('drag-over-top','drag-over-bottom');
+}
+function _onDrop(e){
+  e.preventDefault();
+  var targetId=this.getAttribute('data-order-id');
+  this.classList.remove('drag-over-top','drag-over-bottom');
+  if(!_dragSrcId || _dragSrcId===targetId) return;
+  var rect=this.getBoundingClientRect();
+  var midY=rect.top+rect.height/2;
+  var before=(e.clientY<midY);
+  _reorderModels(_dragSrcId, targetId, before);
+}
+function _onDragEnd(){
+  this.classList.remove('dragging');
+  var all=document.querySelectorAll('.tbl-main');
+  for(var i=0;i<all.length;i++) all[i].classList.remove('drag-over-top','drag-over-bottom');
+  _dragSrcId=null;
+}
+function _reorderModels(srcId, targetId, before){
+  if(isConsulta) return;
+  var ordered=getFiltered();
+  var srcIdx=-1, targetIdx=-1;
+  for(var i=0;i<ordered.length;i++){
+    if(ordered[i].id===srcId) srcIdx=i;
+    if(ordered[i].id===targetId) targetIdx=i;
+  }
+  if(srcIdx===-1||targetIdx===-1) return;
+  pushUndo('Reordenar picaportes');
+  var moved=ordered.splice(srcIdx,1)[0];
+  var insertAt=-1;
+  for(var k=0;k<ordered.length;k++){ if(ordered[k].id===targetId){ insertAt=k; break; } }
+  if(!before) insertAt+=1;
+  ordered.splice(insertAt,0,moved);
+  for(var j=0;j<ordered.length;j++){
+    ordered[j].order=j;
+    for(var n=0;n<models.length;n++){
+      if(models[n].id===ordered[j].id){
+        models[n].order=j;
+        supaUpsertModel(models[n]).catch(function(e){showToast('Error al guardar orden: '+e.message);});
+        break;
+      }
+    }
+  }
+  renderList();
 }
 
 // ===== EXPORT =====
