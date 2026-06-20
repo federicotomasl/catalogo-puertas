@@ -1010,8 +1010,7 @@ function _reorderModels(srcId, targetId, before){
 
 // ===== EXPORT =====
 function getExportModels(){
-  var q=(document.getElementById('search-input').value||'').trim();
-  return q?getFiltered():models.slice();
+  return getFiltered();
 }
 
 function exportBackup(){
