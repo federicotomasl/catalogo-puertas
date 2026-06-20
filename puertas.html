@@ -121,9 +121,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .abtn-dup{color:var(--dim);border-color:var(--border);}
 .abtn-dup:hover{color:var(--muted);border-color:var(--muted);}
 .abtn-dup:active{color:var(--accent);border-color:var(--accent);}
-.abtn-del{color:var(--dim);border-color:var(--border);}
-.abtn-del:hover{color:var(--color-danger);border-color:var(--color-danger);}
-.abtn-del:active{background:var(--color-danger);color:#fff;border-color:var(--color-danger);}
 .abtn-exp{color:var(--dim);border-color:var(--border);font-size:12px;padding:3px 6px;}
 .abtn-exp:hover{color:var(--muted);border-color:var(--muted);}
 .abtn-exp.open{color:var(--accent);border-color:var(--accent);}
@@ -614,7 +611,6 @@ select.finput{cursor:pointer;}
       <div class="mosaic-modal-meta" id="mosaic-modal-meta"></div>
       <div class="mosaic-modal-actions">
         <button class="abtn abtn-edit" id="mosaic-modal-edit">Editar</button>
-        <button class="abtn abtn-del" id="mosaic-modal-del" aria-label="Eliminar" title="Eliminar">❌</button>
       </div>
     </div>
   </div>
@@ -740,7 +736,7 @@ function applyConsultaMode(){
     var el=document.getElementById(staticIds[i]);
     if(el) el.classList.add('consulta-disabled');
   }
-  var dinamicos=document.querySelectorAll('.abtn-edit,.abtn-dup,.abtn-del,.qbtn,.btn-promote,.btn-discard');
+  var dinamicos=document.querySelectorAll('.abtn-edit,.abtn-dup,.qbtn,.btn-promote,.btn-discard');
   for(var j=0;j<dinamicos.length;j++) dinamicos[j].classList.add('consulta-disabled');
 }
 var filtersOpen = false;
@@ -2197,7 +2193,6 @@ function renderTable(filtered){
     var descHtml=m.descripcion?esc(m.descripcion):'<span style="color:var(--dim)">—</span>';
     var actHtml='<div class="tbl-acts">'
       +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')">Editar</button>'
-      +'<button class="abtn abtn-del" onclick="deleteModel(\''+mid+'\')" aria-label="Eliminar" title="Eliminar">❌</button>'
       +'</div>';
 
     if(sizes.length===0){
@@ -2318,7 +2313,6 @@ function openMosaicModal(id){
   var descEl=document.getElementById('mosaic-modal-desc');
   var metaEl=document.getElementById('mosaic-modal-meta');
   var editBtn=document.getElementById('mosaic-modal-edit');
-  var delBtn=document.getElementById('mosaic-modal-del');
 
   if(m.photo){ imgEl.src=m.photo; imgEl.style.display='block'; }
   else { imgEl.src=''; imgEl.style.display='none'; }
@@ -2334,7 +2328,6 @@ function openMosaicModal(id){
   metaEl.innerHTML=metaHtml;
 
   editBtn.onclick=function(){ closeMosaicModal(); openForm(id); };
-  delBtn.onclick=function(){ closeMosaicModal(); deleteModel(id); };
 
   modal.className='mosaic-modal open';
   document.body.style.overflow='hidden';
@@ -2445,10 +2438,7 @@ function renderList(){
       +'<div class="door-actions">'
       +(hasBody?'<button class="abtn abtn-exp" onclick="toggleCard(\'cb-'+mid+'\')">▼</button>':'')
       +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')">Editar</button>'
-      +'<div style="display:flex;flex-direction:column;gap:3px;">'
-      +'<button class="abtn abtn-del" onclick="deleteModel(\''+mid+'\')" aria-label="Eliminar" title="Eliminar">❌</button>'
       +'<button class="abtn abtn-dup" onclick="duplicateModel(\''+mid+'\')" aria-label="Duplicar" title="Duplicar"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><rect x="3" y="7" width="13" height="15" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-3"/></svg></button>'
-      +'</div>'
       +'</div>'
       +'</div>'
       +(hasBody?'<div class="card-body" id="cb-'+mid+'"><div class="sizes-row-wrap"><div class="sizes-row" style="'+sizesRowStyle+'">'+chips+'</div></div>'+photoHtml+'</div>':'')
@@ -3137,10 +3127,7 @@ function renderTempList(){
       +'<div class="door-actions">'
       +'<button class="abtn abtn-exp" onclick="toggleCard(\'tcb-'+mid+'\')">▼</button>'
       +'<button class="abtn abtn-edit" onclick="openTempForm(\''+mid+'\')">Editar</button>'
-      +'<div style="display:flex;flex-direction:column;gap:3px;">'
-      +'<button class="abtn abtn-del" onclick="deleteTempModel(\''+mid+'\')" aria-label="Eliminar" title="Eliminar">❌</button>'
       +'<button class="abtn abtn-dup" onclick="duplicateTempModel(\''+mid+'\')" aria-label="Duplicar" title="Duplicar"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><rect x="3" y="7" width="13" height="15" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-3"/></svg></button>'
-      +'</div>'
       +'</div>'
       +(hasBody?'<div class="card-body" id="tcb-'+mid+'"><div class="sizes-row-wrap"><div class="sizes-row">'+chips+'</div></div></div>':'')
       +'</div>';
@@ -3166,7 +3153,6 @@ function renderTempTable(list){
     var descHtml=m.descripcion?esc(m.descripcion):'—';
     var actHtml='<div class="tbl-acts">'
       +'<button class="abtn abtn-edit" onclick="openTempForm(\''+mid+'\')">Editar</button>'
-      +'<button class="abtn abtn-del" onclick="deleteTempModel(\''+mid+'\')" aria-label="Eliminar" title="Eliminar">❌</button>'
       +'</div>';
     if(sizes.length===0){
       html+='<tr data-model="'+mid+'" class="'+oddCls+'">'
