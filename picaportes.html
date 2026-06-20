@@ -848,7 +848,7 @@ function renderList(){
     var total=(m.cajas||0)*(m.cxc||20)+(m.stock||0);
     var totalCls=total===0?'stock-zero':'stock-u';
     var photoBtn=m.photo?'<button class="photo-btn" id="phbtn-'+mid+'" onclick="togglePhoto(\''+mid+'\')">▼ Foto</button>':'';
-    var actCell='<div style="display:flex;gap:3px;align-items:center;flex-wrap:nowrap;">'
+    var actCell='<div style="display:flex;gap:3px;align-items:center;justify-content:flex-end;flex-wrap:nowrap;">'
       +photoBtn
       +'<button class="abtn abtn-edit'+qc+'" onclick="openForm(\''+mid+'\')">Editar</button>'
       +'<button class="abtn abtn-del'+qc+'" onclick="deleteModel(\''+mid+'\')" title="Eliminar">✕</button>'
@@ -862,7 +862,7 @@ function renderList(){
       +'<td style="white-space:nowrap;">'+stockCell+'</td>'
       +'<td style="white-space:nowrap;">'+cajasCell+'</td>'
       +'<td style="text-align:center;font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:12px;" id="tbl-total-'+mid+'" class="'+totalCls+'">'+total+'</td>'
-      +'<td>'+actCell+'</td>'
+      +'<td style="text-align:right;">'+actCell+'</td>'
       +'</tr>';
     if(m.photo){
       var photoBg=isOdd?'background:var(--bg3);':'';
