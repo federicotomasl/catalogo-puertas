@@ -310,6 +310,14 @@ var SUPA_TABLE = 'picaportes';
 // ===== SESSION CHECK =====
 var torriSession = localStorage.getItem('torri_session');
 var torriMode = localStorage.getItem('torri_mode')||'completo';
+var torriSessionTime = localStorage.getItem('torri_session_time');
+if(torriSession && torriSessionTime && (Date.now()-parseInt(torriSessionTime))>=8*60*60*1000){
+  localStorage.removeItem('torri_session');
+  localStorage.removeItem('torri_mode');
+  localStorage.removeItem('torri_session_time');
+  torriSession=null;
+  torriMode='completo';
+}
 var isConsulta = (torriMode==='consulta');
 if(!torriSession && torriMode !== 'consulta'){ window.location.replace('index.html'); }
 
@@ -387,6 +395,7 @@ function supaHeaders(){
 function handle401(res){
   if(res.status===401){
     localStorage.removeItem('torri_session');
+    localStorage.removeItem('torri_session_time');
     window.location.href='index.html';
     return true;
   }
@@ -926,6 +935,7 @@ function toggleTheme(){
 function salir(){
   localStorage.removeItem('torri_session');
   localStorage.removeItem('torri_mode');
+  localStorage.removeItem('torri_session_time');
   window.location.replace('index.html');
 }
 
