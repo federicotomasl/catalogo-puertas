@@ -870,10 +870,19 @@ const SUPA_TABLE = 'puertas';
 
 var _session = localStorage.getItem('torri_session');
 var _mode = localStorage.getItem('torri_mode');
+var _sessionTime = localStorage.getItem('torri_session_time');
+if(_session && _sessionTime && (Date.now() - parseInt(_sessionTime)) >= 8*60*60*1000){
+  localStorage.removeItem('torri_session');
+  localStorage.removeItem('torri_mode');
+  localStorage.removeItem('torri_session_time');
+  _session = null;
+  _mode = null;
+}
 if(!_session && _mode !== 'consulta'){ window.location.replace('index.html'); }
 
 function handleSessionExpired(){
   localStorage.removeItem('torri_session');
+  localStorage.removeItem('torri_session_time');
   _session=null;
   window.location.replace('index.html');
 }
@@ -881,6 +890,7 @@ function handleSessionExpired(){
 function doLogout(){
   localStorage.removeItem('torri_session');
   localStorage.removeItem('torri_mode');
+  localStorage.removeItem('torri_session_time');
   window.location.replace('index.html');
 }
 
