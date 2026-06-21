@@ -391,7 +391,7 @@ function updateRedoBtn(){
 }
 
 // ===== LOCALSTORAGE (theme + viewmode only) =====
-try{var t=localStorage.getItem('picaportes_theme');if(t==='light'){darkMode=false;document.body.classList.add('light');}}catch(e){}
+try{var t=localStorage.getItem('torri_theme');if(t==='light'){darkMode=false;document.body.classList.add('light');}}catch(e){}
 try{var vm=localStorage.getItem('picaportes_viewmode');if(vm==='mosaic')viewMode='mosaic';}catch(e){}
 
 // ===== SUPABASE HELPERS =====
@@ -1101,7 +1101,7 @@ function exportPDF(){
 function toggleTheme(){
   darkMode=!darkMode;
   document.body.classList.toggle('light',!darkMode);
-  try{localStorage.setItem('picaportes_theme',darkMode?'dark':'light');}catch(e){}
+  try{localStorage.setItem('torri_theme',darkMode?'dark':'light');}catch(e){}
 }
 
 // ===== SALIR =====
