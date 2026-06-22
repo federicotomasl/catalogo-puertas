@@ -397,6 +397,12 @@ body {
 
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ocultar ambas vistas hasta que JS decida cuál mostrar */
+#login-screen { display: none; }
+#login-screen.visible { display: flex !important; }
+#catalog-page { display: none; }
+#catalog-page.visible { display: flex !important; }
 </style>
 </head>
 <body>
@@ -421,7 +427,7 @@ body {
 </div>
 
 <!-- ===== CATALOG PAGE ===== -->
-<div class="page" id="catalog-page" style="display:none;">
+<div class="page" id="catalog-page">
 
   <div class="header">
     <div class="header-actions">
@@ -512,21 +518,33 @@ function toggleTheme() {
 }
 
 // ── AUTH ──
+var SESSION_DURATION_MS = 8 * 60 * 60 * 1000; // 8 horas
+
 function checkSession() {
   var session = null;
   var mode = null;
+  var sessionTime = null;
   try { session = localStorage.getItem('torri_session'); } catch(e) {}
   try { mode = localStorage.getItem('torri_mode'); } catch(e) {}
-  if (session || mode === 'consulta') {
+  try { sessionTime = localStorage.getItem('torri_session_time'); } catch(e) {}
+
+  var hasValidWindow = sessionTime && (Date.now() - parseInt(sessionTime, 10)) < SESSION_DURATION_MS;
+
+  if ((session || mode === 'consulta') && hasValidWindow) {
     showCatalog();
   } else {
+    try {
+      localStorage.removeItem('torri_session');
+      localStorage.removeItem('torri_mode');
+      localStorage.removeItem('torri_session_time');
+    } catch(e) {}
     showLogin();
   }
 }
 
 function showLogin() {
   document.getElementById('login-screen').classList.add('visible');
-  document.getElementById('catalog-page').style.display = 'none';
+  document.getElementById('catalog-page').classList.remove('visible');
   // Precargar credenciales guardadas
   try {
     var savedEmail = localStorage.getItem('torri_saved_email');
@@ -538,7 +556,7 @@ function showLogin() {
 
 function showCatalog() {
   document.getElementById('login-screen').classList.remove('visible');
-  document.getElementById('catalog-page').style.display = 'flex';
+  document.getElementById('catalog-page').classList.add('visible');
 }
 
 function setLoginError(msg) {
@@ -574,6 +592,7 @@ function doLogin() {
         localStorage.setItem('torri_saved_email', email);
         localStorage.setItem('torri_saved_password', password);
         localStorage.setItem('torri_mode', 'completo');
+        localStorage.setItem('torri_session_time', Date.now().toString());
       } catch(e) {}
       showCatalog();
     } else {
@@ -589,7 +608,10 @@ function doLogin() {
 }
 
 function doConsulta() {
-  try { localStorage.setItem('torri_mode', 'consulta'); } catch(e) {}
+  try {
+    localStorage.setItem('torri_mode', 'consulta');
+    localStorage.setItem('torri_session_time', Date.now().toString());
+  } catch(e) {}
   showCatalog();
 }
 
@@ -597,6 +619,7 @@ function doLogout() {
   try {
     localStorage.removeItem('torri_session');
     localStorage.removeItem('torri_mode');
+    localStorage.removeItem('torri_session_time');
   } catch(e) {}
   showLogin();
 }
