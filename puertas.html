@@ -350,7 +350,7 @@ select.finput{cursor:pointer;}
         <div class="totals-footer" id="totals-footer" style="margin:0;border-radius:0;width:100%;border:none;background:transparent;">
           <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:6px;">
             <div id="summary-bar" style="display:flex;gap:4px;flex-wrap:wrap;flex:1;"></div>
-            <button class="filter-tab" id="reorder-toggle-btn" onclick="toggleReorderMode()" title="Reordenar manualmente las cards" aria-label="Reordenar manual" style="margin-left:auto;flex-shrink:0;">⇅ Manual</button>
+            <button class="filter-tab" id="reorder-toggle-btn" onclick="toggleReorderMode()" title="Reordenar manualmente las cards" aria-label="Reordenar manual" style="margin-left:auto;flex-shrink:0;">Orden manual</button>
           </div>
           <div class="totals-grid" id="totals-grid"></div>
         </div>
@@ -2456,9 +2456,9 @@ function renderList(){
       +'<div class="door-header-row1">'
       +(m.fabrica?'<span class="ftag ftag-fab">'+esc(m.fabrica)+'</span>':'')
       +(m.linea?'<span class="ftag ftag-fab">'+esc(m.linea)+'</span>':'')
-      +(m.deposito?'<span class="ftag ftag-marco">'+esc(m.deposito)+'</span>':'')
       +(m.color?'<span class="ftag ftag-color">'+esc(m.color)+'</span>':'')
       +(m.marco?'<span class="ftag ftag-marco">'+esc(m.marco)+'</span>':'')
+      +(m.deposito?'<span class="ftag ftag-marco">'+esc(m.deposito)+'</span>':'')
       +'</div>'
       +'</div>'
       +'<div class="door-actions">'
