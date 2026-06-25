@@ -358,11 +358,13 @@ select.finput{cursor:pointer;}
     </div>
 
     <div class="catalog-controls">
-      <!-- Filtro rápido de depósitos -->
-      <div id="deposito-filter-row" class="filter-tabs" style="margin-bottom:6px;align-items:center;flex-wrap:wrap;display:none;">
+      <!-- Filtro rápido de depósitos + botón ordenar manual -->
+      <div id="deposito-filter-row" style="margin-bottom:6px;align-items:center;flex-wrap:wrap;display:none;">
         <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Depósito</span>
         <button class="filter-tab active" id="dep-filter-all" onclick="setDepositoFilter('',this)">Todos</button>
+        <button class="filter-tab" id="reorder-toggle-btn" onclick="toggleReorderMode()" style="margin-left:auto;" title="Reordenar manualmente las cards" aria-label="Reordenar manual">⇅ Manual</button>
       </div>
+      <!-- Buscador -->
       <div class="search-wrap" style="display:flex;align-items:center;gap:8px;">
         <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Buscar</span>
         <div style="position:relative;flex:1;">
@@ -370,21 +372,23 @@ select.finput{cursor:pointer;}
           <input class="search-box" id="search-input" type="text" placeholder="Buscar fabrica, descripcion, medida..." oninput="debouncedRender()">
         </div>
       </div>
-      <div class="filter-tabs" style="align-items:center;flex-wrap:wrap;">
+      <!-- Agrupar + Ordenar en un solo renglón -->
+      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-top:2px;">
         <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Agrupar</span>
         <button class="filter-tab" id="grp-none" onclick="setGroup('none',this)">✕</button>
-        <button class="filter-tab" id="grp-fabrica" onclick="setGroup('fabrica',this)">Fabrica</button>
+        <button class="filter-tab" id="grp-fabrica" onclick="setGroup('fabrica',this)">Fábrica</button>
         <button class="filter-tab" id="grp-marco" onclick="setGroup('marco',this)">Marco</button>
         <button class="filter-tab" id="grp-color" onclick="setGroup('color',this)">Color</button>
-      </div>
-      <div class="filter-tabs" id="sort-tabs" style="align-items:center;flex-wrap:wrap;">
+        <span style="width:1px;height:16px;background:var(--border);margin:0 4px;flex-shrink:0;"></span>
         <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Ordenar</span>
-        <button class="filter-tab active" onclick="setSort('original',this)">✕</button>
-        <button class="filter-tab" onclick="setSort('fabrica',this)">Fabrica</button>
-        <button class="filter-tab" onclick="setSort('marco',this)">Marco</button>
-        <button class="filter-tab" onclick="setSort('color',this)">Color</button>
-        <button class="filter-tab" id="reorder-toggle-btn" onclick="toggleReorderMode()" style="margin-left:auto;" title="Reordenar manualmente las cards">⇅ Ordenar manual</button>
+        <div id="sort-tabs" style="display:contents;">
+          <button class="filter-tab sort-btn active" onclick="setSort('original',this)">✕</button>
+          <button class="filter-tab sort-btn" onclick="setSort('fabrica',this)">Fábrica</button>
+          <button class="filter-tab sort-btn" onclick="setSort('marco',this)">Marco</button>
+          <button class="filter-tab sort-btn" onclick="setSort('color',this)">Color</button>
+        </div>
       </div>
+      <!-- Filtros fchip -->
       <div style="display:flex;gap:5px;margin-top:7px;align-items:center;flex-wrap:wrap;position:relative;">
         <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Filtrar</span>
         <button class="filter-tab active" id="filter-clear-tab" onclick="resetFilters()" title="Limpiar filtros">✕</button>
@@ -404,7 +408,6 @@ select.finput{cursor:pointer;}
           <button class="fchip" id="fchip-medida" onclick="toggleFchip('medida')">Medida <span class="fchip-arrow">▼</span></button>
           <div class="fchip-drop" id="fchip-drop-medida"><div class="fchip-opts" id="fchip-opts-medida"></div></div>
         </div>
-        <!-- Hidden selects used by getFiltered() -->
         <select id="f-fabrica-filter" style="display:none;"><option value="">Todas</option></select>
         <select id="f-marco-filter" style="display:none;"><option value="">Todos</option></select>
         <select id="f-color-filter" style="display:none;"><option value="">Todos</option></select>
@@ -419,6 +422,7 @@ select.finput{cursor:pointer;}
         <button onclick="collapseAll()" class="inline-btn">Contraer todo</button>
       </span>
       <div style="margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0;">
+        <button onclick="clearAllFilters()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:pointer;white-space:nowrap;transition:all .15s;" title="Limpiar todos los filtros y ordenamientos">✕ Limpiar</button>
         <button id="del-sel-btn" onclick="deleteSelected()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:default;white-space:nowrap;transition:all .15s;" disabled>Eliminar sel.</button>
         <button class="filter-tab" id="sel-all-btn" onclick="toggleSelectAll(this)">Sel. todo</button>
       </div>
@@ -1685,7 +1689,7 @@ function updateMedidaFilter(){
 // ===== SORT =====
 function setSort(sort,el){
   currentSort=sort;
-  var tabs=document.querySelectorAll('#sort-tabs .filter-tab');
+  var tabs=document.querySelectorAll('.sort-btn');
   for(var i=0;i<tabs.length;i++) tabs[i].classList.remove('active');
   el.classList.add('active');
   if(sort!=='original' && reorderMode) toggleReorderMode();
@@ -2024,6 +2028,38 @@ function resetFilters(){
     if(drop) drop.classList.remove('open');
   }
   openFchip=null;
+  renderList();
+}
+
+function clearAllFilters(){
+  // Limpiar buscador
+  document.getElementById('search-input').value='';
+  // Limpiar filtros de fchip
+  var ids=['f-fabrica-filter','f-marco-filter','f-color-filter','f-medida-filter'];
+  for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el)el.value='';}
+  var labels={fabrica:'Fábrica',marco:'Marco',color:'Color',medida:'Medida'};
+  var keys=Object.keys(labels);
+  for(var k=0;k<keys.length;k++){
+    var chip=document.getElementById('fchip-'+keys[k]);
+    if(chip){chip.innerHTML=labels[keys[k]]+' <span class="fchip-arrow">▼</span>';chip.classList.remove('active');}
+    var drop=document.getElementById('fchip-drop-'+keys[k]);
+    if(drop) drop.classList.remove('open');
+  }
+  openFchip=null;
+  // Resetear agrupamiento
+  groupBy='none';
+  var grpTabs=document.querySelectorAll('#grp-none,#grp-fabrica,#grp-marco,#grp-color');
+  for(var g=0;g<grpTabs.length;g++) grpTabs[g].classList.remove('active');
+  var grpNone=document.getElementById('grp-none'); if(grpNone) grpNone.classList.add('active');
+  // Resetear ordenamiento
+  currentSort='original';
+  var sortTabs=document.querySelectorAll('.sort-btn');
+  for(var s=0;s<sortTabs.length;s++) sortTabs[s].classList.remove('active');
+  var sortFirst=document.querySelector('.sort-btn');
+  if(sortFirst) sortFirst.classList.add('active');
+  // Desactivar modo reorder si estaba activo
+  if(reorderMode) toggleReorderMode();
+  // Mantener filtro de depósito intacto
   renderList();
 }
 
