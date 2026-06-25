@@ -348,10 +348,7 @@ select.finput{cursor:pointer;}
     <div class="totals-bar" id="totals-bar">
       <div class="totals-bar-inner">
         <div class="totals-footer" id="totals-footer" style="margin:0;border-radius:0;width:100%;border:none;background:transparent;">
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
-            <div class="totals-title" style="margin-bottom:0;">Totales del listado</div>
-            <div id="summary-bar" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
-          </div>
+          <div id="summary-bar" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;"></div>
           <div class="totals-grid" id="totals-grid"></div>
         </div>
       </div>
@@ -1865,7 +1862,6 @@ function getFiltered(){
 
 // ===== SUMMARY =====
 var noStockIds = [];
-var medidasExpanded = false;
 
 function renderSummary(){
   var total=models.length, units=0, noStock=0;
@@ -1883,36 +1879,19 @@ function renderSummary(){
       medSet[med]=true;
     }
   }
-  var numMedidas=Object.keys(medSet).length;
-  var medidasChip='<div class="summary-chip" style="cursor:pointer;" id="medidas-chip" title="Ver medidas">Medidas: <span>'+numMedidas+'</span> <span id="medidas-arrow" style="font-size:9px;">▼</span></div>';
   var resetChip='<div class="summary-chip alert" id="reset-stock-chip" style="cursor:pointer;" title="Resetear todo el stock a cero">Reset stock</div>';
   var sinStockChip=noStock>0?'<div class="summary-chip alert" id="sin-stock-chip" style="cursor:pointer;" title="Ver modelos sin stock">Sin stock: <span>'+noStock+'</span></div>':'';
   document.getElementById('summary-bar').innerHTML=
     '<div class="summary-chip">Modelos: <span>'+total+'</span></div>'+
     '<div class="summary-chip">Unidades: <span>'+units+'</span></div>'+
-    medidasChip+
     resetChip+
     sinStockChip;
   var grid=document.getElementById('totals-grid');
-  if(grid) grid.style.display=medidasExpanded?'':'none';
+  if(grid) grid.style.display='none';
   var rc=document.getElementById('reset-stock-chip');
   if(rc) rc.addEventListener('click', resetAllStock);
-  var mc=document.getElementById('medidas-chip');
-  if(mc){ mc.addEventListener('click', toggleMedidas); mc.style.borderColor=medidasExpanded?'var(--accent)':''; }
-  var arrow=document.getElementById('medidas-arrow');
-  if(arrow) arrow.textContent=medidasExpanded?'▲':'▼';
   var sc=document.getElementById('sin-stock-chip');
   if(sc) sc.addEventListener('click', expandNoStock);
-}
-
-function toggleMedidas(){
-  medidasExpanded=!medidasExpanded;
-  var grid=document.getElementById('totals-grid');
-  if(grid) grid.style.display=medidasExpanded?'':'none';
-  var chip=document.getElementById('medidas-chip');
-  if(chip) chip.style.borderColor=medidasExpanded?'var(--accent)':'';
-  var arrow=document.getElementById('medidas-arrow');
-  if(arrow) arrow.textContent=medidasExpanded?'▲':'▼';
 }
 
 var resetStockPending = false;
@@ -1995,7 +1974,6 @@ function renderTotals(filtered){
   if(!filtered||filtered.length===0){
     grid.innerHTML='';
     grid.style.display='none';
-    medidasExpanded=false;
     return;
   }
   var by={};
@@ -2008,7 +1986,7 @@ function renderTotals(filtered){
   var html='';
   for(var k=0;k<keys.length;k++) html+='<div class="tchip"><b>'+keys[k]+'</b> &nbsp;<span class="tr">D:'+by[keys[k]].r+'</span> &nbsp;<span class="tl">I:'+by[keys[k]].l+'</span></div>';
   grid.innerHTML=html;
-  grid.style.display=medidasExpanded?'':'none';
+  grid.style.display='none';
 }
 
 // ===== RESET FILTERS =====
