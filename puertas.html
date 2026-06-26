@@ -7,7 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTQwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iIzExMSIgcng9IjgiLz48cmVjdCB4PSIxMiIgeT0iMTIiIHdpZHRoPSI3NiIgaGVpZ2h0PSIxMTYiIGZpbGw9IndoaXRlIi8+PHBvbHlnb24gcG9pbnRzPSIxMiwxMiA1NSwxMiAxMiw1MiIgZmlsbD0iIzRhOGZkNCIvPjxkZWZzPjxjbGlwUGF0aCBpZD0iYyI+PHJlY3QgeD0iMTIiIHk9IjEyIiB3aWR0aD0iNzYiIGhlaWdodD0iMTE2Ii8+PC9jbGlwUGF0aD48L2RlZnM+PGcgY2xpcC1wYXRoPSJ1cmwoI2MpIj48bGluZSB4MT0iLTEwIiB5MT0iMTAwIiB4Mj0iMTEwIiB5Mj0iLTIwIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjgiLz48bGluZSB4MT0iLTEwIiB5MT0iMTMwIiB4Mj0iMTEwIiB5Mj0iMTAiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iOCIvPjxsaW5lIHgxPSItMTAiIHkxPSIxNjAiIHgyPSIxMTAiIHkyPSI0MCIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSI4Ii8+PC9nPjwvc3ZnPg==">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Barlow:wght@400;500&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0f0f0f;--bg2:#181818;--bg3:#222;--border:#2e2e2e;--accent:#d4711f;--al:#e8833a;--text:#e8e0d8;--muted:#7a7268;--dim:#4a4540;--tbg:#2a2218;--tbd:#3d3020;--zero:#8c3a3a;--color-fab:#d4921f;--color-danger:#e05555;--color-stock-r:#7abf9e;--color-stock-l:#9ab3d4;--color-marco:#7a9dc8;}
+:root{--bg:#0f0f0f;--bg2:#181818;--bg3:#222;--border:#2e2e2e;--accent:#d4711f;--al:#e8833a;--text:#e8e0d8;--muted:#7a7268;--dim:#4a4540;--tbg:#2a2218;--tbd:#3d3020;--zero:#8c3a3a;--color-fab:#d4921f;--color-danger:#e05555;--color-stock-r:#7abf9e;--color-stock-l:#9ab3d4;--color-marco:#7a9dc8;--color-deposito:#b07fd4;}
 body.light{--bg:#f4f1ed;--bg2:#fff;--bg3:#ede9e3;--border:#d8d2c8;--text:#2a2218;--muted:#7a6a58;--dim:#b0a090;--tbg:#f0ebe3;--tbd:#d8cfc4;--zero:#c0392b;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;min-height:100vh;}
@@ -86,6 +86,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .ftag-marco{background:rgba(80,120,200,0.12);border-color:rgba(80,120,200,0.4);color:var(--color-marco);}
 /* Color: verde */
 .ftag-color{background:rgba(90,160,100,0.12);border-color:rgba(90,160,100,0.4);color:var(--color-stock-r);}
+.ftag-deposito{background:rgba(176,127,212,0.12);border-color:rgba(176,127,212,0.4);color:var(--color-deposito);}
 /* tabla tags */
 .tbl-ftag{font-size:9px;font-weight:600;padding:1px 4px;border-radius:2px;background:var(--tbg);border:1px solid var(--tbd);color:var(--muted);white-space:nowrap;display:inline-block;}
 .tbl-ftag-fab{background:rgba(212,113,31,0.12);border-color:rgba(212,113,31,0.4);color:var(--color-fab);}
@@ -2458,7 +2459,7 @@ function renderList(){
       +(m.linea?'<span class="ftag ftag-fab">'+esc(m.linea)+'</span>':'')
       +(m.color?'<span class="ftag ftag-color">'+esc(m.color)+'</span>':'')
       +(m.marco?'<span class="ftag ftag-marco">'+esc(m.marco)+'</span>':'')
-      +(m.deposito?'<span class="ftag ftag-marco">'+esc(m.deposito)+'</span>':'')
+      +(m.deposito?'<span class="ftag ftag-deposito">'+esc(m.deposito)+'</span>':'')
       +'</div>'
       +'</div>'
       +'<div class="door-actions">'
