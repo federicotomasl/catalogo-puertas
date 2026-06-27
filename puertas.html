@@ -359,59 +359,64 @@ select.finput{cursor:pointer;}
     </div>
 
     <div class="catalog-controls">
-      <!-- Filtro rápido de depósitos -->
-      <div id="deposito-filter-row" style="margin-bottom:6px;align-items:center;flex-wrap:wrap;display:none;">
-        <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Depósito</span>
-        <button class="filter-tab active" id="dep-filter-all" onclick="setDepositoFilter('',this)">Todos</button>
-      </div>
-      <!-- Buscador -->
+      <!-- Buscador + botón toggle filtros -->
       <div class="search-wrap" style="display:flex;align-items:center;gap:8px;">
         <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Buscar</span>
         <div style="position:relative;flex:1;">
           <span class="search-icon">&#128269;</span>
           <input class="search-box" id="search-input" type="text" placeholder="Buscar fabrica, descripcion, medida..." oninput="debouncedRender()">
         </div>
+        <button id="filtros-toggle-btn" onclick="toggleFiltrosPanel()" style="flex-shrink:0;background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--muted);font-size:16px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;" title="Mostrar/ocultar filtros" aria-label="Mostrar/ocultar filtros">+</button>
       </div>
-      <!-- Agrupar + Ordenar en un solo renglón -->
-      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-top:2px;">
-        <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Agrupar</span>
-        <button class="filter-tab" id="grp-none" onclick="setGroup('none',this)">✕</button>
-        <button class="filter-tab" id="grp-fabrica" onclick="setGroup('fabrica',this)">Fábrica</button>
-        <button class="filter-tab" id="grp-marco" onclick="setGroup('marco',this)">Marco</button>
-        <button class="filter-tab" id="grp-color" onclick="setGroup('color',this)">Color</button>
-        <span style="width:1px;height:16px;background:var(--border);margin:0 4px;flex-shrink:0;"></span>
-        <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Ordenar</span>
-        <div id="sort-tabs" style="display:contents;">
-          <button class="filter-tab sort-btn active" onclick="setSort('original',this)">✕</button>
-          <button class="filter-tab sort-btn" onclick="setSort('fabrica',this)">Fábrica</button>
-          <button class="filter-tab sort-btn" onclick="setSort('marco',this)">Marco</button>
-          <button class="filter-tab sort-btn" onclick="setSort('color',this)">Color</button>
+
+      <!-- Panel colapsable: depósito + agrupar + ordenar + filtrar -->
+      <div id="filtros-panel" style="display:none;margin-top:6px;">
+        <!-- Filtro rápido de depósitos -->
+        <div id="deposito-filter-row" style="margin-bottom:6px;align-items:center;flex-wrap:wrap;display:none;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Depósito</span>
+          <button class="filter-tab active" id="dep-filter-all" onclick="setDepositoFilter('',this)">Todos</button>
         </div>
-      </div>
-      <!-- Filtros fchip -->
-      <div style="display:flex;gap:5px;margin-top:7px;align-items:center;flex-wrap:wrap;position:relative;">
-        <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Filtrar</span>
-        <button class="filter-tab active" id="filter-clear-tab" onclick="resetFilters()" title="Limpiar filtros">✕</button>
-        <div class="fchip-wrap">
-          <button class="fchip" id="fchip-fabrica" onclick="toggleFchip('fabrica')">Fábrica <span class="fchip-arrow">▼</span></button>
-          <div class="fchip-drop" id="fchip-drop-fabrica"><div class="fchip-opts" id="fchip-opts-fabrica"></div></div>
+        <!-- Agrupar + Ordenar en un solo renglón -->
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:6px;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Agrupar</span>
+          <button class="filter-tab" id="grp-none" onclick="setGroup('none',this)">✕</button>
+          <button class="filter-tab" id="grp-fabrica" onclick="setGroup('fabrica',this)">Fábrica</button>
+          <button class="filter-tab" id="grp-marco" onclick="setGroup('marco',this)">Marco</button>
+          <button class="filter-tab" id="grp-color" onclick="setGroup('color',this)">Color</button>
+          <span style="width:1px;height:16px;background:var(--border);margin:0 4px;flex-shrink:0;"></span>
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Ordenar</span>
+          <div id="sort-tabs" style="display:contents;">
+            <button class="filter-tab sort-btn active" onclick="setSort('original',this)">✕</button>
+            <button class="filter-tab sort-btn" onclick="setSort('fabrica',this)">Fábrica</button>
+            <button class="filter-tab sort-btn" onclick="setSort('marco',this)">Marco</button>
+            <button class="filter-tab sort-btn" onclick="setSort('color',this)">Color</button>
+          </div>
         </div>
-        <div class="fchip-wrap">
-          <button class="fchip" id="fchip-marco" onclick="toggleFchip('marco')">Marco <span class="fchip-arrow">▼</span></button>
-          <div class="fchip-drop" id="fchip-drop-marco"><div class="fchip-opts" id="fchip-opts-marco"></div></div>
+        <!-- Filtros fchip -->
+        <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;position:relative;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Filtrar</span>
+          <button class="filter-tab active" id="filter-clear-tab" onclick="resetFilters()" title="Limpiar filtros">✕</button>
+          <div class="fchip-wrap">
+            <button class="fchip" id="fchip-fabrica" onclick="toggleFchip('fabrica')">Fábrica <span class="fchip-arrow">▼</span></button>
+            <div class="fchip-drop" id="fchip-drop-fabrica"><div class="fchip-opts" id="fchip-opts-fabrica"></div></div>
+          </div>
+          <div class="fchip-wrap">
+            <button class="fchip" id="fchip-marco" onclick="toggleFchip('marco')">Marco <span class="fchip-arrow">▼</span></button>
+            <div class="fchip-drop" id="fchip-drop-marco"><div class="fchip-opts" id="fchip-opts-marco"></div></div>
+          </div>
+          <div class="fchip-wrap">
+            <button class="fchip" id="fchip-color" onclick="toggleFchip('color')">Color <span class="fchip-arrow">▼</span></button>
+            <div class="fchip-drop" id="fchip-drop-color"><div class="fchip-opts" id="fchip-opts-color"></div></div>
+          </div>
+          <div class="fchip-wrap">
+            <button class="fchip" id="fchip-medida" onclick="toggleFchip('medida')">Medida <span class="fchip-arrow">▼</span></button>
+            <div class="fchip-drop" id="fchip-drop-medida"><div class="fchip-opts" id="fchip-opts-medida"></div></div>
+          </div>
+          <select id="f-fabrica-filter" style="display:none;"><option value="">Todas</option></select>
+          <select id="f-marco-filter" style="display:none;"><option value="">Todos</option></select>
+          <select id="f-color-filter" style="display:none;"><option value="">Todos</option></select>
+          <select id="f-medida-filter" style="display:none;"><option value="">Todas</option></select>
         </div>
-        <div class="fchip-wrap">
-          <button class="fchip" id="fchip-color" onclick="toggleFchip('color')">Color <span class="fchip-arrow">▼</span></button>
-          <div class="fchip-drop" id="fchip-drop-color"><div class="fchip-opts" id="fchip-opts-color"></div></div>
-        </div>
-        <div class="fchip-wrap">
-          <button class="fchip" id="fchip-medida" onclick="toggleFchip('medida')">Medida <span class="fchip-arrow">▼</span></button>
-          <div class="fchip-drop" id="fchip-drop-medida"><div class="fchip-opts" id="fchip-opts-medida"></div></div>
-        </div>
-        <select id="f-fabrica-filter" style="display:none;"><option value="">Todas</option></select>
-        <select id="f-marco-filter" style="display:none;"><option value="">Todos</option></select>
-        <select id="f-color-filter" style="display:none;"><option value="">Todos</option></select>
-        <select id="f-medida-filter" style="display:none;"><option value="">Todas</option></select>
       </div>
     </div>
 
@@ -614,7 +619,7 @@ select.finput{cursor:pointer;}
       <div class="mosaic-modal-desc" id="mosaic-modal-desc"></div>
       <div class="mosaic-modal-meta" id="mosaic-modal-meta"></div>
       <div class="mosaic-modal-actions">
-        <button class="abtn abtn-edit" id="mosaic-modal-edit">Editar</button>
+        <button class="abtn abtn-edit" id="mosaic-modal-edit" aria-label="Editar" title="Editar">✏️</button>
       </div>
     </div>
   </div>
@@ -1601,6 +1606,20 @@ function toggleCard(id){
 // ===== FILTERS =====
 var currentDepositoFilter = '';
 
+var _filtrosPanelOpen = false;
+
+function toggleFiltrosPanel(){
+  _filtrosPanelOpen = !_filtrosPanelOpen;
+  var panel = document.getElementById('filtros-panel');
+  var btn = document.getElementById('filtros-toggle-btn');
+  if(panel) panel.style.display = _filtrosPanelOpen ? 'block' : 'none';
+  if(btn){
+    btn.textContent = _filtrosPanelOpen ? '−' : '+';
+    btn.style.borderColor = _filtrosPanelOpen ? 'var(--accent)' : 'var(--border)';
+    btn.style.color = _filtrosPanelOpen ? 'var(--accent)' : 'var(--muted)';
+  }
+}
+
 function setDepositoFilter(val, btn){
   currentDepositoFilter = val;
   var btns = document.querySelectorAll('#deposito-filter-row .filter-tab');
@@ -2219,7 +2238,7 @@ function renderTable(filtered){
     var marHtml=m.marco?'<span class="tbl-ftag tbl-ftag-marco">'+esc(m.marco)+'</span>':'<span style="color:var(--dim)">—</span>';
     var descHtml=m.descripcion?esc(m.descripcion):'<span style="color:var(--dim)">—</span>';
     var actHtml='<div class="tbl-acts">'
-      +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')">Editar</button>'
+      +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')" aria-label="Editar" title="Editar">✏️</button>'
       +'</div>';
 
     if(sizes.length===0){
@@ -2464,7 +2483,7 @@ function renderList(){
       +'</div>'
       +'<div class="door-actions">'
       +(hasBody?'<button class="abtn abtn-exp" onclick="toggleCard(\'cb-'+mid+'\')">▼</button>':'')
-      +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')">Editar</button>'
+      +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')" aria-label="Editar" title="Editar">✏️</button>'
       +'<button class="abtn abtn-dup" onclick="duplicateModel(\''+mid+'\')" aria-label="Duplicar" title="Duplicar"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><rect x="3" y="7" width="13" height="15" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-3"/></svg></button>'
       +'</div>'
       +'</div>'
@@ -3153,7 +3172,7 @@ function renderTempList(){
       +'</div>'
       +'<div class="door-actions">'
       +'<button class="abtn abtn-exp" onclick="toggleCard(\'tcb-'+mid+'\')">▼</button>'
-      +'<button class="abtn abtn-edit" onclick="openTempForm(\''+mid+'\')">Editar</button>'
+      +'<button class="abtn abtn-edit" onclick="openTempForm(\''+mid+'\')" aria-label="Editar" title="Editar">✏️</button>'
       +'<button class="abtn abtn-dup" onclick="duplicateTempModel(\''+mid+'\')" aria-label="Duplicar" title="Duplicar"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><rect x="3" y="7" width="13" height="15" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-3"/></svg></button>'
       +'</div>'
       +(hasBody?'<div class="card-body" id="tcb-'+mid+'"><div class="sizes-row-wrap"><div class="sizes-row">'+chips+'</div></div></div>':'')
@@ -3179,7 +3198,7 @@ function renderTempTable(list){
     var marHtml=m.marco?'<span class="tbl-ftag tbl-ftag-marco">'+esc(m.marco)+'</span>':'—';
     var descHtml=m.descripcion?esc(m.descripcion):'—';
     var actHtml='<div class="tbl-acts">'
-      +'<button class="abtn abtn-edit" onclick="openTempForm(\''+mid+'\')">Editar</button>'
+      +'<button class="abtn abtn-edit" onclick="openTempForm(\''+mid+'\')" aria-label="Editar" title="Editar">✏️</button>'
       +'</div>';
     if(sizes.length===0){
       html+='<tr data-model="'+mid+'" class="'+oddCls+'">'
