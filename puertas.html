@@ -359,6 +359,14 @@ select.finput{cursor:pointer;}
     </div>
 
     <div class="catalog-controls">
+      <!-- Filtro rápido de depósitos: siempre visible, chips centrados -->
+      <div id="deposito-filter-row" style="margin-bottom:6px;align-items:center;flex-wrap:wrap;display:none;">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Depósito</span>
+        <div style="display:flex;flex-wrap:wrap;gap:3px;flex:1;justify-content:center;" id="dep-filter-chips">
+          <button class="filter-tab active" id="dep-filter-all" onclick="setDepositoFilter('',this)">Todos</button>
+        </div>
+      </div>
+
       <!-- Buscador + botón toggle filtros -->
       <div class="search-wrap" style="display:flex;align-items:center;gap:8px;">
         <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Buscar</span>
@@ -369,21 +377,18 @@ select.finput{cursor:pointer;}
         <button id="filtros-toggle-btn" onclick="toggleFiltrosPanel()" style="flex-shrink:0;background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--muted);font-size:16px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;" title="Mostrar/ocultar filtros" aria-label="Mostrar/ocultar filtros">+</button>
       </div>
 
-      <!-- Panel colapsable: depósito + agrupar + ordenar + filtrar -->
+      <!-- Panel colapsable: agrupar + ordenar + filtrar -->
       <div id="filtros-panel" style="display:none;margin-top:6px;">
-        <!-- Filtro rápido de depósitos -->
-        <div id="deposito-filter-row" style="margin-bottom:6px;align-items:center;flex-wrap:wrap;display:none;">
-          <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Depósito</span>
-          <button class="filter-tab active" id="dep-filter-all" onclick="setDepositoFilter('',this)">Todos</button>
-        </div>
-        <!-- Agrupar + Ordenar en un solo renglón -->
+        <!-- Agrupar -->
         <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:6px;">
           <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Agrupar</span>
           <button class="filter-tab" id="grp-none" onclick="setGroup('none',this)">✕</button>
           <button class="filter-tab" id="grp-fabrica" onclick="setGroup('fabrica',this)">Fábrica</button>
           <button class="filter-tab" id="grp-marco" onclick="setGroup('marco',this)">Marco</button>
           <button class="filter-tab" id="grp-color" onclick="setGroup('color',this)">Color</button>
-          <span style="width:1px;height:16px;background:var(--border);margin:0 4px;flex-shrink:0;"></span>
+        </div>
+        <!-- Ordenar (renglón propio) -->
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:6px;">
           <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Ordenar</span>
           <div id="sort-tabs" style="display:contents;">
             <button class="filter-tab sort-btn active" onclick="setSort('original',this)">✕</button>
@@ -1634,12 +1639,13 @@ function updateDepositoFilterRow(){
   var row = document.getElementById('deposito-filter-row'); if(!row) return;
   if(depositos.length===0){ row.style.display='none'; return; }
   row.style.display='flex';
+  var chips=document.getElementById('dep-filter-chips'); if(!chips) return;
   var html='<button class="filter-tab'+(currentDepositoFilter===''?' active':'')+'" onclick="setDepositoFilter(\'\',this)">Todos</button>';
   for(var i=0;i<depositos.length;i++){
     var d=depositos[i];
     html+='<button class="filter-tab'+(currentDepositoFilter===d?' active':'')+'" onclick="setDepositoFilter(\''+esc(d)+'\',this)">'+esc(d)+'</button>';
   }
-  row.innerHTML='<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Depósito</span>'+html;
+  chips.innerHTML=html;
 }
 
 function setFchipValue(key, val, label){
