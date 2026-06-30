@@ -30,6 +30,13 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
 .btn-consulta{opacity:0.35;cursor:not-allowed !important;pointer-events:none;}
 
+/* MORE OPTIONS DROPDOWN */
+.more-opts-menu{display:none;position:absolute;top:calc(100% + 4px);left:0;background:var(--bg2);border:1px solid var(--border);border-radius:6px;min-width:170px;z-index:50;flex-direction:column;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,0.35);}
+.more-opts-menu.open{display:flex;}
+.more-opts-menu button,.more-opts-menu label{background:transparent;border:none;color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.04em;padding:9px 14px;text-align:left;cursor:pointer;display:block;width:100%;box-sizing:border-box;border-bottom:1px solid var(--border);}
+.more-opts-menu button:last-child,.more-opts-menu label:last-child{border-bottom:none;}
+.more-opts-menu button:hover,.more-opts-menu label:hover{background:var(--bg3);color:var(--accent);}
+
 .summary-chip{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;padding:3px 7px;border-radius:4px;background:var(--bg2);border:1px solid var(--border);color:var(--muted);white-space:nowrap;cursor:default;}
 .summary-chip span{color:var(--text);font-weight:700;}
 .summary-chip.alert{border-color:var(--zero);color:var(--zero);cursor:pointer;}
@@ -174,16 +181,21 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
   <div class="topbar">
     <div class="topbar-inner">
       <div style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;">
-        <button class="btn btn-outline" onclick="exportBackup()" title="Backup">&#11015;</button>
-        <label class="btn btn-outline" id="btn-restaurar" style="cursor:pointer;" title="Restaurar">&#11014;<input type="file" accept=".json" style="display:none" onchange="importBackup(event)"></label>
+        <div style="position:relative;">
+          <button class="btn btn-outline" onclick="toggleMoreMenu()" id="more-opts-btn">Mas opciones &#9662;</button>
+          <div id="more-opts-menu" class="more-opts-menu">
+            <button onclick="closeMoreMenuAnd(exportBackup)">&#11015; Backup</button>
+            <label id="btn-restaurar">&#11014; Restaurar<input type="file" accept=".json" style="display:none" onchange="closeMoreMenu();importBackup(event)"></label>
+            <button onclick="closeMoreMenuAnd(exportFotos)">&#8595; Descargar fotos</button>
+            <button onclick="closeMoreMenuAnd(exportPDF)">PDF</button>
+            <button onclick="closeMoreMenuAnd(exportCSV)">CSV</button>
+          </div>
+        </div>
         <a href="index.html" class="btn btn-ghost" style="text-decoration:none;">&#8962;</a>
         <button class="btn btn-ghost" onclick="salir()" title="Cerrar sesión">Salir</button>
         <div class="topbar-title">Picaportes</div>
       </div>
       <div class="topbar-actions">
-        <button class="btn btn-ghost" onclick="exportPDF()">PDF</button>
-        <button class="btn btn-outline" onclick="exportCSV()">CSV</button>
-        <button class="btn btn-outline" onclick="exportFotos()">&#8595; Fotos</button>
         <button id="undo-btn" class="btn btn-ghost" onclick="performUndo()" disabled style="opacity:0.35;" title="Sin acciones para deshacer">&#8630;</button>
         <button id="redo-btn" class="btn btn-ghost" onclick="performRedo()" disabled style="opacity:0.35;" title="Sin acciones para rehacer">&#8631;</button>
         <div class="view-toggle">
@@ -1147,6 +1159,34 @@ function toggleTheme(){
 }
 
 // ===== SALIR =====
+// ===== MORE OPTIONS MENU =====
+function toggleMoreMenu(){
+  var menu=document.getElementById('more-opts-menu');
+  if(!menu) return;
+  var open=menu.className.indexOf('open')!==-1;
+  if(open){
+    closeMoreMenu();
+  } else {
+    menu.className='more-opts-menu open';
+    setTimeout(function(){document.addEventListener('click',_onOutsideMoreMenuClick,{capture:true});},0);
+  }
+}
+function closeMoreMenu(){
+  var menu=document.getElementById('more-opts-menu');
+  if(menu) menu.className='more-opts-menu';
+  document.removeEventListener('click',_onOutsideMoreMenuClick,{capture:true});
+}
+function closeMoreMenuAnd(fn){
+  closeMoreMenu();
+  if(typeof fn==='function') fn();
+}
+function _onOutsideMoreMenuClick(e){
+  var menu=document.getElementById('more-opts-menu');
+  var btn=document.getElementById('more-opts-btn');
+  if(menu && (menu.contains(e.target)||btn.contains(e.target))) return;
+  closeMoreMenu();
+}
+
 function salir(){
   localStorage.removeItem('torri_session');
   localStorage.removeItem('torri_mode');
