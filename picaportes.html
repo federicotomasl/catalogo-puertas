@@ -174,8 +174,8 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
   <div class="topbar">
     <div class="topbar-inner">
       <div style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;">
-        <button class="btn btn-outline" onclick="exportBackup()">&#8595; Backup</button>
-        <label class="btn btn-outline" id="btn-restaurar" style="cursor:pointer;">&#8593; Restaurar<input type="file" accept=".json" style="display:none" onchange="importBackup(event)"></label>
+        <button class="btn btn-outline" onclick="exportBackup()" title="Backup" style="font-size:14px;font-weight:700;">&#11015;</button>
+        <label class="btn btn-outline" id="btn-restaurar" style="cursor:pointer;font-size:14px;font-weight:700;" title="Restaurar">&#11014;<input type="file" accept=".json" style="display:none" onchange="importBackup(event)"></label>
         <a href="index.html" class="btn btn-ghost" style="text-decoration:none;">&#8962;</a>
         <button class="btn btn-ghost" onclick="salir()" title="Cerrar sesión">Salir</button>
         <div class="topbar-title">Picaportes</div>
