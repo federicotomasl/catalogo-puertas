@@ -183,6 +183,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
       <div class="topbar-actions">
         <button class="btn btn-ghost" onclick="exportPDF()">PDF</button>
         <button class="btn btn-outline" onclick="exportCSV()">CSV</button>
+        <button class="btn btn-outline" onclick="exportFotos()">&#8595; Fotos</button>
         <button id="undo-btn" class="btn btn-ghost" onclick="performUndo()" disabled style="opacity:0.35;" title="Sin acciones para deshacer">&#8630;</button>
         <button id="redo-btn" class="btn btn-ghost" onclick="performRedo()" disabled style="opacity:0.35;" title="Sin acciones para rehacer">&#8631;</button>
         <div class="view-toggle">
@@ -1097,7 +1098,48 @@ function exportPDF(){
   else{var blob=new Blob([html],{type:'text/html'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='catalogo-picaportes.html';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(url);},1000);}
 }
 
-// ===== THEME =====
+// ===== EXPORT FOTOS ZIP =====
+function exportFotos(){
+  var conFoto=models.filter(function(m){return !!m.photo;});
+  if(conFoto.length===0){showToast('No hay fotos cargadas');return;}
+  showToast('Generando ZIP...');
+  // Load JSZip dynamically
+  if(typeof JSZip==='undefined'){
+    var script=document.createElement('script');
+    script.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+    script.onload=function(){_buildFotosZip(conFoto);};
+    script.onerror=function(){showToast('Error al cargar JSZip');};
+    document.head.appendChild(script);
+  } else {
+    _buildFotosZip(conFoto);
+  }
+}
+function _buildFotosZip(items){
+  var zip=new JSZip();
+  for(var i=0;i<items.length;i++){
+    var m=items[i];
+    var base64=m.photo;
+    // Strip data:image/xxx;base64, prefix
+    var parts=base64.match(/^data:image\/(\w+);base64,(.+)$/);
+    if(!parts) continue;
+    var ext=parts[1]==='jpeg'?'jpg':parts[1];
+    var data=parts[2];
+    var cod=(m.codigo||'').replace(/[^a-zA-Z0-9]/g,'');
+    var desc=(m.descripcion||'picaporte').replace(/[^a-zA-Z0-9 _-]/g,'').trim().replace(/\s+/g,'_').slice(0,40);
+    var filename=(cod?cod+'_':'')+desc+'.'+ext;
+    zip.file(filename, data, {base64:true});
+  }
+  zip.generateAsync({type:'blob'}).then(function(blob){
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url;
+    a.download='fotos-picaportes-'+new Date().toISOString().slice(0,10)+'.zip';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url);},1000);
+    showToast('ZIP descargado ('+items.length+' foto'+(items.length!==1?'s':'')+')');
+  }).catch(function(e){showToast('Error al generar ZIP: '+e.message);});
+}
+
 function toggleTheme(){
   darkMode=!darkMode;
   document.body.classList.toggle('light',!darkMode);
