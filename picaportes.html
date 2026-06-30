@@ -636,7 +636,8 @@ function saveModel(){
     cajas:parseInt(document.getElementById('ff-cajas').value)||0,
     cxc:formCxc,
     photo:formPhoto,
-    createdAt:editingId?(getModel(editingId)||{}).createdAt||Date.now():Date.now()
+    createdAt:editingId?(getModel(editingId)||{}).createdAt||Date.now():Date.now(),
+    order:editingId?(getModel(editingId)||{}).order:undefined
   };
   if(editingId){
     for(var i=0;i<models.length;i++){if(models[i].id===editingId){pushUndo('Editar: '+desc);models[i]=m;break;}}
