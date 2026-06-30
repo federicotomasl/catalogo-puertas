@@ -810,13 +810,10 @@ function renderMosaic(filtered){
     var m=filtered[j],mid=m.id;
     var hasPhoto=!!m.photo;
     var imgHtml=hasPhoto?'<img src="'+m.photo+'" loading="lazy" alt="'+esc(m.descripcion||'')+'">':'<span class="mosaic-no-img">&#128273;</span>';
-    var stockStr='Uds: '+(m.stock||0)+'  Cajas: '+(m.cajas||0);
     html+='<div class="mosaic-card'+(hasPhoto?'':' no-photo')+'" onclick="openMosaicModal(\''+mid+'\')">'
       +'<div class="mosaic-img-wrap">'+imgHtml+'</div>'
       +'<div class="mosaic-info">'
-      +(m.codigo?'<div class="mosaic-code">'+esc(m.codigo)+'</div>':'')
-      +'<div class="mosaic-desc">'+(m.descripcion?esc(m.descripcion):'Sin descripcion')+'</div>'
-      +'<div class="mosaic-stock">'+stockStr+'</div>'
+      +'<div class="mosaic-desc">'+(m.codigo?'<span class="mosaic-code">'+esc(m.codigo)+'</span> ':'')+(m.descripcion?esc(m.descripcion):'Sin descripcion')+'</div>'
       +'</div></div>';
   }
   html+='</div>';
