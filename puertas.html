@@ -68,7 +68,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     top:50%;
     transform:translateY(-50%);
     left:calc(50% + 300px);
-    width:220px;
+    width:240px;
     background:var(--bg2);
     border:1px solid var(--border);
     border-radius:8px;
@@ -77,6 +77,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     transition:opacity .2s;
     opacity:0;
     pointer-events:none;
+    overflow-y:auto;
   }
   #stock-panel.visible{opacity:1;pointer-events:auto;}
   .sp-title{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;border-bottom:1px solid var(--border);padding-bottom:6px;word-break:break-word;}
@@ -1720,6 +1721,13 @@ function showStockPanel(mid){
     }
     body.innerHTML=html;
   }
+  // Calcular posición: intentar a la derecha, si no cabe ajustar
+  var panelW=240;
+  var idealLeft=window.innerWidth/2+300;
+  var maxLeft=window.innerWidth-panelW-8;
+  panel.style.left=Math.min(idealLeft, maxLeft)+'px';
+  panel.style.maxHeight=(window.innerHeight*0.7)+'px';
+  panel.style.overflowY='auto';
   panel.classList.add('visible');
 }
 
