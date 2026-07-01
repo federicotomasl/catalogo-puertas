@@ -152,13 +152,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .abtn-edit{color:var(--accent);border-color:var(--accent);}
 .abtn-edit:hover{background:var(--accent);color:#fff;}
 .abtn-edit:active{background:var(--al);border-color:var(--al);color:#fff;}
-.abtn-dup{color:var(--dim);border-color:var(--border);}
-.abtn-dup:hover{color:var(--muted);border-color:var(--muted);}
-.abtn-dup:active{color:var(--accent);border-color:var(--accent);}
-.abtn-exp{color:var(--dim);border-color:var(--border);font-size:12px;padding:3px 6px;}
-.abtn-exp:hover{color:var(--muted);border-color:var(--muted);}
-.abtn-exp.open{color:var(--accent);border-color:var(--accent);}
-.abtn-exp.open:hover{background:var(--accent);color:#fff;}
 
 /* TOTALS */
 .totals-footer{margin:4px 12px 16px;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;display:none;}
@@ -793,7 +786,7 @@ function applyConsultaMode(){
     var el=document.getElementById(staticIds[i]);
     if(el) el.classList.add('consulta-disabled');
   }
-  var dinamicos=document.querySelectorAll('.abtn-edit,.abtn-dup,.qbtn,.btn-promote,.btn-discard');
+  var dinamicos=document.querySelectorAll('.abtn-edit,.qbtn,.btn-promote,.btn-discard');
   for(var j=0;j<dinamicos.length;j++) dinamicos[j].classList.add('consulta-disabled');
 }
 var filtersOpen = false;
@@ -826,11 +819,7 @@ function getOpenCards(){
 function restoreOpenCards(open){
   for(var id in open){
     var body=document.getElementById('cb-'+id);
-    if(body){
-      body.className='card-body open';
-      var expBtn=body.parentNode.querySelector('.abtn-exp');
-      if(expBtn){expBtn.className='abtn abtn-exp open';expBtn.textContent='▲';}
-    }
+    if(body) body.className='card-body open';
   }
 }
 
@@ -1610,16 +1599,6 @@ function saveModel(){
   supaUpsert(m.id, m); updateFilters(); renderList(); closeForm();
 }
 
-// ===== DUPLICATE =====
-function duplicateModel(id){
-  if(isConsulta()) return;
-  var src=getModel(id); if(!src)return;
-  var copy=JSON.parse(JSON.stringify(src));
-  copy.id=String(Date.now()); copy.createdAt=Date.now(); copy.order=getNextOrder();
-  pushUndo('Duplicar modelo');
-  models.push(copy); supaUpsert(copy.id, copy); updateFilters(); renderList(); showToast('Modelo duplicado');
-}
-
 // ===== DELETE WITH UNDO =====
 function deleteModel(id){
   if(isConsulta()) return;
@@ -1661,20 +1640,20 @@ function adjustStock(btn, modelId, sizeIdx, side, delta){
 function toggleCard(id){
   var body=document.getElementById(id);
   if(!body) return;
-  var card=body.parentNode;
-  var btn=card.querySelector('.abtn-exp');
   var open=(body.className==='card-body open');
-  // Cerrar todas las otras cards abiertas
   if(!open){
     var allBodies=document.querySelectorAll('.card-body.open');
-    for(var i=0;i<allBodies.length;i++){
-      allBodies[i].className='card-body';
-      var prevBtn=allBodies[i].parentNode.querySelector('.abtn-exp');
-      if(prevBtn){prevBtn.className='abtn abtn-exp';prevBtn.textContent='▼';}
-    }
+    for(var i=0;i<allBodies.length;i++) allBodies[i].className='card-body';
   }
   body.className=open?'card-body':'card-body open';
-  if(btn){btn.className=open?'abtn abtn-exp':'abtn abtn-exp open';btn.textContent=open?'▼':'▲';}
+}
+
+function handleCardClick(e, cardBodyId, mid){
+  if(window.innerWidth>=900){
+    showStockPanel(mid);
+  } else {
+    toggleCard(cardBodyId);
+  }
 }
 
 function showStockPanel(mid){
@@ -2072,27 +2051,18 @@ var noStockExpanded = false;
 
 function expandNoStock(){
   var bodies=document.querySelectorAll('.card-body');
-  var exps=document.querySelectorAll('.abtn-exp');
-
   if(noStockExpanded){
-    for(var b=0;b<bodies.length;b++){bodies[b].className='card-body';}
-    for(var e=0;e<exps.length;e++){exps[e].className='abtn abtn-exp';exps[e].textContent='▼';}
+    for(var b=0;b<bodies.length;b++) bodies[b].className='card-body';
     noStockExpanded=false;
     allExpanded=false;
     return;
   }
-
   var idSet={};
   for(var i=0;i<noStockIds.length;i++) idSet[noStockIds[i]]=true;
-  for(var b2=0;b2<bodies.length;b2++){bodies[b2].className='card-body';}
-  for(var e2=0;e2<exps.length;e2++){exps[e2].className='abtn abtn-exp';exps[e2].textContent='▼';}
+  for(var b2=0;b2<bodies.length;b2++) bodies[b2].className='card-body';
   for(var id in idSet){
     var body=document.getElementById('cb-'+id);
-    if(body){
-      body.className='card-body open';
-      var expBtn=body.parentNode.querySelector('.abtn-exp');
-      if(expBtn){expBtn.className='abtn abtn-exp open';expBtn.textContent='▲';}
-    }
+    if(body) body.className='card-body open';
   }
   noStockExpanded=true;
   allExpanded=false;
@@ -2245,17 +2215,13 @@ var mosaicSmall = true;
 // ===== EXPAND/COLLAPSE ALL =====
 function expandAll(){
   var bodies=document.querySelectorAll('.card-body');
-  var btns=document.querySelectorAll('.abtn-exp');
   for(var i=0;i<bodies.length;i++) bodies[i].className='card-body open';
-  for(var j=0;j<btns.length;j++){btns[j].className='abtn abtn-exp open';btns[j].textContent='▲';}
   allExpanded=true;
 }
 
 function collapseAll(){
   var bodies=document.querySelectorAll('.card-body');
-  var btns=document.querySelectorAll('.abtn-exp');
   for(var i=0;i<bodies.length;i++) bodies[i].className='card-body';
-  for(var j=0;j<btns.length;j++){btns[j].className='abtn abtn-exp';btns[j].textContent='▼';}
   allExpanded=false;
 }
 
@@ -2578,7 +2544,7 @@ function renderList(){
       +(reorderMode?'<span class="reorder-handle" aria-hidden="true">⠿</span>':'')
       +'<input type="checkbox" class="door-check" data-id="'+mid+'" onchange="updateSelLabel()">'
       +'<div class="door-top">'
-      +'<div class="door-header" onclick="showStockPanel(\''+mid+'\')">'
+      +'<div class="door-header" onclick="handleCardClick(event,\'cb-'+mid+'\',\''+mid+'\')" style="cursor:pointer;">'
       +(m.descripcion?'<div class="door-desc-row">'+esc(m.descripcion)+'</div>':'')
       +'<div class="door-header-row1">'
       +(m.fabrica?'<span class="ftag ftag-fab">'+esc(m.fabrica)+'</span>':'')
@@ -2589,9 +2555,7 @@ function renderList(){
       +'</div>'
       +'</div>'
       +'<div class="door-actions">'
-      +(hasBody?'<button class="abtn abtn-exp" onclick="toggleCard(\'cb-'+mid+'\')">▼</button>':'')
       +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')" aria-label="Editar" title="Editar">✏️</button>'
-      +'<button class="abtn abtn-dup" onclick="duplicateModel(\''+mid+'\')" aria-label="Duplicar" title="Duplicar"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><rect x="3" y="7" width="13" height="15" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-3"/></svg></button>'
       +'</div>'
       +'</div>'
       +(hasBody?'<div class="card-body" id="cb-'+mid+'"><div class="sizes-row-wrap"><div class="sizes-row" style="'+sizesRowStyle+'">'+chips+'</div></div>'+photoHtml+'</div>':'')
@@ -2603,8 +2567,6 @@ function renderList(){
   if(allExpanded){
     var bodies=document.querySelectorAll('.card-body');
     for(var bi=0;bi<bodies.length;bi++) bodies[bi].className='card-body open';
-    var exps=document.querySelectorAll('.abtn-exp');
-    for(var ei=0;ei<exps.length;ei++){exps[ei].className='abtn abtn-exp open';exps[ei].textContent='▲';}
   }
   updateResetBtn();
   if(consultaMode) applyConsultaMode();
@@ -3256,18 +3218,6 @@ function promoteSelected(){
   }
 }
 
-function duplicateTempModel(id){
-  var m=tempModels.filter(function(x){return x.id===id;})[0]; if(!m) return;
-  pushTempUndo('Copiar '+m.descripcion);
-  var copy=JSON.parse(JSON.stringify(m));
-  copy.id='t'+Date.now();
-  copy.descripcion=(m.descripcion||'')+(m.descripcion?' (copia)':'copia');
-  tempModels.push(copy);
-  saveTempModels(); renderTempList();
-  var tb=document.getElementById('btn-temporal');
-  if(tb) tb.textContent='⏱ Temporal ('+tempModels.length+')';
-}
-
 function adjustTempStock(btn, modelId, sizeIdx, side, delta){
   var m=tempModels.filter(function(x){return x.id===modelId;})[0];
   if(!m||!m.sizes[sizeIdx]) return;
@@ -3344,9 +3294,7 @@ function renderTempList(){
       +'</div>'
       +'</div>'
       +'<div class="door-actions">'
-      +'<button class="abtn abtn-exp" onclick="toggleCard(\'tcb-'+mid+'\')">▼</button>'
       +'<button class="abtn abtn-edit" onclick="openTempForm(\''+mid+'\')" aria-label="Editar" title="Editar">✏️</button>'
-      +'<button class="abtn abtn-dup" onclick="duplicateTempModel(\''+mid+'\')" aria-label="Duplicar" title="Duplicar"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><rect x="3" y="7" width="13" height="15" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-3"/></svg></button>'
       +'</div>'
       +(hasBody?'<div class="card-body" id="tcb-'+mid+'"><div class="sizes-row-wrap"><div class="sizes-row">'+chips+'</div></div></div>':'')
       +'</div>';
