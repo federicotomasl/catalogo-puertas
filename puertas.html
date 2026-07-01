@@ -81,6 +81,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     transition:opacity .2s;
   }
   #stock-panel.visible{opacity:1;pointer-events:auto;}
+  body.sp-overflow{overflow-x:auto;min-width:fit-content;}
   .sp-title{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;border-bottom:1px solid var(--border);padding-bottom:6px;word-break:break-word;}
   .sp-row{display:flex;align-items:center;padding:3px 0;border-bottom:1px solid var(--border);font-family:'Barlow Condensed',sans-serif;font-size:12px;gap:8px;}
   .sp-row:last-child{border-bottom:none;}
@@ -1722,12 +1723,14 @@ function showStockPanel(mid){
     }
     body.innerHTML=html;
   }
-  // Posicionar siempre a la derecha del contenedor centrado
+  // Posicionar siempre a la derecha del contenedor centrado (relativo al viewport con fixed)
   var idealLeft=Math.round(window.innerWidth/2)+300;
   panel.style.left=idealLeft+'px';
-  // Habilitar scroll horizontal si el panel se sale del viewport
-  if(idealLeft+248>window.innerWidth){
-    document.body.style.overflowX='auto';
+  // Si el panel se sale del viewport, expandir el body para permitir scroll horizontal
+  var panelRight=idealLeft+248;
+  if(panelRight>window.innerWidth){
+    document.body.classList.add('sp-overflow');
+    document.body.style.minWidth=panelRight+'px';
   }
   panel.classList.add('visible');
 }
@@ -3829,7 +3832,9 @@ document.addEventListener('click', function(e){
   if(!panel) return;
   if(!e.target.closest('.door-card') && !e.target.closest('#stock-panel')){
     panel.classList.remove('visible');
-    document.body.style.overflowX='';
+    panel.style.left='-9999px';
+    document.body.classList.remove('sp-overflow');
+    document.body.style.minWidth='';
     var active=document.querySelectorAll('.door-card.sp-active');
     for(var i=0;i<active.length;i++) active[i].classList.remove('sp-active');
   }
