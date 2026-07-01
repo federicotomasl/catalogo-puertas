@@ -1722,11 +1722,13 @@ function showStockPanel(mid){
     }
     body.innerHTML=html;
   }
-  // Calcular posición: a la derecha del contenedor centrado, ajustar si no cabe
-  var panelW=240;
+  // Posicionar siempre a la derecha del contenedor centrado
   var idealLeft=Math.round(window.innerWidth/2)+300;
-  var safeLeft=Math.min(idealLeft, window.innerWidth-panelW-8);
-  panel.style.left=Math.max(safeLeft, 8)+'px';
+  panel.style.left=idealLeft+'px';
+  // Habilitar scroll horizontal si el panel se sale del viewport
+  if(idealLeft+248>window.innerWidth){
+    document.body.style.overflowX='auto';
+  }
   panel.classList.add('visible');
 }
 
@@ -3827,6 +3829,7 @@ document.addEventListener('click', function(e){
   if(!panel) return;
   if(!e.target.closest('.door-card') && !e.target.closest('#stock-panel')){
     panel.classList.remove('visible');
+    document.body.style.overflowX='';
     var active=document.querySelectorAll('.door-card.sp-active');
     for(var i=0;i<active.length;i++) active[i].classList.remove('sp-active');
   }
