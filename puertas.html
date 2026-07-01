@@ -65,7 +65,8 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
   #stock-panel{
     display:block;
     position:fixed;
-    top:120px;
+    top:50%;
+    transform:translateY(-50%);
     left:calc(50% + 300px);
     width:220px;
     background:var(--bg2);
@@ -3800,8 +3801,6 @@ function updateTotalsBarTop(){
   var tb=document.querySelector('.topbar');
   var tbH=tb?tb.offsetHeight:0;
   if(tb) document.documentElement.style.setProperty('--topbar-h', tbH+'px');
-  var sp=document.getElementById('stock-panel');
-  if(sp) sp.style.top=(tbH+16)+'px';
 }
 updateTotalsBarTop();
 window.addEventListener('resize', updateTotalsBarTop);
