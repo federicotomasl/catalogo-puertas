@@ -3825,6 +3825,8 @@ window.addEventListener('resize', updateTotalsBarTop);
 document.addEventListener('click', function(e){
   var panel=document.getElementById('stock-panel');
   if(!panel||!panel.classList.contains('visible')) return;
+  // Ignorar clicks en scrollbars (fuera del área del documento)
+  if(e.clientX>document.documentElement.clientWidth||e.clientY>document.documentElement.clientHeight) return;
   if(!e.target.closest('.door-card') && !e.target.closest('#stock-panel')){
     panel.classList.remove('visible');
     var active=document.querySelectorAll('.door-card.sp-active');
