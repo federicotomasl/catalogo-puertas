@@ -1512,15 +1512,32 @@ function sortSizes(arr){
 }
 
 // ===== PHOTO FORM =====
-const MAX_PHOTO_BYTES = 2*1024*1024; // 2MB
 function handlePhoto(e){
   var f=e.target.files[0]; if(!f)return;
-  if(f.size > MAX_PHOTO_BYTES){
-    showToast('⚠ Foto demasiado grande (máx 2MB)');
-    e.target.value='';
-    return;
-  }
-  var r=new FileReader(); r.onload=function(ev){formPhoto=ev.target.result;renderPhotoPreview();}; r.readAsDataURL(f);
+  var r=new FileReader();
+  r.onload=function(ev){
+    compressImage(ev.target.result, 900, 0.7, function(compressed){
+      formPhoto=compressed;
+      renderPhotoPreview();
+    });
+  };
+  r.readAsDataURL(f);
+}
+function compressImage(dataUrl, maxDim, quality, callback){
+  var img=new Image();
+  img.onload=function(){
+    var w=img.width, h=img.height;
+    if(w>h && w>maxDim){ h=Math.round(h*(maxDim/w)); w=maxDim; }
+    else if(h>=w && h>maxDim){ w=Math.round(w*(maxDim/h)); h=maxDim; }
+    var canvas=document.createElement('canvas');
+    canvas.width=w; canvas.height=h;
+    var ctx=canvas.getContext('2d');
+    ctx.drawImage(img,0,0,w,h);
+    try{ callback(canvas.toDataURL('image/jpeg', quality)); }
+    catch(err){ callback(dataUrl); }
+  };
+  img.onerror=function(){callback(dataUrl);};
+  img.src=dataUrl;
 }
 function renderPhotoPreview(){
   var w=document.getElementById('photo-wrap'), p=document.getElementById('photo-preview');
