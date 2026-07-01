@@ -62,13 +62,14 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 /* PANEL LATERAL DE STOCKS (solo PC) */
 #stock-panel{display:none;}
 @media(min-width:900px){
+  #app-wrap{display:flex;flex-direction:row;align-items:flex-start;justify-content:center;min-width:820px;}
   html,body{overflow-x:auto;}
-  #app-wrap{position:relative;min-width:820px;}
+  #page-catalog{flex:0 0 560px;min-width:0;max-width:560px;margin:0;}
   #stock-panel{
     display:block;
-    position:absolute;
+    position:sticky;
     top:120px;
-    left:calc(50% + 290px);
+    flex:0 0 240px;
     width:240px;
     max-height:70vh;
     overflow-y:auto;
@@ -76,10 +77,13 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     border:1px solid var(--border);
     border-radius:8px;
     padding:12px;
+    margin-left:16px;
+    margin-top:120px;
     z-index:5;
     opacity:0;
     pointer-events:none;
     transition:opacity .2s;
+    align-self:flex-start;
   }
   #stock-panel.visible{opacity:1;pointer-events:auto;}
   .sp-title{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;border-bottom:1px solid var(--border);padding-bottom:6px;word-break:break-word;}
@@ -3811,6 +3815,8 @@ function updateTotalsBarTop(){
   var tb=document.querySelector('.topbar');
   var tbH=tb?tb.offsetHeight:0;
   if(tb) document.documentElement.style.setProperty('--topbar-h', tbH+'px');
+  var sp=document.getElementById('stock-panel');
+  if(sp){ sp.style.top=(tbH+16)+'px'; sp.style.marginTop=(tbH+16)+'px'; }
 }
 updateTotalsBarTop();
 window.addEventListener('resize', updateTotalsBarTop);
