@@ -1688,21 +1688,31 @@ function toggleCard(id){
   if(btn){btn.className=open?'abtn abtn-exp':'abtn abtn-exp open';btn.textContent=open?'▼':'▲';}
 }
 
+function _positionStockPanel(){
+  var panel=document.getElementById('stock-panel');
+  if(!panel||!panel.classList.contains('visible')) return;
+  var idealLeft=Math.round(window.innerWidth/2)+300;
+  panel.style.left=idealLeft+'px';
+  var panelRight=idealLeft+248;
+  if(panelRight>window.innerWidth){
+    document.body.classList.add('sp-overflow');
+    document.body.style.minWidth=panelRight+'px';
+  } else {
+    document.body.classList.remove('sp-overflow');
+    document.body.style.minWidth='';
+  }
+}
+
 function showStockPanel(mid){
-  // En mobile no hacer nada (el panel no existe visualmente)
   var panel=document.getElementById('stock-panel');
   if(!panel || window.innerWidth<900) return;
   var m=getModel(mid); if(!m) return;
-  // Quitar clase activa de todas las cards
   var all=document.querySelectorAll('.door-card.sp-active');
   for(var i=0;i<all.length;i++) all[i].classList.remove('sp-active');
-  // Marcar la card activa
   var card=document.querySelector('.door-card[data-order-id="'+mid+'"]');
   if(card) card.classList.add('sp-active');
-  // Titulo
   var title=document.getElementById('sp-title');
   if(title) title.textContent=(m.descripcion||m.fabrica||'Stock');
-  // Contenido
   var body=document.getElementById('sp-body');
   if(!body) return;
   if(!(m.sizes||[]).length){
@@ -1723,16 +1733,8 @@ function showStockPanel(mid){
     }
     body.innerHTML=html;
   }
-  // Posicionar siempre a la derecha del contenedor centrado (relativo al viewport con fixed)
-  var idealLeft=Math.round(window.innerWidth/2)+300;
-  panel.style.left=idealLeft+'px';
-  // Si el panel se sale del viewport, expandir el body para permitir scroll horizontal
-  var panelRight=idealLeft+248;
-  if(panelRight>window.innerWidth){
-    document.body.classList.add('sp-overflow');
-    document.body.style.minWidth=panelRight+'px';
-  }
   panel.classList.add('visible');
+  _positionStockPanel();
 }
 
 // ===== FILTERS =====
@@ -3824,12 +3826,15 @@ function updateTotalsBarTop(){
   if(tb) document.documentElement.style.setProperty('--topbar-h', tbH+'px');
 }
 updateTotalsBarTop();
-window.addEventListener('resize', updateTotalsBarTop);
+window.addEventListener('resize', function(){
+  updateTotalsBarTop();
+  _positionStockPanel();
+});
 
 // Cerrar panel de stocks al hacer click fuera de las cards
 document.addEventListener('click', function(e){
   var panel=document.getElementById('stock-panel');
-  if(!panel) return;
+  if(!panel||!panel.classList.contains('visible')) return;
   if(!e.target.closest('.door-card') && !e.target.closest('#stock-panel')){
     panel.classList.remove('visible');
     panel.style.left='-9999px';
