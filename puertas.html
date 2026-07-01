@@ -58,41 +58,9 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .door-list{padding:3px 8px 20px;display:flex;flex-direction:column;gap:2px;}
 .door-card{background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:7px 8px;display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;}
 
-/* PANEL LATERAL DE STOCKS (solo PC) */
-#stock-panel{display:none;}
-@media(min-width:900px){
-  #stock-panel{
-    display:block;
-    position:fixed;
-    top:50%;
-    transform:translateY(-50%);
-    left:calc(50% + 295px);
-    width:240px;
-    max-height:70vh;
-    overflow-y:auto;
-    background:var(--bg2);
-    border:1px solid var(--border);
-    border-radius:8px;
-    padding:12px;
-    z-index:5;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity .2s;
-  }
-  #stock-panel.visible{opacity:1;pointer-events:auto;}
-  .sp-title{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;border-bottom:1px solid var(--border);padding-bottom:6px;word-break:break-word;}
-  .sp-row{display:flex;align-items:center;padding:3px 0;border-bottom:1px solid var(--border);font-family:'Barlow Condensed',sans-serif;font-size:12px;gap:8px;}
-  .sp-row:last-child{border-bottom:none;}
-  .sp-med{font-weight:700;color:var(--text);min-width:38px;}
-  .sp-vals{display:flex;gap:6px;}
-  .sp-d{color:var(--color-stock-r);font-weight:700;}
-  .sp-i{color:var(--color-stock-l);font-weight:700;}
-  .sp-zero{color:var(--zero);}
-  .sp-empty{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--dim);text-align:center;padding:8px 0;}
-  .door-header{cursor:pointer;}
-  .door-card.sp-active .door-header{background:rgba(212,113,31,0.06);border-radius:4px;}
-  .door-card.sp-active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 0 10px rgba(212,113,31,0.25);}
-}
+/* Card desplegada: borde brillante */
+.door-card.card-open{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 0 10px rgba(212,113,31,0.25);}
+
 #reorder-toggle-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
 .door-card.reorder-mode{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;transition:transform .15s,box-shadow .15s;}
 .door-card.reorder-mode:active{cursor:grabbing;}
@@ -548,9 +516,6 @@ select.finput{cursor:pointer;}
     </div>
   </div>
 
-<!-- ===== PANEL LATERAL STOCKS (PC) ===== -->
-<div id="stock-panel">
-  <div class="sp-title" id="sp-title">Stock</div>
   <div id="sp-body"></div>
 </div>
 
@@ -1640,53 +1605,21 @@ function adjustStock(btn, modelId, sizeIdx, side, delta){
 function toggleCard(id){
   var body=document.getElementById(id);
   if(!body) return;
+  var card=body.parentNode;
   var open=(body.className==='card-body open');
   if(!open){
     var allBodies=document.querySelectorAll('.card-body.open');
-    for(var i=0;i<allBodies.length;i++) allBodies[i].className='card-body';
+    for(var i=0;i<allBodies.length;i++){
+      allBodies[i].className='card-body';
+      if(allBodies[i].parentNode) allBodies[i].parentNode.classList.remove('card-open');
+    }
   }
   body.className=open?'card-body':'card-body open';
+  if(card) card.classList.toggle('card-open', !open);
 }
 
 function handleCardClick(e, cardBodyId, mid){
-  if(window.innerWidth>=900){
-    showStockPanel(mid);
-  } else {
-    toggleCard(cardBodyId);
-  }
-}
-
-function showStockPanel(mid){
-  var panel=document.getElementById('stock-panel');
-  if(!panel || window.innerWidth<900) return;
-  var m=getModel(mid); if(!m) return;
-  // Marcar card activa
-  var all=document.querySelectorAll('.door-card.sp-active');
-  for(var i=0;i<all.length;i++) all[i].classList.remove('sp-active');
-  var card=document.querySelector('.door-card[data-order-id="'+mid+'"]');
-  if(card) card.classList.add('sp-active');
-  // Titulo
-  document.getElementById('sp-title').textContent=(m.descripcion||m.fabrica||'Stock');
-  // Contenido
-  var body=document.getElementById('sp-body');
-  if(!(m.sizes||[]).length){
-    body.innerHTML='<div class="sp-empty">Sin medidas cargadas</div>';
-  } else {
-    var html='';
-    for(var s=0;s<m.sizes.length;s++){
-      var sz=m.sizes[s];
-      var rCls=(sz.r||0)===0?'sp-d sp-zero':'sp-d';
-      var lCls=(sz.l||0)===0?'sp-i sp-zero':'sp-i';
-      html+='<div class="sp-row">'
-        +'<span class="sp-med">'+esc(sz.medida)+'</span>'
-        +'<span class="sp-vals">'
-        +'<span class="'+rCls+'">D:'+(sz.r||0)+'</span>'
-        +'<span class="'+lCls+'">I:'+(sz.l||0)+'</span>'
-        +'</span></div>';
-    }
-    body.innerHTML=html;
-  }
-  panel.classList.add('visible');
+  toggleCard(cardBodyId);
 }
 
 // ===== FILTERS =====
@@ -3747,17 +3680,6 @@ function updateTotalsBarTop(){
 }
 updateTotalsBarTop();
 window.addEventListener('resize', updateTotalsBarTop);
-
-// Cerrar panel de stocks al hacer click fuera de las cards
-document.addEventListener('click', function(e){
-  var panel=document.getElementById('stock-panel');
-  if(!panel||!panel.classList.contains('visible')) return;
-  if(!e.target.closest('.door-card') && !e.target.closest('#stock-panel')){
-    panel.classList.remove('visible');
-    var active=document.querySelectorAll('.door-card.sp-active');
-    for(var i=0;i<active.length;i++) active[i].classList.remove('sp-active');
-  }
-});
 
 // Ctrl+Z / Ctrl+Y / Ctrl+Shift+Z keyboard shortcuts
 document.addEventListener('keydown', function(e){
