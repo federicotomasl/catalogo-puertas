@@ -59,7 +59,37 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .door-list{padding:3px 8px 20px;display:flex;flex-direction:column;gap:2px;}
 .door-card{background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:7px 8px;display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;}
 
-/* REORDENAR MANUAL */
+/* PANEL LATERAL DE STOCKS (solo PC) */
+#stock-panel{display:none;}
+@media(min-width:900px){
+  #stock-panel{
+    display:block;
+    position:fixed;
+    top:120px;
+    left:calc(50% + 300px);
+    width:220px;
+    background:var(--bg2);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:12px;
+    z-index:5;
+    transition:opacity .2s;
+    opacity:0;
+    pointer-events:none;
+  }
+  #stock-panel.visible{opacity:1;pointer-events:auto;}
+  .sp-title{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;border-bottom:1px solid var(--border);padding-bottom:6px;word-break:break-word;}
+  .sp-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid var(--border);font-family:'Barlow Condensed',sans-serif;font-size:12px;}
+  .sp-row:last-child{border-bottom:none;}
+  .sp-med{font-weight:700;color:var(--text);}
+  .sp-vals{display:flex;gap:8px;}
+  .sp-d{color:var(--color-stock-r);font-weight:700;}
+  .sp-i{color:var(--color-stock-l);font-weight:700;}
+  .sp-zero{color:var(--zero);}
+  .sp-empty{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--dim);text-align:center;padding:8px 0;}
+  .door-header{cursor:pointer;}
+  .door-card.sp-active .door-header{background:rgba(212,113,31,0.06);border-radius:4px;}
+}
 #reorder-toggle-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
 .door-card.reorder-mode{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;transition:transform .15s,box-shadow .15s;}
 .door-card.reorder-mode:active{cursor:grabbing;}
@@ -530,6 +560,12 @@ select.finput{cursor:pointer;}
       <button class="btn-save" id="btn-save" onclick="saveModel()">Guardar Modelo</button>
     </div>
   </div>
+
+<!-- ===== PANEL LATERAL STOCKS (PC) ===== -->
+<div id="stock-panel">
+  <div class="sp-title" id="sp-title">Stock</div>
+  <div id="sp-body"></div>
+</div>
 
 <!-- ===== GLOBAL PANEL ===== -->
 <div id="global-panel-overlay" onclick="closeGlobalPanel(event)" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.6);align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;">
@@ -1638,6 +1674,44 @@ function toggleCard(id){
   if(btn){btn.className=open?'abtn abtn-exp':'abtn abtn-exp open';btn.textContent=open?'▼':'▲';}
 }
 
+function showStockPanel(mid){
+  // En mobile no hacer nada (el panel no existe visualmente)
+  var panel=document.getElementById('stock-panel');
+  if(!panel || window.innerWidth<900) return;
+  var m=getModel(mid); if(!m) return;
+  // Quitar clase activa de todas las cards
+  var all=document.querySelectorAll('.door-card.sp-active');
+  for(var i=0;i<all.length;i++) all[i].classList.remove('sp-active');
+  // Marcar la card activa
+  var card=document.querySelector('.door-card[data-order-id="'+mid+'"]');
+  if(card) card.classList.add('sp-active');
+  // Titulo
+  var title=document.getElementById('sp-title');
+  if(title) title.textContent=(m.descripcion||m.fabrica||'Stock');
+  // Contenido
+  var body=document.getElementById('sp-body');
+  if(!body) return;
+  if(!(m.sizes||[]).length){
+    body.innerHTML='<div class="sp-empty">Sin medidas cargadas</div>';
+  } else {
+    var html='';
+    for(var s=0;s<m.sizes.length;s++){
+      var sz=m.sizes[s];
+      var rCls=(sz.r||0)===0?'sp-d sp-zero':'sp-d';
+      var lCls=(sz.l||0)===0?'sp-i sp-zero':'sp-i';
+      html+='<div class="sp-row">'
+        +'<span class="sp-med">'+esc(sz.medida)+'</span>'
+        +'<span class="sp-vals">'
+        +'<span class="'+rCls+'">D:'+(sz.r||0)+'</span>'
+        +'<span class="'+lCls+'">I:'+(sz.l||0)+'</span>'
+        +'</span>'
+        +'</div>';
+    }
+    body.innerHTML=html;
+  }
+  panel.classList.add('visible');
+}
+
 // ===== FILTERS =====
 var currentDepositoFilter = '';
 
@@ -2507,7 +2581,7 @@ function renderList(){
       +(reorderMode?'<span class="reorder-handle" aria-hidden="true">⠿</span>':'')
       +'<input type="checkbox" class="door-check" data-id="'+mid+'" onchange="updateSelLabel()">'
       +'<div class="door-top">'
-      +'<div class="door-header">'
+      +'<div class="door-header" onclick="showStockPanel(\''+mid+'\')">'
       +(m.descripcion?'<div class="door-desc-row">'+esc(m.descripcion)+'</div>':'')
       +'<div class="door-header-row1">'
       +(m.fabrica?'<span class="ftag ftag-fab">'+esc(m.fabrica)+'</span>':'')
@@ -3723,10 +3797,24 @@ if(_session || _mode === 'consulta'){
 // Ajustar la posición de la barra de totales según la altura de la topbar
 function updateTotalsBarTop(){
   var tb=document.querySelector('.topbar');
-  if(tb) document.documentElement.style.setProperty('--topbar-h', tb.offsetHeight+'px');
+  var tbH=tb?tb.offsetHeight:0;
+  if(tb) document.documentElement.style.setProperty('--topbar-h', tbH+'px');
+  var sp=document.getElementById('stock-panel');
+  if(sp) sp.style.top=(tbH+16)+'px';
 }
 updateTotalsBarTop();
 window.addEventListener('resize', updateTotalsBarTop);
+
+// Cerrar panel de stocks al hacer click fuera de las cards
+document.addEventListener('click', function(e){
+  var panel=document.getElementById('stock-panel');
+  if(!panel) return;
+  if(!e.target.closest('.door-card') && !e.target.closest('#stock-panel')){
+    panel.classList.remove('visible');
+    var active=document.querySelectorAll('.door-card.sp-active');
+    for(var i=0;i<active.length;i++) active[i].classList.remove('sp-active');
+  }
+});
 
 // Ctrl+Z / Ctrl+Y / Ctrl+Shift+Z keyboard shortcuts
 document.addEventListener('keydown', function(e){
