@@ -1994,23 +1994,20 @@ function getFiltered(){
 var noStockIds = [];
 
 function renderSummary(){
-  var total=models.length, units=0, noStock=0;
+  var depLabel = currentDepositoFilter ? ' ('+currentDepositoFilter+')' : '';
+  var scope = currentDepositoFilter
+    ? models.filter(function(m){return (m.deposito||'')=== currentDepositoFilter;})
+    : models;
+  var total=scope.length, units=0, noStock=0;
   noStockIds=[];
-  for(var i=0;i<models.length;i++){
-    var m=models[i], any=false;
+  for(var i=0;i<scope.length;i++){
+    var m=scope[i], any=false;
     for(var j=0;j<(m.sizes||[]).length;j++){units+=(m.sizes[j].r||0)+(m.sizes[j].l||0);if((m.sizes[j].r||0)>0||(m.sizes[j].l||0)>0)any=true;}
     if((m.sizes||[]).length>0&&!any){noStock++;noStockIds.push(m.id);}
   }
-  var filtered=getFiltered();
-  var medSet={};
-  for(var fi=0;fi<filtered.length;fi++){
-    for(var fj=0;fj<(filtered[fi].sizes||[]).length;fj++){
-      var med=filtered[fi].sizes[fj].medida||'?';
-      medSet[med]=true;
-    }
-  }
-  var resetChip='<div class="summary-chip alert" id="reset-stock-chip" style="cursor:pointer;" title="Resetear todo el stock a cero">Reset stock</div>';
-  var sinStockChip=noStock>0?'<div class="summary-chip alert" id="sin-stock-chip" style="cursor:pointer;" title="Ver modelos sin stock">Sin stock: <span>'+noStock+'</span></div>':'';
+  var resetLabel='Reset stock'+depLabel;
+  var resetChip='<div class="summary-chip alert" id="reset-stock-chip" style="cursor:pointer;" title="Resetear stock a cero'+depLabel+'">'+resetLabel+'</div>';
+  var sinStockChip=noStock>0?'<div class="summary-chip alert" id="sin-stock-chip" style="cursor:pointer;" title="Ver modelos sin stock'+depLabel+'">Sin stock: <span>'+noStock+'</span></div>':'';
   document.getElementById('summary-bar').innerHTML=
     '<div class="summary-chip">Modelos: <span>'+total+'</span></div>'+
     '<div class="summary-chip">Unidades: <span>'+units+'</span></div>'+
@@ -2030,16 +2027,20 @@ function resetAllStock(){
   if(isConsulta()) return;
   if(resetStockPending){
     resetStockPending=false;
-    pushUndo('Reset stock general');
-    for(var i=0;i<models.length;i++){
-      for(var j=0;j<(models[i].sizes||[]).length;j++){
-        models[i].sizes[j].r=0;
-        models[i].sizes[j].l=0;
+    var scope = currentDepositoFilter
+      ? models.filter(function(m){return (m.deposito||'')=== currentDepositoFilter;})
+      : models;
+    var label = currentDepositoFilter ? 'Reset stock ('+currentDepositoFilter+')' : 'Reset stock general';
+    pushUndo(label);
+    for(var i=0;i<scope.length;i++){
+      for(var j=0;j<(scope[i].sizes||[]).length;j++){
+        scope[i].sizes[j].r=0;
+        scope[i].sizes[j].l=0;
       }
-      supaUpsert(models[i].id, models[i]);
+      supaUpsert(scope[i].id, scope[i]);
     }
     renderList();
-    showToast('Stock reseteado a cero');
+    showToast('Stock reseteado a cero'+(currentDepositoFilter?' ('+currentDepositoFilter+')':''));
     return;
   }
   resetStockPending=true;
