@@ -625,7 +625,7 @@ select.finput{cursor:pointer;}
       <div class="mosaic-modal-desc" id="mosaic-modal-desc"></div>
       <div class="mosaic-modal-meta" id="mosaic-modal-meta"></div>
       <div class="mosaic-modal-actions">
-        <button class="abtn abtn-edit" id="mosaic-modal-edit" aria-label="Editar" title="Editar">✏️</button>
+        <button class="abtn abtn-edit" id="mosaic-modal-edit" aria-label="Editar" title="Editar">Editar</button>
       </div>
     </div>
   </div>
@@ -2244,7 +2244,7 @@ function renderTable(filtered){
     var marHtml=m.marco?'<span class="tbl-ftag tbl-ftag-marco">'+esc(m.marco)+'</span>':'<span style="color:var(--dim)">—</span>';
     var descHtml=m.descripcion?esc(m.descripcion):'<span style="color:var(--dim)">—</span>';
     var actHtml='<div class="tbl-acts">'
-      +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')" aria-label="Editar" title="Editar">✏️</button>'
+      +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')" aria-label="Editar" title="Editar">Editar</button>'
       +'</div>';
 
     if(sizes.length===0){
@@ -2488,7 +2488,7 @@ function renderList(){
       +'</div>'
       +'</div>'
       +'<div class="door-actions">'
-      +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')" aria-label="Editar" title="Editar">✏️</button>'
+      +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')" aria-label="Editar" title="Editar">Editar</button>'
       +'</div>'
       +'</div>'
       +(hasBody?'<div class="card-body" id="cb-'+mid+'"><div class="sizes-row-wrap"><div class="sizes-row" style="'+sizesRowStyle+'">'+chips+'</div></div>'+photoHtml+'</div>':'')
@@ -3227,7 +3227,7 @@ function renderTempList(){
       +'</div>'
       +'</div>'
       +'<div class="door-actions">'
-      +'<button class="abtn abtn-edit" onclick="openTempForm(\''+mid+'\')" aria-label="Editar" title="Editar">✏️</button>'
+      +'<button class="abtn abtn-edit" onclick="openTempForm(\''+mid+'\')" aria-label="Editar" title="Editar">Editar</button>'
       +'</div>'
       +(hasBody?'<div class="card-body" id="tcb-'+mid+'"><div class="sizes-row-wrap"><div class="sizes-row">'+chips+'</div></div></div>':'')
       +'</div>';
@@ -3252,7 +3252,7 @@ function renderTempTable(list){
     var marHtml=m.marco?'<span class="tbl-ftag tbl-ftag-marco">'+esc(m.marco)+'</span>':'—';
     var descHtml=m.descripcion?esc(m.descripcion):'—';
     var actHtml='<div class="tbl-acts">'
-      +'<button class="abtn abtn-edit" onclick="openTempForm(\''+mid+'\')" aria-label="Editar" title="Editar">✏️</button>'
+      +'<button class="abtn abtn-edit" onclick="openTempForm(\''+mid+'\')" aria-label="Editar" title="Editar">Editar</button>'
       +'</div>';
     if(sizes.length===0){
       html+='<tr data-model="'+mid+'" class="'+oddCls+'">'
