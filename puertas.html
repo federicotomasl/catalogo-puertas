@@ -2435,13 +2435,13 @@ function renderList(){
       var lClsL=(szL.l||0)===0?'stock-zero':'stock-l';
       chips+='<div class="size-chip">'
         +'<span class="size-val">'+esc(szL.medida)+'</span>'
-        +'<span class="ssep">D</span>'
+        +'<span class="ssep" style="color:var(--color-stock-r);">D</span>'
         +'<div class="qbtns">'
         +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+li+',\'r\',-1)">-</button>'
         +'<span class="qval '+rClsL+'">'+(szL.r||0)+'</span>'
         +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+li+',\'r\',1)">+</button>'
         +'</div>'
-        +'<span class="ssep-div"></span><span class="ssep">𝙸</span>'
+        +'<span class="ssep-div"></span><span class="ssep" style="color:var(--color-stock-l);">𝙸</span>'
         +'<div class="qbtns">'
         +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+li+',\'l\',-1)">-</button>'
         +'<span class="qval '+lClsL+'">'+(szL.l||0)+'</span>'
@@ -2455,13 +2455,13 @@ function renderList(){
         var lClsR=(szR.l||0)===0?'stock-zero':'stock-l';
         chips+='<div class="size-chip">'
           +'<span class="size-val">'+esc(szR.medida)+'</span>'
-          +'<span class="ssep">D</span>'
+          +'<span class="ssep" style="color:var(--color-stock-r);">D</span>'
           +'<div class="qbtns">'
           +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+ri+',\'r\',-1)">-</button>'
           +'<span class="qval '+rClsR+'">'+(szR.r||0)+'</span>'
           +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+ri+',\'r\',1)">+</button>'
           +'</div>'
-          +'<span class="ssep-div"></span><span class="ssep">𝙸</span>'
+          +'<span class="ssep-div"></span><span class="ssep" style="color:var(--color-stock-l);">𝙸</span>'
           +'<div class="qbtns">'
           +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+ri+',\'l\',-1)">-</button>'
           +'<span class="qval '+lClsR+'">'+(szR.l||0)+'</span>'
@@ -3199,7 +3199,7 @@ function renderTempList(){
       chips+='<div class="size-chip">'
         +'<span class="size-val">'+esc(szL.medida)+'</span><span class="ssep">D</span>'
         +'<div class="qbtns"><button class="qbtn" onclick="adjustTempStock(this,\''+mid+'\','+li+',\'r\',-1)">-</button><span class="qval '+rClsL+'">'+(szL.r||0)+'</span><button class="qbtn" onclick="adjustTempStock(this,\''+mid+'\','+li+',\'r\',1)">+</button></div>'
-        +'<span class="ssep-div"></span><span class="ssep">𝙸</span>'
+        +'<span class="ssep-div"></span><span class="ssep" style="color:var(--color-stock-l);">𝙸</span>'
         +'<div class="qbtns"><button class="qbtn" onclick="adjustTempStock(this,\''+mid+'\','+li+',\'l\',-1)">-</button><span class="qval '+lClsL+'">'+(szL.l||0)+'</span><button class="qbtn" onclick="adjustTempStock(this,\''+mid+'\','+li+',\'l\',1)">+</button></div>'
         +'</div>';
       if(ri!==undefined){
@@ -3209,7 +3209,7 @@ function renderTempList(){
         chips+='<div class="size-chip">'
           +'<span class="size-val">'+esc(szR.medida)+'</span><span class="ssep">D</span>'
           +'<div class="qbtns"><button class="qbtn" onclick="adjustTempStock(this,\''+mid+'\','+ri+',\'r\',-1)">-</button><span class="qval '+rClsR+'">'+(szR.r||0)+'</span><button class="qbtn" onclick="adjustTempStock(this,\''+mid+'\','+ri+',\'r\',1)">+</button></div>'
-          +'<span class="ssep-div"></span><span class="ssep">𝙸</span>'
+          +'<span class="ssep-div"></span><span class="ssep" style="color:var(--color-stock-l);">𝙸</span>'
           +'<div class="qbtns"><button class="qbtn" onclick="adjustTempStock(this,\''+mid+'\','+ri+',\'l\',-1)">-</button><span class="qval '+lClsR+'">'+(szR.l||0)+'</span><button class="qbtn" onclick="adjustTempStock(this,\''+mid+'\','+ri+',\'l\',1)">+</button></div>'
           +'</div>';
       }
