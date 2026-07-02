@@ -309,10 +309,14 @@ select.finput{cursor:pointer;}
   <div id="page-catalog" role="main">
     <div class="topbar">
       <div class="topbar-inner">
-        <!-- Fila 1: navegación + título -->
-        <div style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;">
+        <!-- Fila 1: título -->
+        <div style="display:flex;align-items:center;justify-content:center;width:100%;">
+          <div class="topbar-title">Puertas</div>
+        </div>
+        <!-- Fila 2: todas las acciones en un renglón -->
+        <div style="display:flex;align-items:center;justify-content:center;gap:5px;width:100%;flex-wrap:wrap;">
           <div style="position:relative;">
-            <button class="btn btn-outline" onclick="toggleMoreMenu()" id="more-opts-btn" aria-label="Más opciones">Más opciones &#9662;</button>
+            <button class="btn btn-outline" onclick="toggleMoreMenu()" id="more-opts-btn" aria-label="Opciones">Opciones &#9662;</button>
             <div id="more-opts-menu" class="more-opts-menu">
               <button onclick="closeMoreMenuAnd(backupJSON)">⬇ Backup</button>
               <label>⬆ Restaurar<input type="file" accept=".json" style="display:none;" onchange="closeMoreMenu();restoreJSON(event)"></label>
@@ -322,11 +326,6 @@ select.finput{cursor:pointer;}
             </div>
           </div>
           <a href="index.html" class="btn btn-ghost" style="text-decoration:none;" aria-label="Ir al menú">MENÚ</a>
-          <button class="btn btn-ghost" onclick="doLogout()" style="color:var(--dim);" title="Cerrar sesión">Salir</button>
-          <div class="topbar-title">Puertas</div>
-        </div>
-        <!-- Fila 2: acciones -->
-        <div style="display:flex;align-items:center;justify-content:center;gap:5px;width:100%;">
           <button id="undo-btn" class="btn btn-ghost" onclick="performUndo()" disabled style="opacity:0.35;" title="Sin acciones para deshacer" aria-label="Deshacer">&#8630;</button>
           <button id="redo-btn" class="btn btn-ghost" onclick="performRedo()" disabled style="opacity:0.35;" title="Sin acciones para rehacer" aria-label="Rehacer">&#8631;</button>
           <div class="view-toggle">
