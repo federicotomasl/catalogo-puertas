@@ -373,25 +373,11 @@ select.finput{cursor:pointer;}
         <button id="filtros-toggle-btn" onclick="toggleFiltrosPanel()" style="flex-shrink:0;background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--muted);font-size:16px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;" title="Mostrar/ocultar filtros" aria-label="Mostrar/ocultar filtros">+</button>
       </div>
 
-      <!-- Panel colapsable: agrupar + ordenar + filtrar -->
+      <!-- Panel colapsable: agrupar + filtrar -->
       <div id="filtros-panel" style="display:none;margin-top:6px;">
         <!-- Agrupar -->
         <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:6px;">
-          <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Agrupar</span>
-          <button class="filter-tab" id="grp-none" onclick="setGroup('none',this)">✕</button>
-          <button class="filter-tab" id="grp-fabrica" onclick="setGroup('fabrica',this)">Fábrica</button>
-          <button class="filter-tab" id="grp-marco" onclick="setGroup('marco',this)">Marco</button>
-          <button class="filter-tab" id="grp-color" onclick="setGroup('color',this)">Color</button>
-        </div>
-        <!-- Ordenar (renglón propio) -->
-        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:6px;">
-          <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Ordenar</span>
-          <div id="sort-tabs" style="display:contents;">
-            <button class="filter-tab sort-btn active" onclick="setSort('original',this)">✕</button>
-            <button class="filter-tab sort-btn" onclick="setSort('fabrica',this)">Fábrica</button>
-            <button class="filter-tab sort-btn" onclick="setSort('marco',this)">Marco</button>
-            <button class="filter-tab sort-btn" onclick="setSort('color',this)">Color</button>
-          </div>
+          <button class="filter-tab" id="grp-fabrica" onclick="toggleGroupFabrica(this)">Agrupar por Fábrica</button>
         </div>
         <!-- Filtros fchip -->
         <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;position:relative;">
@@ -1593,10 +1579,20 @@ function updateMedidaFilter(){
 // ===== SORT =====
 function setSort(sort,el){
   currentSort=sort;
-  var tabs=document.querySelectorAll('.sort-btn');
-  for(var i=0;i<tabs.length;i++) tabs[i].classList.remove('active');
-  el.classList.add('active');
   if(sort!=='original' && reorderMode) toggleReorderMode();
+  renderList();
+}
+
+function setGroup(val){
+  groupBy=val;
+  if(val!=='none' && reorderMode) toggleReorderMode();
+  renderList();
+}
+
+function toggleGroupFabrica(btn){
+  groupBy = groupBy==='fabrica' ? 'none' : 'fabrica';
+  if(btn) btn.classList.toggle('active', groupBy==='fabrica');
+  if(groupBy!=='none' && reorderMode) toggleReorderMode();
   renderList();
 }
 
@@ -1914,9 +1910,7 @@ function resetFilters(){
 }
 
 function clearAllFilters(){
-  // Limpiar buscador
   document.getElementById('search-input').value='';
-  // Limpiar filtros de fchip
   var ids=['f-fabrica-filter','f-marco-filter','f-color-filter','f-medida-filter'];
   for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el)el.value='';}
   var labels={fabrica:'Fábrica',marco:'Marco',color:'Color',medida:'Medida'};
@@ -1928,20 +1922,10 @@ function clearAllFilters(){
     if(drop) drop.classList.remove('open');
   }
   openFchip=null;
-  // Resetear agrupamiento
   groupBy='none';
-  var grpTabs=document.querySelectorAll('#grp-none,#grp-fabrica,#grp-marco,#grp-color');
-  for(var g=0;g<grpTabs.length;g++) grpTabs[g].classList.remove('active');
-  var grpNone=document.getElementById('grp-none'); if(grpNone) grpNone.classList.add('active');
-  // Resetear ordenamiento
+  var grpFab=document.getElementById('grp-fabrica'); if(grpFab) grpFab.classList.remove('active');
   currentSort='original';
-  var sortTabs=document.querySelectorAll('.sort-btn');
-  for(var s=0;s<sortTabs.length;s++) sortTabs[s].classList.remove('active');
-  var sortFirst=document.querySelector('.sort-btn');
-  if(sortFirst) sortFirst.classList.add('active');
-  // Desactivar modo reorder si estaba activo
   if(reorderMode) toggleReorderMode();
-  // Mantener filtro de depósito intacto
   renderList();
 }
 
@@ -2025,15 +2009,6 @@ function debouncedRender(){
 }
 
 // ===== GROUP BY =====
-function setGroup(val, btn){
-  groupBy = val;
-  var tabs = document.querySelectorAll('#grp-none,#grp-fabrica,#grp-marco,#grp-color');
-  for(var i=0;i<tabs.length;i++) tabs[i].classList.remove('active');
-  if(btn) btn.classList.add('active');
-  if(val!=='none' && reorderMode) toggleReorderMode();
-  renderList();
-}
-
 function groupModels(filtered){
   if(groupBy==='none') return [{key:null, models:filtered}];
   var groups={}, order=[];
