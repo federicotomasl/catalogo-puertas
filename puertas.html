@@ -50,8 +50,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .filter-tab{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .15s;}
 .filter-tab:not(.active):hover{border-color:var(--accent);color:var(--accent);}
 .filter-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;}
-.inline-btn{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--muted);background:transparent;cursor:pointer;white-space:nowrap;transition:all .15s;min-width:80px;text-align:center;}
-.inline-btn:hover{border-color:var(--accent);color:var(--accent);}
 .divider{height:1px;background:var(--border);margin:0 12px;}
 
 /* CARDS */
@@ -425,10 +423,7 @@ select.finput{cursor:pointer;}
 
     <div style="display:flex;align-items:center;justify-content:flex-start;gap:5px;margin:8px 12px 6px;">
       <div id="count-label" style="display:none;"></div>
-      <span id="card-only-btns" style="display:inline-flex;gap:5px;">
-        <button onclick="expandAll()" class="inline-btn">Desplegar todo</button>
-        <button onclick="collapseAll()" class="inline-btn">Contraer todo</button>
-      </span>
+
       <div style="margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0;">
         <button onclick="clearAllFilters()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:pointer;white-space:nowrap;transition:all .15s;" title="Limpiar todos los filtros y ordenamientos">✕ Limpiar</button>
         <button id="del-sel-btn" onclick="deleteSelected()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:default;white-space:nowrap;transition:all .15s;" disabled>Eliminar sel.</button>
@@ -648,7 +643,6 @@ var reorderMode = false;
 var formSizes = [];
 var formPhoto = null;
 var darkMode = true;
-var allExpanded = false;
 var consultaMode = (localStorage.getItem('torri_mode') === 'consulta');
 
 function isConsulta(){ return consultaMode; }
@@ -1836,25 +1830,29 @@ function cancelResetStock(e){
   }
 }
 
+
 var noStockExpanded = false;
 
 function expandNoStock(){
   var bodies=document.querySelectorAll('.card-body');
   if(noStockExpanded){
     for(var b=0;b<bodies.length;b++) bodies[b].className='card-body';
+    document.querySelectorAll('.door-card.card-open').forEach(function(el){el.classList.remove('card-open');});
     noStockExpanded=false;
-    allExpanded=false;
     return;
   }
   var idSet={};
   for(var i=0;i<noStockIds.length;i++) idSet[noStockIds[i]]=true;
   for(var b2=0;b2<bodies.length;b2++) bodies[b2].className='card-body';
+  document.querySelectorAll('.door-card.card-open').forEach(function(el){el.classList.remove('card-open');});
   for(var id in idSet){
     var body=document.getElementById('cb-'+id);
-    if(body) body.className='card-body open';
+    if(body){
+      body.className='card-body open';
+      if(body.parentNode) body.parentNode.classList.add('card-open');
+    }
   }
   noStockExpanded=true;
-  allExpanded=false;
 }
 
 // ===== TOTALS =====
@@ -1881,6 +1879,7 @@ function renderTotals(filtered){
 
 // ===== RESET FILTERS =====
 function resetFilters(){
+  noStockExpanded=false;
   document.getElementById('search-input').value='';
   var ids=['f-fabrica-filter','f-marco-filter','f-color-filter','f-medida-filter'];
   for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el)el.value='';}
@@ -2001,18 +2000,6 @@ function updateFchipLabel(key){
 
 var mosaicSmall = true;
 
-// ===== EXPAND/COLLAPSE ALL =====
-function expandAll(){
-  var bodies=document.querySelectorAll('.card-body');
-  for(var i=0;i<bodies.length;i++) bodies[i].className='card-body open';
-  allExpanded=true;
-}
-
-function collapseAll(){
-  var bodies=document.querySelectorAll('.card-body');
-  for(var i=0;i<bodies.length;i++) bodies[i].className='card-body';
-  allExpanded=false;
-}
 
 // ===== DEBOUNCED SEARCH =====
 var searchTimer=null;
@@ -2056,7 +2043,6 @@ function setViewMode(mode){
   document.getElementById('vt-cards').className  = mode==='cards'  ? 'active' : '';
   document.getElementById('vt-table').className  = mode==='table'  ? 'active' : '';
   document.getElementById('vt-mosaic').className = mode==='mosaic' ? 'active' : '';
-  document.getElementById('card-only-btns').style.display = mode==='cards' ? 'inline-flex' : 'none';
   if(mode!=='cards' && reorderMode) toggleReorderMode();
   renderList();
 }
@@ -2253,7 +2239,6 @@ function renderList(){
   var n=filtered.length;
   document.getElementById('count-label').textContent=n+' modelo'+(n!==1?'s':'');
   renderSummary(); renderTotals(filtered);
-  noStockExpanded=false;
 
   var groups=groupModels(filtered);
   if(viewMode==='table'){ renderTable(filtered, groups); updateResetBtn(); if(consultaMode) applyConsultaMode(); return; }
@@ -2353,10 +2338,6 @@ function renderList(){
   } // end groups loop
   list.innerHTML=html;
   // Preserve expand-all state after re-render
-  if(allExpanded){
-    var bodies=document.querySelectorAll('.card-body');
-    for(var bi=0;bi<bodies.length;bi++) bodies[bi].className='card-body open';
-  }
   updateResetBtn();
   if(consultaMode) applyConsultaMode();
   if(reorderMode) attachReorderListeners();
@@ -2893,11 +2874,9 @@ function initCatalog(){
       if(viewMode==='table'){
         document.getElementById('vt-cards').className='';
         document.getElementById('vt-table').className='active';
-        document.getElementById('card-only-btns').style.display='none';
       } else if(viewMode==='mosaic'){
         document.getElementById('vt-cards').className='';
         document.getElementById('vt-mosaic').className='active';
-        document.getElementById('card-only-btns').style.display='none';
       }
       document.getElementById('grp-none').classList.add('active');
       renderList();
