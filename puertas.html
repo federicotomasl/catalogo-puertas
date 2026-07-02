@@ -2227,7 +2227,7 @@ function closeMosaicModal(e){
 function renderList(){
   var filtered=getFiltered();
   var n=filtered.length;
-  document.getElementById('count-label').textContent=n+' modelo'+(n!==1?'s':'');
+  var cl=document.getElementById('count-label'); if(cl) cl.textContent=n+' modelo'+(n!==1?'s':'');
   renderSummary(); renderTotals(filtered);
 
   var groups=groupModels(filtered);
@@ -2894,7 +2894,6 @@ function initCatalog(){
         document.getElementById('vt-cards').className='';
         document.getElementById('vt-mosaic').className='active';
       }
-      document.getElementById('grp-none').classList.add('active');
       renderList();
       updateTotalsBarTop();
       if(consultaMode) applyConsultaMode();
