@@ -514,6 +514,15 @@ select.finput{cursor:pointer;}
   <div id="sp-body"></div>
 </div>
 
+<!-- ===== PHOTO PANEL ===== -->
+<div id="photo-panel-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center;" onclick="closePhotoPanel()">
+  <div id="photo-panel" style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;max-width:520px;width:90%;max-height:90vh;overflow-y:auto;padding:16px;position:relative;" onclick="event.stopPropagation()">
+    <button onclick="closePhotoPanel()" aria-label="Cerrar" style="position:absolute;top:10px;right:12px;background:transparent;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;">✕</button>
+    <div id="photo-panel-info" style="margin-bottom:12px;"></div>
+    <img id="photo-panel-img" src="" alt="Foto del modelo" style="width:100%;border-radius:6px;border:1px solid var(--border);">
+  </div>
+</div>
+
 <!-- ===== GLOBAL PANEL ===== -->
 <div id="global-panel-overlay" onclick="closeGlobalPanel(event)" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.6);align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;">
   <div id="global-panel-inner" onclick="event.stopPropagation()" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;width:100%;max-width:540px;margin:auto;overflow:hidden;">
@@ -2336,6 +2345,7 @@ function renderList(){
       +'</div>'
       +'<div class="door-actions">'
       +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')" aria-label="Editar" title="Editar">Editar</button>'
+      +(m.photo?'<button class="abtn" onclick="showPhotoPanel(\''+mid+'\')" title="Ver foto">Foto</button>':'')
       +'</div>'
       +'</div>'
       +(hasBody?'<div class="card-body" id="cb-'+mid+'"><div class="sizes-row-wrap"><div class="sizes-row" style="'+sizesRowStyle+'">'+chips+'</div></div>'+photoHtml+'</div>':'')
@@ -2397,6 +2407,31 @@ function getExportModels(){
   var out=[];
   for(var j=0;j<models.length;j++){if(ids[models[j].id])out.push(models[j]);}
   return out;
+}
+
+// ===== PHOTO PANEL =====
+function showPhotoPanel(mid){
+  var m=getModel(mid); if(!m||!m.photo) return;
+  var overlay=document.getElementById('photo-panel-overlay');
+  var info=document.getElementById('photo-panel-info');
+  var img=document.getElementById('photo-panel-img');
+  var html='';
+  if(m.descripcion) html+='<div style="font-family:\'Rajdhani\',sans-serif;font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px;">'+esc(m.descripcion)+'</div>';
+  var tags='';
+  if(m.fabrica) tags+='<span class="ftag ftag-fab">'+esc(m.fabrica)+'</span>';
+  if(m.linea)   tags+='<span class="ftag ftag-fab">'+esc(m.linea)+'</span>';
+  if(m.color)   tags+='<span class="ftag ftag-color">'+esc(m.color)+'</span>';
+  if(m.marco)   tags+='<span class="ftag ftag-marco">'+esc(m.marco)+'</span>';
+  if(m.deposito)tags+='<span class="ftag ftag-deposito">'+esc(m.deposito)+'</span>';
+  if(tags) html+='<div style="display:flex;flex-wrap:wrap;gap:4px;">'+tags+'</div>';
+  info.innerHTML=html;
+  img.src=m.photo;
+  overlay.style.display='flex';
+}
+function closePhotoPanel(){
+  var overlay=document.getElementById('photo-panel-overlay');
+  if(overlay) overlay.style.display='none';
+  document.getElementById('photo-panel-img').src='';
 }
 
 // ===== MÁS OPCIONES MENU =====
