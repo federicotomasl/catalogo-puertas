@@ -370,48 +370,40 @@ select.finput{cursor:pointer;}
           <span class="search-icon">&#128269;</span>
           <input class="search-box" id="search-input" type="text" placeholder="Buscar fabrica, descripcion, medida..." oninput="debouncedRender()">
         </div>
-        <button id="filtros-toggle-btn" onclick="toggleFiltrosPanel()" style="flex-shrink:0;background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--muted);font-size:16px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;" title="Mostrar/ocultar filtros" aria-label="Mostrar/ocultar filtros">+</button>
+
       </div>
 
-      <!-- Panel colapsable: agrupar + filtrar -->
-      <div id="filtros-panel" style="display:none;margin-top:6px;">
-        <!-- Agrupar -->
-        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:6px;">
-          <button class="filter-tab" id="grp-fabrica" onclick="toggleGroupFabrica(this)">Agrupar por Fábrica</button>
+      <!-- Filtros fchip: siempre visibles -->
+      <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;position:relative;margin-top:6px;">
+        <button class="filter-tab active" id="filter-clear-tab" onclick="resetFilters()" title="Limpiar filtros">✕</button>
+        <div class="fchip-wrap">
+          <button class="fchip" id="fchip-fabrica" onclick="toggleFchip('fabrica')">Fábrica <span class="fchip-arrow">▼</span></button>
+          <div class="fchip-drop" id="fchip-drop-fabrica"><div class="fchip-opts" id="fchip-opts-fabrica"></div></div>
         </div>
-        <!-- Filtros fchip -->
-        <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;position:relative;">
-          <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Filtrar</span>
-          <button class="filter-tab active" id="filter-clear-tab" onclick="resetFilters()" title="Limpiar filtros">✕</button>
-          <div class="fchip-wrap">
-            <button class="fchip" id="fchip-fabrica" onclick="toggleFchip('fabrica')">Fábrica <span class="fchip-arrow">▼</span></button>
-            <div class="fchip-drop" id="fchip-drop-fabrica"><div class="fchip-opts" id="fchip-opts-fabrica"></div></div>
-          </div>
-          <div class="fchip-wrap">
-            <button class="fchip" id="fchip-marco" onclick="toggleFchip('marco')">Marco <span class="fchip-arrow">▼</span></button>
-            <div class="fchip-drop" id="fchip-drop-marco"><div class="fchip-opts" id="fchip-opts-marco"></div></div>
-          </div>
-          <div class="fchip-wrap">
-            <button class="fchip" id="fchip-color" onclick="toggleFchip('color')">Color <span class="fchip-arrow">▼</span></button>
-            <div class="fchip-drop" id="fchip-drop-color"><div class="fchip-opts" id="fchip-opts-color"></div></div>
-          </div>
-          <div class="fchip-wrap">
-            <button class="fchip" id="fchip-medida" onclick="toggleFchip('medida')">Medida <span class="fchip-arrow">▼</span></button>
-            <div class="fchip-drop" id="fchip-drop-medida"><div class="fchip-opts" id="fchip-opts-medida"></div></div>
-          </div>
-          <select id="f-fabrica-filter" style="display:none;"><option value="">Todas</option></select>
-          <select id="f-marco-filter" style="display:none;"><option value="">Todos</option></select>
-          <select id="f-color-filter" style="display:none;"><option value="">Todos</option></select>
-          <select id="f-medida-filter" style="display:none;"><option value="">Todas</option></select>
+        <div class="fchip-wrap">
+          <button class="fchip" id="fchip-marco" onclick="toggleFchip('marco')">Marco <span class="fchip-arrow">▼</span></button>
+          <div class="fchip-drop" id="fchip-drop-marco"><div class="fchip-opts" id="fchip-opts-marco"></div></div>
         </div>
+        <div class="fchip-wrap">
+          <button class="fchip" id="fchip-color" onclick="toggleFchip('color')">Color <span class="fchip-arrow">▼</span></button>
+          <div class="fchip-drop" id="fchip-drop-color"><div class="fchip-opts" id="fchip-opts-color"></div></div>
+        </div>
+        <div class="fchip-wrap">
+          <button class="fchip" id="fchip-medida" onclick="toggleFchip('medida')">Medida <span class="fchip-arrow">▼</span></button>
+          <div class="fchip-drop" id="fchip-drop-medida"><div class="fchip-opts" id="fchip-opts-medida"></div></div>
+        </div>
+        <select id="f-fabrica-filter" style="display:none;"><option value="">Todas</option></select>
+        <select id="f-marco-filter" style="display:none;"><option value="">Todos</option></select>
+        <select id="f-color-filter" style="display:none;"><option value="">Todos</option></select>
+        <select id="f-medida-filter" style="display:none;"><option value="">Todas</option></select>
       </div>
+
     </div>
 
     <div style="display:flex;align-items:center;justify-content:flex-start;gap:5px;margin:8px 12px 6px;">
       <div id="count-label" style="display:none;"></div>
-
+      <button class="filter-tab" id="grp-fabrica" onclick="toggleGroupFabrica(this)">Agrupar por Fábrica</button>
       <div style="margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0;">
-        <button onclick="clearAllFilters()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:pointer;white-space:nowrap;transition:all .15s;" title="Limpiar todos los filtros y ordenamientos">✕ Limpiar</button>
         <button id="del-sel-btn" onclick="deleteSelected()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:default;white-space:nowrap;transition:all .15s;" disabled>Eliminar sel.</button>
         <button class="filter-tab" id="sel-all-btn" onclick="toggleSelectAll(this)">Sel. todo</button>
       </div>
@@ -1476,19 +1468,6 @@ function handleCardClick(e, cardBodyId, mid){
 // ===== FILTERS =====
 var currentDepositoFilter = '';
 
-var _filtrosPanelOpen = false;
-
-function toggleFiltrosPanel(){
-  _filtrosPanelOpen = !_filtrosPanelOpen;
-  var panel = document.getElementById('filtros-panel');
-  var btn = document.getElementById('filtros-toggle-btn');
-  if(panel) panel.style.display = _filtrosPanelOpen ? 'block' : 'none';
-  if(btn){
-    btn.textContent = _filtrosPanelOpen ? '−' : '+';
-    btn.style.borderColor = _filtrosPanelOpen ? 'var(--accent)' : 'var(--border)';
-    btn.style.color = _filtrosPanelOpen ? 'var(--accent)' : 'var(--muted)';
-  }
-}
 
 function setDepositoFilter(val, btn){
   currentDepositoFilter = val;
