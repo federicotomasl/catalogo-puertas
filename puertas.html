@@ -2344,8 +2344,8 @@ function renderList(){
       +'</div>'
       +'</div>'
       +'<div class="door-actions">'
+      +(m.photo?'<button class="abtn abtn-edit" onclick="showPhotoPanel(\''+mid+'\')" title="Ver foto">Foto</button>':'')
       +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')" aria-label="Editar" title="Editar">Editar</button>'
-      +(m.photo?'<button class="abtn" onclick="showPhotoPanel(\''+mid+'\')" title="Ver foto">Foto</button>':'')
       +'</div>'
       +'</div>'
       +(hasBody?'<div class="card-body" id="cb-'+mid+'"><div class="sizes-row-wrap"><div class="sizes-row" style="'+sizesRowStyle+'">'+chips+'</div></div>'+photoHtml+'</div>':'')
