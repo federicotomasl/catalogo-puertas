@@ -87,10 +87,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .ftag-color{background:rgba(90,160,100,0.12);border-color:rgba(90,160,100,0.4);color:var(--color-stock-r);}
 .ftag-deposito{background:rgba(176,127,212,0.12);border-color:rgba(176,127,212,0.4);color:var(--color-deposito);}
 /* tabla tags */
-.tbl-ftag{font-size:9px;font-weight:600;padding:1px 4px;border-radius:2px;background:var(--tbg);border:1px solid var(--tbd);color:var(--muted);white-space:nowrap;display:inline-block;}
-.tbl-ftag-fab{background:rgba(212,113,31,0.12);border-color:rgba(212,113,31,0.4);color:var(--color-fab);}
-.tbl-ftag-marco{background:rgba(80,120,200,0.12);border-color:rgba(80,120,200,0.4);color:var(--color-marco);}
-.tbl-ftag-color{background:rgba(90,160,100,0.12);border-color:rgba(90,160,100,0.4);color:var(--color-stock-r);}
 /* subpanel de líneas en panel flotante */
 .gp-lineas-panel{display:none;margin-top:6px;padding:8px;background:var(--bg3);border-radius:4px;border:1px solid var(--border);}
 .gp-lineas-panel.open{display:block;}
@@ -185,24 +181,10 @@ select.finput{cursor:pointer;}
 .group-sep{display:flex;align-items:center;gap:8px;padding:8px 12px 4px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
 .group-sep-line{flex:1;height:1px;background:var(--border);}
 .group-sep-count{color:var(--dim);font-weight:400;}
-.tbl-group-row td{background:var(--bg2);font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);padding:4px 6px;border-bottom:1px solid var(--accent);}
-.tbl-wrap{padding:0 8px 20px;}
-.tbl{width:100%;border-collapse:collapse;font-family:'Barlow Condensed',sans-serif;font-size:11px;}
-.tbl thead tr{border-bottom:1px solid var(--accent);}
-.tbl th{font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);padding:3px 5px;text-align:left;white-space:nowrap;border-right:1px solid var(--border);}
 .tbl th:last-child{border-right:none;}
-.tbl tbody tr{border-bottom:1px solid var(--border);}
-.tbl tbody tr.tbl-odd td{background:var(--bg3);}
-.tbl tbody tr.tbl-hover td{background:var(--tbg);}
-.tbl td{padding:3px 5px;vertical-align:middle;color:var(--text);line-height:1.2;border-right:1px solid var(--border);}
 .tbl td:last-child{border-right:none;}
 .tbl td.td-muted{color:var(--muted);font-size:11px;}
 .tbl td.td-medida{font-weight:700;white-space:nowrap;color:var(--text);}
-.tbl-qbtns{display:inline-flex;align-items:center;gap:1px;}
-.tbl-qbtn{background:var(--bg3);border:1px solid var(--border);border-radius:2px;color:var(--muted);cursor:pointer;font-size:11px;font-weight:700;width:17px;height:17px;display:inline-flex;align-items:center;justify-content:center;padding:0;line-height:1;}
-.tbl-qbtn:active{background:var(--accent);color:#fff;border-color:var(--accent);}
-.tbl-qval{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;min-width:16px;text-align:center;display:inline-block;}
-.tbl-acts{display:flex;gap:2px;align-items:center;}
 .view-toggle{display:inline-flex;border:1px solid var(--border);border-radius:4px;overflow:hidden;flex-shrink:0;}
 .view-toggle button{background:transparent;border:none;padding:5px 9px;font-family:'Barlow Condensed',sans-serif;font-size:13px;cursor:pointer;color:var(--muted);line-height:1;}
 .view-toggle button.active{background:var(--accent);color:#fff;}
@@ -330,7 +312,6 @@ select.finput{cursor:pointer;}
           <button id="redo-btn" class="btn btn-ghost" onclick="performRedo()" disabled style="opacity:0.35;" title="Sin acciones para rehacer" aria-label="Rehacer">&#8631;</button>
           <div class="view-toggle">
             <button id="vt-cards" class="active" onclick="setViewMode('cards')" title="Vista cards" aria-label="Vista de tarjetas">▦</button>
-            <button id="vt-table" onclick="setViewMode('table')" title="Vista tabla" aria-label="Vista de tabla">☰</button>
             <button id="vt-mosaic" onclick="setViewMode('mosaic')" title="Vista mosaico" aria-label="Vista de mosaico">⊟</button>
           </div>
           <button class="btn btn-ghost" onclick="toggleTheme()" aria-label="Cambiar tema claro/oscuro">&#9788;</button>
@@ -878,7 +859,7 @@ function toggleTheme(){
   document.body.classList.toggle('light', !darkMode);
   try{localStorage.setItem('torri_theme', darkMode?'dark':'light');}catch(e){}
 }
-try { var vm = localStorage.getItem('puertas_viewmode'); if(vm==='table') viewMode='table'; else if(vm==='mosaic') viewMode='mosaic'; } catch(e){}
+try { var vm = localStorage.getItem('puertas_viewmode'); if(vm==='mosaic') viewMode='mosaic'; } catch(e){}
 
 // ===== NAVIGATION =====
 function openForm(id){
@@ -1429,20 +1410,15 @@ function adjustStock(btn, modelId, sizeIdx, side, delta){
   if(side==='r') sz.r=Math.max(0,(sz.r||0)+delta);
   else           sz.l=Math.max(0,(sz.l||0)+delta);
   supaUpsert(m.id, m);
-  var span=btn.parentNode.querySelector('.qval')||btn.parentNode.querySelector('.tbl-qval');
+  var span=btn.parentNode.querySelector('.qval');
   if(span){
     var newVal = side==='r' ? sz.r : sz.l;
     span.textContent=newVal;
-    var base=span.className.indexOf('tbl-qval')!==-1?'tbl-qval':'qval';
+    var base='qval';
     span.className=base+' '+(newVal===0?'stock-zero':(side==='r'?'stock-r':'stock-l'));
   }
   renderTotals(getFiltered());
   renderSummary();
-  var totalCell=document.getElementById('tbl-total-'+modelId);
-  if(totalCell){
-    var mt=0; for(var ti=0;ti<m.sizes.length;ti++) mt+=(m.sizes[ti].r||0)+(m.sizes[ti].l||0);
-    totalCell.textContent=mt;
-  }
 }
 
 // ===== TOGGLE CARD =====
@@ -1580,7 +1556,7 @@ function toggleGroupFabrica(btn){
 function toggleReorderMode(){
   if(isConsulta()) return;
   var hasSearch=(document.getElementById('search-input').value||'').trim().length>0;
-  if(!reorderMode && (currentSort!=='original' || viewMode!=='cards' || groupBy!=='none' || hasSearch)){
+  if(!reorderMode && (viewMode!=='cards' || groupBy!=='none' || hasSearch)){
     showToast('El orden manual solo está disponible en vista Cards, sin búsqueda, filtros de orden ni agrupamiento');
     return;
   }
@@ -2011,121 +1987,12 @@ function setViewMode(mode){
   viewMode = mode;
   try{localStorage.setItem('puertas_viewmode', mode);}catch(e){}
   document.getElementById('vt-cards').className  = mode==='cards'  ? 'active' : '';
-  document.getElementById('vt-table').className  = mode==='table'  ? 'active' : '';
   document.getElementById('vt-mosaic').className = mode==='mosaic' ? 'active' : '';
   if(mode!=='cards' && reorderMode) toggleReorderMode();
   renderList();
 }
 
 // ===== RENDER TABLE =====
-function renderTable(filtered){
-  var list = document.getElementById('door-list');
-  if(filtered.length===0){
-    list.innerHTML='<div class="empty-state"><div class="empty-icon">&#128682;</div><p>No hay resultados</p></div>';
-    return;
-  }
-  var html='<div class="tbl-wrap"><table class="tbl"><thead><tr>'
-    +'<th></th>'
-    +'<th>Fabrica</th>'
-    +'<th>Descripcion</th>'
-    +'<th>Color</th>'
-    +'<th>Marco</th>'
-    +'<th>Medida</th>'
-    +'<th>D</th>'
-    +'<th>I</th>'
-    +'<th>Total</th>'
-    +'<th></th>'
-    +'</tr></thead><tbody>';
-
-  var groups=arguments.length>1&&arguments[1]?arguments[1]:groupModels(filtered);
-  var globalIdx=0;
-  for(var g=0;g<groups.length;g++){
-    var grp=groups[g];
-    if(grp.key!==null){
-      var cols=10;
-      html+='<tr class="tbl-group-row"><td colspan="'+cols+'">'+esc(grp.key)+' <span style="font-weight:400;color:var(--dim)">— '+grp.models.length+' modelo'+(grp.models.length!==1?'s':'')+'</span></td></tr>';
-    }
-    for(var j=0;j<grp.models.length;j++){
-    var m=grp.models[j], mid=m.id;
-    var sizes=m.sizes||[];
-    var rowspan=sizes.length||1;
-    var isOdd=(j%2===1);
-    var oddCls=isOdd?' tbl-odd':'';
-    var fabHtml=(m.fabrica?'<span class="tbl-ftag tbl-ftag-fab">'+esc(m.fabrica)+'</span>':'')+(m.linea?'<span class="tbl-ftag tbl-ftag-fab">'+esc(m.linea)+'</span>':'')||'<span style="color:var(--dim)">—</span>';
-    var colHtml=m.color?'<span class="tbl-ftag tbl-ftag-color">'+esc(m.color)+'</span>':'<span style="color:var(--dim)">—</span>';
-    var marHtml=m.marco?'<span class="tbl-ftag tbl-ftag-marco">'+esc(m.marco)+'</span>':'<span style="color:var(--dim)">—</span>';
-    var descHtml=m.descripcion?esc(m.descripcion):'<span style="color:var(--dim)">—</span>';
-    var actHtml='<div class="tbl-acts">'
-      +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')" aria-label="Editar" title="Editar">Editar</button>'
-      +'</div>';
-
-    if(sizes.length===0){
-      html+='<tr data-model="'+mid+'" class="'+oddCls+'">'
-        +'<td><input type="checkbox" class="door-check" data-id="'+mid+'" onchange="updateSelLabel()"></td>'
-        +'<td>'+fabHtml+'</td>'
-        +'<td class="td-muted">'+descHtml+'</td>'
-        +'<td>'+colHtml+'</td>'
-        +'<td>'+marHtml+'</td>'
-        +'<td class="td-muted" style="color:var(--dim)">—</td>'
-        +'<td>—</td><td>—</td><td>—</td>'
-        +'<td>'+actHtml+'</td>'
-        +'</tr>';
-    } else {
-      var modelTotal=0;
-      for(var t=0;t<sizes.length;t++) modelTotal+=(sizes[t].r||0)+(sizes[t].l||0);
-      for(var s=0;s<sizes.length;s++){
-        var sz=sizes[s];
-        var rCls=(sz.r||0)===0?'stock-zero':'stock-r';
-        var lCls=(sz.l||0)===0?'stock-zero':'stock-l';
-        var rCtrl='<div class="tbl-qbtns"><button class="tbl-qbtn" onclick="adjustStock(this,\''+mid+'\','+s+',\'r\',-1)">-</button><span class="tbl-qval '+rCls+'">'+(sz.r||0)+'</span><button class="tbl-qbtn" onclick="adjustStock(this,\''+mid+'\','+s+',\'r\',1)">+</button></div>';
-        var lCtrl='<div class="tbl-qbtns"><button class="tbl-qbtn" onclick="adjustStock(this,\''+mid+'\','+s+',\'l\',-1)">-</button><span class="tbl-qval '+lCls+'">'+(sz.l||0)+'</span><button class="tbl-qbtn" onclick="adjustStock(this,\''+mid+'\','+s+',\'l\',1)">+</button></div>';
-        if(s===0){
-          html+='<tr data-model="'+mid+'" class="'+oddCls+'">'
-            +'<td rowspan="'+rowspan+'"><input type="checkbox" class="door-check" data-id="'+mid+'" onchange="updateSelLabel()"></td>'
-            +'<td rowspan="'+rowspan+'">'+fabHtml+'</td>'
-            +'<td rowspan="'+rowspan+'" class="td-muted">'+descHtml+'</td>'
-            +'<td rowspan="'+rowspan+'">'+colHtml+'</td>'
-            +'<td rowspan="'+rowspan+'">'+marHtml+'</td>'
-            +'<td class="td-medida">'+esc(sz.medida)+'</td>'
-            +'<td>'+rCtrl+'</td>'
-            +'<td>'+lCtrl+'</td>'
-            +'<td rowspan="'+rowspan+'" style="color:var(--text);font-weight:700;text-align:center;" id="tbl-total-'+mid+'">'+modelTotal+'</td>'
-            +'<td rowspan="'+rowspan+'">'+actHtml+'</td>'
-            +'</tr>';
-        } else {
-          html+='<tr data-model="'+mid+'" class="'+oddCls+'">'
-            +'<td class="td-medida">'+esc(sz.medida)+'</td>'
-            +'<td>'+rCtrl+'</td>'
-            +'<td style="border-right:1px solid var(--border)">'+lCtrl+'</td>'
-            +'</tr>';
-        }
-      }
-    } // end else (has sizes)
-    } // end for j (models in group)
-  } // end for g (groups)
-  html+='</tbody></table></div>';
-  list.innerHTML=html;
-
-  var tbody = list.querySelector('tbody');
-  if(tbody){
-    tbody.addEventListener('mouseover', function(e){
-      var tr = e.target.closest('tr');
-      if(!tr) return;
-      var mid = tr.getAttribute('data-model');
-      if(!mid) return;
-      var rows = tbody.querySelectorAll('tr[data-model="'+mid+'"]');
-      for(var i=0;i<rows.length;i++) rows[i].classList.add('tbl-hover');
-    });
-    tbody.addEventListener('mouseout', function(e){
-      var tr = e.target.closest('tr');
-      if(!tr) return;
-      var mid = tr.getAttribute('data-model');
-      if(!mid) return;
-      var rows = tbody.querySelectorAll('tr[data-model="'+mid+'"]');
-      for(var i=0;i<rows.length;i++) rows[i].classList.remove('tbl-hover');
-    });
-  }
-}
 
 // ===== RENDER MOSAIC =====
 function renderMosaic(filtered){
@@ -2211,7 +2078,6 @@ function renderList(){
   renderSummary(); renderTotals(filtered);
 
   var groups=groupModels(filtered);
-  if(viewMode==='table'){ renderTable(filtered, groups); updateResetBtn(); if(consultaMode) applyConsultaMode(); return; }
   if(viewMode==='mosaic'){ renderMosaic(filtered, groups); updateResetBtn(); if(consultaMode) applyConsultaMode(); return; }
 
   var list=document.getElementById('door-list');
@@ -2867,10 +2733,7 @@ function initCatalog(){
         saveMedidas();
       }
       updateFilters();
-      if(viewMode==='table'){
-        document.getElementById('vt-cards').className='';
-        document.getElementById('vt-table').className='active';
-      } else if(viewMode==='mosaic'){
+      if(viewMode==='mosaic'){
         document.getElementById('vt-cards').className='';
         document.getElementById('vt-mosaic').className='active';
       }
