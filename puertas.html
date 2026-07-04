@@ -108,7 +108,9 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .qbtns{display:flex;align-items:center;gap:1px;}
 .qbtn{background:var(--bg3);border:1px solid var(--border);border-radius:2px;color:var(--muted);cursor:pointer;font-size:11px;font-weight:700;width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;}
 .qbtn:active{background:var(--accent);color:#fff;border-color:var(--accent);}
-.qval{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;min-width:14px;text-align:center;}
+.qval{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;min-width:14px;text-align:center;cursor:pointer;border-radius:2px;padding:0 2px;}
+.qval:hover{background:var(--bg3);outline:1px solid var(--border);}
+.qval-input{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;width:32px;text-align:center;background:var(--bg3);border:1px solid var(--accent);border-radius:2px;color:var(--text);padding:0;}
 
 /* CARD ACTIONS */
 .abtn{background:transparent;border:1px solid transparent;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:3px 7px;border-radius:3px;white-space:nowrap;transition:all .15s;}
@@ -1401,6 +1403,31 @@ function deleteModel(id){
 }
 
 // ===== QUICK STOCK (no re-render) =====
+function editStockDirect(span, modelId, sizeIdx, side){
+  if(isConsulta()) return;
+  var cur=(side==='r'?getModel(modelId).sizes[sizeIdx].r:getModel(modelId).sizes[sizeIdx].l)||0;
+  var inp=document.createElement('input');
+  inp.type='number'; inp.min='0'; inp.value=cur;
+  inp.className='qval-input';
+  span.parentNode.replaceChild(inp, span);
+  inp.focus(); inp.select();
+  function commit(){
+    var val=Math.max(0,parseInt(inp.value)||0);
+    var m=getModel(modelId); if(!m||!m.sizes[sizeIdx]) return;
+    if(val!==(side==='r'?m.sizes[sizeIdx].r:m.sizes[sizeIdx].l)){
+      pushUndo('Stock: '+m.sizes[sizeIdx].medida+' '+(side==='r'?'D':'𝙸')+' → '+val);
+      if(side==='r') m.sizes[sizeIdx].r=val; else m.sizes[sizeIdx].l=val;
+      supaUpsert(m.id, m);
+    }
+    renderList();
+  }
+  inp.addEventListener('blur', commit);
+  inp.addEventListener('keydown', function(e){
+    if(e.key==='Enter'){ e.preventDefault(); commit(); }
+    if(e.key==='Escape'){ renderList(); }
+  });
+}
+
 function adjustStock(btn, modelId, sizeIdx, side, delta){
   if(isConsulta()) return;
   var m=getModel(modelId);
@@ -2112,15 +2139,15 @@ function renderList(){
       chips+='<div class="size-chip">'
         +'<span class="size-val">'+esc(szL.medida)+'</span>'
         +'<span class="ssep" style="color:var(--color-stock-r);">D</span>'
+        +'<span class="qval '+rClsL+'" onclick="editStockDirect(this,\''+mid+'\','+li+',\'r\')">'+(szL.r||0)+'</span>'
         +'<div class="qbtns">'
         +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+li+',\'r\',-1)">-</button>'
-        +'<span class="qval '+rClsL+'">'+(szL.r||0)+'</span>'
         +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+li+',\'r\',1)">+</button>'
         +'</div>'
         +'<span class="ssep-div"></span><span class="ssep" style="color:var(--color-stock-l);">𝙸</span>'
+        +'<span class="qval '+lClsL+'" onclick="editStockDirect(this,\''+mid+'\','+li+',\'l\')">'+(szL.l||0)+'</span>'
         +'<div class="qbtns">'
         +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+li+',\'l\',-1)">-</button>'
-        +'<span class="qval '+lClsL+'">'+(szL.l||0)+'</span>'
         +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+li+',\'l\',1)">+</button>'
         +'</div>'
         +'</div>';
@@ -2132,15 +2159,15 @@ function renderList(){
         chips+='<div class="size-chip">'
           +'<span class="size-val">'+esc(szR.medida)+'</span>'
           +'<span class="ssep" style="color:var(--color-stock-r);">D</span>'
+          +'<span class="qval '+rClsR+'" onclick="editStockDirect(this,\''+mid+'\','+ri+',\'r\')">'+(szR.r||0)+'</span>'
           +'<div class="qbtns">'
           +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+ri+',\'r\',-1)">-</button>'
-          +'<span class="qval '+rClsR+'">'+(szR.r||0)+'</span>'
           +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+ri+',\'r\',1)">+</button>'
           +'</div>'
           +'<span class="ssep-div"></span><span class="ssep" style="color:var(--color-stock-l);">𝙸</span>'
+          +'<span class="qval '+lClsR+'" onclick="editStockDirect(this,\''+mid+'\','+ri+',\'l\')">'+(szR.l||0)+'</span>'
           +'<div class="qbtns">'
           +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+ri+',\'l\',-1)">-</button>'
-          +'<span class="qval '+lClsR+'">'+(szR.l||0)+'</span>'
           +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+ri+',\'l\',1)">+</button>'
           +'</div>'
           +'</div>';
