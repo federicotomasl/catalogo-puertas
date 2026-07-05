@@ -1451,17 +1451,17 @@ function updateCardStockIndicator(modelId){
   if(!card) return;
   var indVerde=card.querySelector('.stock-indicator-verde');
   if(indVerde){
-    if(ind.completo>0){ indVerde.className='stock-indicator-verde stock-ind-verde'; indVerde.innerHTML='&#9679;&nbsp;'+ind.completo; indVerde.style.display=''; }
+    if(ind.completo>0){ indVerde.className='stock-indicator-verde stock-ind-verde'; indVerde.innerHTML=''+ind.completo; indVerde.style.display=''; }
     else { indVerde.className='stock-indicator-verde'; indVerde.style.display='none'; indVerde.innerHTML=''; }
   }
   var indUno=card.querySelector('.stock-indicator-uno');
   if(indUno){
-    if(ind.uno>0){ indUno.className='stock-indicator-uno stock-ind-uno'; indUno.innerHTML='&#9679;&nbsp;'+ind.uno; indUno.style.display=''; }
+    if(ind.uno>0){ indUno.className='stock-indicator-uno stock-ind-uno'; indUno.innerHTML=''+ind.uno; indUno.style.display=''; }
     else { indUno.className='stock-indicator-uno'; indUno.style.display='none'; indUno.innerHTML=''; }
   }
   var indRojo=card.querySelector('.stock-indicator');
   if(indRojo){
-    if(ind.ambos>0){ indRojo.className='stock-indicator stock-ind-rojo'; indRojo.innerHTML='&#9679;&nbsp;'+ind.ambos; indRojo.style.display=''; }
+    if(ind.ambos>0){ indRojo.className='stock-indicator stock-ind-rojo'; indRojo.innerHTML=''+ind.ambos; indRojo.style.display=''; }
     else { indRojo.className='stock-indicator'; indRojo.style.display='none'; indRojo.innerHTML=''; }
   }
 }
@@ -2269,9 +2269,9 @@ function renderList(){
     var photoHtml=''; // fotos solo en mosaico
     // Calcular indicadores de stock
     var _ind=calcStockIndicators(m.sizes);
-    var _indVerde=_ind.completo>0?'<span class="stock-indicator-verde stock-ind-verde">&#9679;&nbsp;'+_ind.completo+'</span>':'<span class="stock-indicator-verde" style="display:none;"></span>';
-    var _indUno=_ind.uno>0?'<span class="stock-indicator-uno stock-ind-uno">&#9679;&nbsp;'+_ind.uno+'</span>':'<span class="stock-indicator-uno" style="display:none;"></span>';
-    var _indRojo=_ind.ambos>0?'<span class="stock-indicator stock-ind-rojo">&#9679;&nbsp;'+_ind.ambos+'</span>':'<span class="stock-indicator" style="display:none;"></span>';
+    var _indVerde=_ind.completo>0?'<span class="stock-indicator-verde stock-ind-verde">'+_ind.completo+'</span>':'<span class="stock-indicator-verde" style="display:none;"></span>';
+    var _indUno=_ind.uno>0?'<span class="stock-indicator-uno stock-ind-uno">'+_ind.uno+'</span>':'<span class="stock-indicator-uno" style="display:none;"></span>';
+    var _indRojo=_ind.ambos>0?'<span class="stock-indicator stock-ind-rojo">'+_ind.ambos+'</span>':'<span class="stock-indicator" style="display:none;"></span>';
     html+='<div class="door-card'+(reorderMode?' reorder-mode':'')+'" data-order-id="'+esc(mid)+'" draggable="'+(reorderMode?'true':'false')+'">'
       +(reorderMode?'<span class="reorder-handle" aria-hidden="true">⠿</span>':'')
       +'<input type="checkbox" class="door-check" data-id="'+mid+'" onchange="updateSelLabel()">'
