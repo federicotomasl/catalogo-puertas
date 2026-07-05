@@ -1449,22 +1449,14 @@ function updateCardStockIndicator(modelId){
   }
   var card=document.querySelector('.door-card[data-order-id="'+modelId+'"]');
   if(!card) return;
-  var actions=card.querySelector('.door-actions');
-  if(!actions) return;
-  var existing=actions.querySelector('.stock-indicator');
+  var indicator=card.querySelector('.stock-indicator');
+  if(!indicator) return;
   if(sinStock>0){
-    if(!existing){
-      existing=document.createElement('span');
-      existing.className='stock-indicator';
-      existing.style.cssText='display:inline-flex;align-items:center;gap:2px;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;color:var(--color-danger);padding:2px 5px;border-radius:3px;background:rgba(224,85,85,0.12);border:1px solid rgba(224,85,85,0.3);';
-      // Insertar antes del botón Editar
-      var editBtn=actions.querySelector('.abtn-edit[title="Editar"]');
-      if(editBtn) actions.insertBefore(existing, editBtn);
-      else actions.appendChild(existing);
-    }
-    existing.innerHTML='&#9679;&nbsp;'+sinStock;
+    indicator.innerHTML='&#9679;&nbsp;'+sinStock;
+    indicator.style.display='inline-flex';
   } else {
-    if(existing) existing.remove();
+    indicator.style.display='none';
+    indicator.innerHTML='';
   }
 }
 
@@ -2320,7 +2312,7 @@ function renderList(){
       +(function(){
           var sinStock=0;
           for(var si=0;si<(m.sizes||[]).length;si++){if((m.sizes[si].r||0)===0||(m.sizes[si].l||0)===0)sinStock++;}
-          return sinStock>0?'<span style="display:inline-flex;align-items:center;gap:2px;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;color:var(--color-danger);padding:2px 5px;border-radius:3px;background:rgba(224,85,85,0.12);border:1px solid rgba(224,85,85,0.3);">●&nbsp;'+sinStock+'</span>':'';
+          return sinStock>0?'<span class="stock-indicator" style="display:inline-flex;align-items:center;gap:2px;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;color:var(--color-danger);padding:2px 5px;border-radius:3px;background:rgba(224,85,85,0.12);border:1px solid rgba(224,85,85,0.3);">&#9679;&nbsp;'+sinStock+'</span>':'<span class="stock-indicator" style="display:none;"></span>';
         })()
       +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')" aria-label="Editar" title="Editar">Editar</button>'
       +'</div>'
