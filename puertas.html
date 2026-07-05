@@ -626,7 +626,7 @@ function isConsulta(){ return consultaMode; }
 
 function applyConsultaMode(){
   if(!consultaMode) return;
-  var staticIds=['btn-nuevo','del-sel-btn','undo-btn','redo-btn','reset-stock-chip','reorder-toggle-btn'];
+  var staticIds=['btn-nuevo','del-sel-btn','undo-btn','redo-btn','reorder-toggle-btn'];
   for(var i=0;i<staticIds.length;i++){
     var el=document.getElementById(staticIds[i]);
     if(el) el.classList.add('consulta-disabled');
@@ -1904,50 +1904,6 @@ function resetAllStockFromMenu(btn){
   setTimeout(function(){document.addEventListener('click', cancelResetStock, {once:true, capture:true});},0);
 }
 
-function resetAllStock(){
-  if(isConsulta()) return;
-  if(resetStockPending){
-    resetStockPending=false;
-    var scope = currentDepositoFilter
-      ? models.filter(function(m){return (m.deposito||'')=== currentDepositoFilter;})
-      : models;
-    var label = currentDepositoFilter ? 'Reset stock ('+currentDepositoFilter+')' : 'Reset stock general';
-    pushUndo(label);
-    for(var i=0;i<scope.length;i++){
-      for(var j=0;j<(scope[i].sizes||[]).length;j++){
-        scope[i].sizes[j].r=0;
-        scope[i].sizes[j].l=0;
-      }
-      supaUpsert(scope[i].id, scope[i]);
-    }
-    renderList();
-    showToast('Stock reseteado a cero'+(currentDepositoFilter?' ('+currentDepositoFilter+')':''));
-    return;
-  }
-  resetStockPending=true;
-  var chip=document.getElementById('reset-stock-chip');
-  if(chip){
-    chip.textContent='Seguro?';
-    chip.style.background='var(--zero)';
-    chip.style.color='#fff';
-    chip.style.borderColor='var(--zero)';
-  }
-  setTimeout(function(){
-    document.addEventListener('click', cancelResetStock, {once:true, capture:true});
-  }, 0);
-}
-
-function cancelResetStock(e){
-  var chip=document.getElementById('reset-stock-chip');
-  if(chip && chip.contains(e.target)) return; // clicking the chip itself = confirm
-  resetStockPending=false;
-  if(chip){
-    chip.textContent='Reset stock';
-    chip.style.background='';
-    chip.style.color='';
-    chip.style.borderColor='';
-  }
-}
 
 
 var noStockExpanded = false;
