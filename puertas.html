@@ -1811,9 +1811,13 @@ function renderSummary(){
   var total=scope.length, units=0, noStock=0;
   noStockIds=[];
   for(var i=0;i<scope.length;i++){
-    var m=scope[i], any=false;
-    for(var j=0;j<(m.sizes||[]).length;j++){units+=(m.sizes[j].r||0)+(m.sizes[j].l||0);if((m.sizes[j].r||0)>0||(m.sizes[j].l||0)>0)any=true;}
-    if((m.sizes||[]).length>0&&!any){noStock++;noStockIds.push(m.id);}
+    var m=scope[i], any=false, hasZero=false;
+    for(var j=0;j<(m.sizes||[]).length;j++){
+      units+=(m.sizes[j].r||0)+(m.sizes[j].l||0);
+      if((m.sizes[j].r||0)>0||(m.sizes[j].l||0)>0) any=true;
+      if((m.sizes[j].r||0)===0||(m.sizes[j].l||0)===0) hasZero=true;
+    }
+    if((m.sizes||[]).length>0&&hasZero){noStock++;noStockIds.push(m.id);}
   }
   var sinStockChip=noStock>0?'<div class="summary-chip alert" id="sin-stock-chip" style="cursor:pointer;" title="Ver modelos sin stock'+depLabel+'">Sin stock: <span>'+noStock+'</span></div>':'';
   document.getElementById('summary-bar').innerHTML=
@@ -2283,6 +2287,11 @@ function renderList(){
       +'</div>'
       +'<div class="door-actions">'
       +(m.photo?'<button class="abtn abtn-edit" onclick="showPhotoPanel(\''+mid+'\')" title="Ver foto">Foto</button>':'')
+      +(function(){
+          var sinStock=0;
+          for(var si=0;si<(m.sizes||[]).length;si++){if((m.sizes[si].r||0)===0||(m.sizes[si].l||0)===0)sinStock++;}
+          return sinStock>0?'<span style="display:inline-flex;align-items:center;gap:2px;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;color:var(--color-danger);padding:2px 5px;border-radius:3px;background:rgba(224,85,85,0.12);border:1px solid rgba(224,85,85,0.3);">●&nbsp;'+sinStock+'</span>':'';
+        })()
       +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')" aria-label="Editar" title="Editar">Editar</button>'
       +'</div>'
       +'</div>'
