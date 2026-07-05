@@ -370,23 +370,14 @@ select.finput{cursor:pointer;}
           <button class="fchip" id="fchip-fabrica" onclick="toggleFchip('fabrica')">Fábrica <span class="fchip-arrow">▼</span></button>
           <div class="fchip-drop" id="fchip-drop-fabrica"><div class="fchip-opts" id="fchip-opts-fabrica"></div></div>
         </div>
-        <div class="fchip-wrap">
-          <button class="fchip" id="fchip-marco" onclick="toggleFchip('marco')">Marco <span class="fchip-arrow">▼</span></button>
-          <div class="fchip-drop" id="fchip-drop-marco"><div class="fchip-opts" id="fchip-opts-marco"></div></div>
+        
         </div>
-        <div class="fchip-wrap">
-          <button class="fchip" id="fchip-color" onclick="toggleFchip('color')">Color <span class="fchip-arrow">▼</span></button>
-          <div class="fchip-drop" id="fchip-drop-color"><div class="fchip-opts" id="fchip-opts-color"></div></div>
+        
         </div>
-        <div class="fchip-wrap">
-          <button class="fchip" id="fchip-medida" onclick="toggleFchip('medida')">Medida <span class="fchip-arrow">▼</span></button>
-          <div class="fchip-drop" id="fchip-drop-medida"><div class="fchip-opts" id="fchip-opts-medida"></div></div>
+        
         </div>
         <select id="f-fabrica-filter" style="display:none;"><option value="">Todas</option></select>
-        <select id="f-marco-filter" style="display:none;"><option value="">Todos</option></select>
-        <select id="f-color-filter" style="display:none;"><option value="">Todos</option></select>
-        <select id="f-medida-filter" style="display:none;"><option value="">Todas</option></select>
-      </div>
+        </div>
 
     </div>
 
@@ -1574,7 +1565,7 @@ function setDepositoFilter(val, btn){
   renderList();
 }
 
-function updateFilters(){ updateFabricaFilter(); updateMarcoFilter(); updateColorFilter(); updateMedidaFilter(); updateDepositoFilterRow(); }
+function updateFilters(){ updateFabricaFilter(); updateDepositoFilterRow(); }
 
 function updateDepositoFilterRow(){
   var row = document.getElementById('deposito-filter-row'); if(!row) return;
@@ -1623,34 +1614,8 @@ function updateFabricaFilter(){
   if(sel){sel.innerHTML='<option value="">Todas</option>';for(var k=0;k<keys.length;k++){var o=document.createElement('option');o.value=keys[k];o.textContent=keys[k];if(keys[k]===cur)o.selected=true;sel.appendChild(o);}}
 }
 
-function updateMarcoFilter(){
-  var sel=document.getElementById('f-marco-filter'); var cur=sel?sel.value:'';
-  var map={};
-  for(var i=0;i<marcos.length;i++) map[marcos[i]]=true;
-  for(var j=0;j<models.length;j++){if(models[j].marco)map[models[j].marco]=true;}
-  var keys=Object.keys(map).sort();
-  renderFchipOpts('marco',keys,cur,'Todos los marcos');
-  if(sel){sel.innerHTML='<option value="">Todos</option>';for(var k=0;k<keys.length;k++){var o=document.createElement('option');o.value=keys[k];o.textContent=keys[k];if(keys[k]===cur)o.selected=true;sel.appendChild(o);}}
-}
 
-function updateColorFilter(){
-  var sel=document.getElementById('f-color-filter'); var cur=sel?sel.value:'';
-  var map={};
-  for(var i=0;i<colors.length;i++) map[colors[i]]=true;
-  for(var j=0;j<models.length;j++){if(models[j].color)map[models[j].color]=true;}
-  var keys=Object.keys(map).sort();
-  renderFchipOpts('color',keys,cur,'Todos los colores');
-  if(sel){sel.innerHTML='<option value="">Todos</option>';for(var k=0;k<keys.length;k++){var o=document.createElement('option');o.value=keys[k];o.textContent=keys[k];if(keys[k]===cur)o.selected=true;sel.appendChild(o);}}
-}
 
-function updateMedidaFilter(){
-  var sel=document.getElementById('f-medida-filter'); var cur=sel?sel.value:'';
-  var med={};
-  for(var i=0;i<models.length;i++){for(var j=0;j<(models[i].sizes||[]).length;j++){if(models[i].sizes[j].medida)med[models[i].sizes[j].medida]=true;}}
-  var keys=Object.keys(med).sort(function(a,b){var pa=parseMedida(a),pb=parseMedida(b);if(pb.a!==pa.a)return pb.a-pa.a;return pa.b-pb.b;});
-  renderFchipOpts('medida',keys,cur,'Todas las medidas');
-  if(sel){sel.innerHTML='<option value="">Todas</option>';for(var k=0;k<keys.length;k++){var o=document.createElement('option');o.value=keys[k];o.textContent=keys[k];if(keys[k]===cur)o.selected=true;sel.appendChild(o);}}
-}
 
 // ===== SORT =====
 function setSort(sort,el){
@@ -1809,9 +1774,6 @@ function _reorderModels(srcId, targetId, before){
 function getFiltered(){
   var q=(document.getElementById('search-input').value||'').toLowerCase().trim();
   var ff=(document.getElementById('f-fabrica-filter')||{}).value||'';
-  var mf=(document.getElementById('f-marco-filter')||{}).value||'';
-  var cf=(document.getElementById('f-color-filter')||{}).value||'';
-  var medf=(document.getElementById('f-medida-filter')||{}).value||'';
   var out=[];
   for(var i=0;i<models.length;i++){
     var m=models[i];
@@ -1822,10 +1784,7 @@ function getFiltered(){
       if(!matchBasic&&!matchMedida) continue;
     }
     if(ff && (m.fabrica||'')!==ff) continue;
-    if(mf && (m.marco||'')!==mf) continue;
-    if(cf && (m.color||'')!==cf) continue;
     if(currentDepositoFilter && (m.deposito||'')!==currentDepositoFilter) continue;
-    if(medf){var found=false;for(var j=0;j<(m.sizes||[]).length;j++){if(m.sizes[j].medida===medf){found=true;break;}} if(!found)continue;}
     out.push(m);
   }
   if(currentSort==='fabrica') out.sort(function(a,b){return(a.fabrica||'').localeCompare(b.fabrica||'');});
@@ -1963,9 +1922,9 @@ function renderTotals(filtered){
 function resetFilters(){
   noStockExpanded=false;
   document.getElementById('search-input').value='';
-  var ids=['f-fabrica-filter','f-marco-filter','f-color-filter','f-medida-filter'];
+  var ids=['f-fabrica-filter'];
   for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el)el.value='';}
-  var labels={fabrica:'Fábrica',marco:'Marco',color:'Color',medida:'Medida'};
+  var labels={fabrica:'Fábrica'};
   var keys=Object.keys(labels);
   for(var k=0;k<keys.length;k++){
     var chip=document.getElementById('fchip-'+keys[k]);
@@ -1982,9 +1941,9 @@ function resetFilters(){
 
 function clearAllFilters(){
   document.getElementById('search-input').value='';
-  var ids=['f-fabrica-filter','f-marco-filter','f-color-filter','f-medida-filter'];
+  var ids=['f-fabrica-filter'];
   for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el)el.value='';}
-  var labels={fabrica:'Fábrica',marco:'Marco',color:'Color',medida:'Medida'};
+  var labels={fabrica:'Fábrica'};
   var keys=Object.keys(labels);
   for(var k=0;k<keys.length;k++){
     var chip=document.getElementById('fchip-'+keys[k]);
@@ -2002,9 +1961,6 @@ function clearAllFilters(){
 
 function updateResetBtn(){
   var ff=(document.getElementById('f-fabrica-filter')||{}).value||'';
-  var mf=(document.getElementById('f-marco-filter')||{}).value||'';
-  var cf=(document.getElementById('f-color-filter')||{}).value||'';
-  var medf=(document.getElementById('f-medida-filter')||{}).value||'';
   var anyActive = !!(ff||mf||cf||medf);
   var clearTab=document.getElementById('filter-clear-tab');
   if(clearTab) clearTab.className = anyActive ? 'filter-tab' : 'filter-tab active';
