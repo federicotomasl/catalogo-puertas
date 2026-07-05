@@ -2301,10 +2301,10 @@ function renderList(){
     var photoHtml=''; // fotos solo en mosaico
     // Calcular indicadores de stock
     var _sinAmbos=0, _sinUno=0;
-    for(var si=0;si<(m.sizes||[]).length;si++){
-      var _r=m.sizes[si].r||0, _l=m.sizes[si].l||0;
-      if(_r===0&&_l===0) _sinAmbos++;
-      else if(_r===0||_l===0) _sinUno++;
+    for(var _si=0;_si<(m.sizes||[]).length;_si++){
+      var _rv=m.sizes[_si].r||0, _lv=m.sizes[_si].l||0;
+      if(_rv===0&&_lv===0) _sinAmbos++;
+      else if(_rv===0||_lv===0) _sinUno++;
     }
     var _indUno=_sinUno>0?'<span class="stock-indicator-uno stock-ind-uno">&#9679;&nbsp;'+_sinUno+'</span>':'<span class="stock-indicator-uno" style="display:none;"></span>';
     var _indRojo=_sinAmbos>0?'<span class="stock-indicator stock-ind-rojo">&#9679;&nbsp;'+_sinAmbos+'</span>':'<span class="stock-indicator" style="display:none;"></span>';
