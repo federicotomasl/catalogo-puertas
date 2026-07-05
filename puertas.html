@@ -2299,6 +2299,15 @@ function renderList(){
     var hasSizes=(m.sizes||[]).length>0;
     var hasBody=hasSizes||!!m.photo;
     var photoHtml=''; // fotos solo en mosaico
+    // Calcular indicadores de stock
+    var _sinAmbos=0, _sinUno=0;
+    for(var si=0;si<(m.sizes||[]).length;si++){
+      var _r=m.sizes[si].r||0, _l=m.sizes[si].l||0;
+      if(_r===0&&_l===0) _sinAmbos++;
+      else if(_r===0||_l===0) _sinUno++;
+    }
+    var _indUno=_sinUno>0?'<span class="stock-indicator-uno stock-ind-uno">&#9679;&nbsp;'+_sinUno+'</span>':'<span class="stock-indicator-uno" style="display:none;"></span>';
+    var _indRojo=_sinAmbos>0?'<span class="stock-indicator stock-ind-rojo">&#9679;&nbsp;'+_sinAmbos+'</span>':'<span class="stock-indicator" style="display:none;"></span>';
     html+='<div class="door-card'+(reorderMode?' reorder-mode':'')+'" data-order-id="'+esc(mid)+'" draggable="'+(reorderMode?'true':'false')+'">'
       +(reorderMode?'<span class="reorder-handle" aria-hidden="true">⠿</span>':'')
       +'<input type="checkbox" class="door-check" data-id="'+mid+'" onchange="updateSelLabel()">'
@@ -2315,21 +2324,7 @@ function renderList(){
       +'</div>'
       +'<div class="door-actions">'
       +(m.photo?'<button class="abtn abtn-edit" onclick="showPhotoPanel(\''+mid+'\')" title="Ver foto">Foto</button>':'')
-      +(function(){
-          var sinAmbos=0, sinUno=0;
-          for(var si=0;si<(m.sizes||[]).length;si++){
-            var r=m.sizes[si].r||0, l=m.sizes[si].l||0;
-            if(r===0&&l===0) sinAmbos++;
-            else if(r===0||l===0) sinUno++;
-          }
-          var uno=sinUno>0
-            ?'<span class="stock-indicator-uno stock-ind-uno">&#9679;&nbsp;'+sinUno+'</span>'
-            :'<span class="stock-indicator-uno" style="display:none;"></span>';
-          var rojo=sinAmbos>0
-            ?'<span class="stock-indicator stock-ind-rojo">&#9679;&nbsp;'+sinAmbos+'</span>'
-            :'<span class="stock-indicator" style="display:none;"></span>';
-          return uno+rojo;
-        })()
+      +_indUno+_indRojo
       +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')" aria-label="Editar" title="Editar">Editar</button>'
       +'</div>'
       +'</div>'
