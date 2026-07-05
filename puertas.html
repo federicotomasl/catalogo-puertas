@@ -2320,12 +2320,14 @@ function renderList(){
             if(r===0&&l===0) sinAmbos++;
             else if(r===0||l===0) sinUno++;
           }
-          var out='';
-          if(sinUno>0) out+='<span class="stock-indicator-uno" style="display:inline-flex;align-items:center;gap:2px;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;color:#c8a020;padding:2px 5px;border-radius:3px;background:rgba(200,160,32,0.12);border:1px solid rgba(200,160,32,0.3);">&#9679;&nbsp;'+sinUno+'</span>';
-          if(sinAmbos>0) out+='<span class="stock-indicator" style="display:inline-flex;align-items:center;gap:2px;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;color:var(--color-danger);padding:2px 5px;border-radius:3px;background:rgba(224,85,85,0.12);border:1px solid rgba(224,85,85,0.3);">&#9679;&nbsp;'+sinAmbos+'</span>';
-          if(sinUno===0) out+='<span class="stock-indicator-uno" style="display:none;"></span>';
-          if(sinAmbos===0) out+='<span class="stock-indicator" style="display:none;"></span>';
-          return out;
+          var styleBase='font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;padding:2px 5px;border-radius:3px;';
+          var uno=sinUno>0
+            ?'<span class="stock-indicator-uno" style="display:inline-flex;align-items:center;gap:2px;'+styleBase+'color:#c8a020;background:rgba(200,160,32,0.12);border:1px solid rgba(200,160,32,0.3);">&#9679;&nbsp;'+sinUno+'</span>'
+            :'<span class="stock-indicator-uno" style="display:none;"></span>';
+          var rojo=sinAmbos>0
+            ?'<span class="stock-indicator" style="display:inline-flex;align-items:center;gap:2px;'+styleBase+'color:var(--color-danger);background:rgba(224,85,85,0.12);border:1px solid rgba(224,85,85,0.3);">&#9679;&nbsp;'+sinAmbos+'</span>'
+            :'<span class="stock-indicator" style="display:none;"></span>';
+          return uno+rojo;
         })()
       +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')" aria-label="Editar" title="Editar">Editar</button>'
       +'</div>'
