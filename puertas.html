@@ -2203,7 +2203,7 @@ function renderList(){
         +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+li+',\'l\',-1)">-</button>'
         +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+li+',\'l\',1)">+</button>'
         +'</div>'
-        +'<span class="summary-chip alert" style="cursor:pointer;font-size:10px;padding:1px 6px;margin-left:4px;min-width:42px;text-align:center;display:inline-block;" onclick="resetSizeStock(this,\''+mid+'\','+li+')">Reset</span>'
+        +'<span class="summary-chip alert" style="cursor:pointer;font-size:10px;padding:1px 6px;margin-left:4px;min-width:42px;text-align:center;display:inline-flex;align-items:center;justify-content:center;line-height:1;" onclick="resetSizeStock(this,\''+mid+'\','+li+')">Reset</span>'
         +'</div>';
       // Right chip (only if exists)
       if(ri!==undefined){
@@ -2224,7 +2224,7 @@ function renderList(){
           +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+ri+',\'l\',-1)">-</button>'
           +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+ri+',\'l\',1)">+</button>'
           +'</div>'
-          +'<span class="summary-chip alert" style="cursor:pointer;font-size:10px;padding:1px 6px;margin-left:4px;min-width:42px;text-align:center;display:inline-block;" onclick="resetSizeStock(this,\''+mid+'\','+ri+')">Reset</span>'
+          +'<span class="summary-chip alert" style="cursor:pointer;font-size:10px;padding:1px 6px;margin-left:4px;min-width:42px;text-align:center;display:inline-flex;align-items:center;justify-content:center;line-height:1;" onclick="resetSizeStock(this,\''+mid+'\','+ri+')">Reset</span>'
           +'</div>';
       }
     }
