@@ -1443,20 +1443,23 @@ function editStockDirect(span, modelId, sizeIdx, side){
 
 function updateCardStockIndicator(modelId){
   var m=getModel(modelId); if(!m) return;
-  var sinStock=0;
+  var sinAmbos=0, sinUno=0;
   for(var i=0;i<(m.sizes||[]).length;i++){
-    if((m.sizes[i].r||0)===0||(m.sizes[i].l||0)===0) sinStock++;
+    var r=m.sizes[i].r||0, l=m.sizes[i].l||0;
+    if(r===0&&l===0) sinAmbos++;
+    else if(r===0||l===0) sinUno++;
   }
   var card=document.querySelector('.door-card[data-order-id="'+modelId+'"]');
   if(!card) return;
-  var indicator=card.querySelector('.stock-indicator');
-  if(!indicator) return;
-  if(sinStock>0){
-    indicator.innerHTML='&#9679;&nbsp;'+sinStock;
-    indicator.style.display='inline-flex';
-  } else {
-    indicator.style.display='none';
-    indicator.innerHTML='';
+  var indUno=card.querySelector('.stock-indicator-uno');
+  if(indUno){
+    if(sinUno>0){ indUno.innerHTML='&#9679;&nbsp;'+sinUno; indUno.style.display='inline-flex'; }
+    else { indUno.style.display='none'; indUno.innerHTML=''; }
+  }
+  var indRojo=card.querySelector('.stock-indicator');
+  if(indRojo){
+    if(sinAmbos>0){ indRojo.innerHTML='&#9679;&nbsp;'+sinAmbos; indRojo.style.display='inline-flex'; }
+    else { indRojo.style.display='none'; indRojo.innerHTML=''; }
   }
 }
 
@@ -1835,9 +1838,10 @@ function renderSummary(){
   for(var i=0;i<scope.length;i++){
     var m=scope[i], any=false, hasZero=false;
     for(var j=0;j<(m.sizes||[]).length;j++){
-      units+=(m.sizes[j].r||0)+(m.sizes[j].l||0);
-      if((m.sizes[j].r||0)>0||(m.sizes[j].l||0)>0) any=true;
-      if((m.sizes[j].r||0)===0||(m.sizes[j].l||0)===0) hasZero=true;
+      var r=m.sizes[j].r||0, l=m.sizes[j].l||0;
+      units+=r+l;
+      if(r>0||l>0) any=true;
+      if(r===0&&l===0) hasZero=true;
     }
     if((m.sizes||[]).length>0&&hasZero){noStock++;noStockIds.push(m.id);}
   }
@@ -2310,9 +2314,18 @@ function renderList(){
       +'<div class="door-actions">'
       +(m.photo?'<button class="abtn abtn-edit" onclick="showPhotoPanel(\''+mid+'\')" title="Ver foto">Foto</button>':'')
       +(function(){
-          var sinStock=0;
-          for(var si=0;si<(m.sizes||[]).length;si++){if((m.sizes[si].r||0)===0||(m.sizes[si].l||0)===0)sinStock++;}
-          return sinStock>0?'<span class="stock-indicator" style="display:inline-flex;align-items:center;gap:2px;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;color:var(--color-danger);padding:2px 5px;border-radius:3px;background:rgba(224,85,85,0.12);border:1px solid rgba(224,85,85,0.3);">&#9679;&nbsp;'+sinStock+'</span>':'<span class="stock-indicator" style="display:none;"></span>';
+          var sinAmbos=0, sinUno=0;
+          for(var si=0;si<(m.sizes||[]).length;si++){
+            var r=m.sizes[si].r||0, l=m.sizes[si].l||0;
+            if(r===0&&l===0) sinAmbos++;
+            else if(r===0||l===0) sinUno++;
+          }
+          var out='';
+          if(sinUno>0) out+='<span class="stock-indicator-uno" style="display:inline-flex;align-items:center;gap:2px;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;color:#c8a020;padding:2px 5px;border-radius:3px;background:rgba(200,160,32,0.12);border:1px solid rgba(200,160,32,0.3);">&#9679;&nbsp;'+sinUno+'</span>';
+          if(sinAmbos>0) out+='<span class="stock-indicator" style="display:inline-flex;align-items:center;gap:2px;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;color:var(--color-danger);padding:2px 5px;border-radius:3px;background:rgba(224,85,85,0.12);border:1px solid rgba(224,85,85,0.3);">&#9679;&nbsp;'+sinAmbos+'</span>';
+          if(sinUno===0) out+='<span class="stock-indicator-uno" style="display:none;"></span>';
+          if(sinAmbos===0) out+='<span class="stock-indicator" style="display:none;"></span>';
+          return out;
         })()
       +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')" aria-label="Editar" title="Editar">Editar</button>'
       +'</div>'
