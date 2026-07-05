@@ -182,7 +182,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     <div class="topbar-inner">
       <!-- Fila 1: título -->
       <div style="display:flex;align-items:center;justify-content:center;width:100%;">
-        <div class="topbar-title">Picaportes</div>
+        <div class="topbar-title">Stock de Picaportes</div>
       </div>
       <!-- Fila 2: acciones -->
       <div style="display:flex;align-items:center;justify-content:center;gap:5px;width:100%;flex-wrap:wrap;">
@@ -194,10 +194,10 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
             <button onclick="closeMoreMenuAnd(exportFotos)">Descargar fotos</button>
             <button onclick="closeMoreMenuAnd(exportPDF)">PDF</button>
             <button onclick="closeMoreMenuAnd(exportCSV)">CSV</button>
+            <button id="more-reset-stock-btn" onclick="resetAllStockFromMenu(this)">Reset stock</button>
           </div>
         </div>
         <a href="index.html" class="btn btn-ghost" style="text-decoration:none;">Men&#250;</a>
-        <button class="btn btn-ghost" onclick="salir()">Salir</button>
         <button id="undo-btn" class="btn btn-ghost" onclick="performUndo()" disabled style="opacity:0.35;" title="Sin acciones para deshacer">&#8630;</button>
         <button id="redo-btn" class="btn btn-ghost" onclick="performRedo()" disabled style="opacity:0.35;" title="Sin acciones para rehacer">&#8631;</button>
         <div class="view-toggle">
@@ -505,13 +505,14 @@ function esc(str){if(str==null)return'';return String(str).replace(/&/g,'&amp;')
 // ===== CONSULTA MODE =====
 function applyConsultaMode(){
   if(!isConsulta) return;
-  // Topbar buttons
   var btnAgregar=document.getElementById('btn-agregar');
   if(btnAgregar) btnAgregar.classList.add('btn-consulta');
   var btnRestaura=document.getElementById('btn-restaurar');
   if(btnRestaura) btnRestaura.classList.add('btn-consulta');
   var btnReorder=document.getElementById('reorder-toggle-btn');
   if(btnReorder) btnReorder.classList.add('btn-consulta');
+  var btnReset=document.getElementById('more-reset-stock-btn');
+  if(btnReset) btnReset.classList.add('btn-consulta');
 }
 
 // ===== FORM STOCK ADJ =====
@@ -736,6 +737,33 @@ function cancelResetStock(e){
   if(chip&&chip.contains(e.target))return;
   resetStockPending=false;
   if(chip){chip.textContent='Reset stock';chip.style.background='';chip.style.color='';chip.style.borderColor='';}
+}
+
+var resetMenuPending=false;
+function resetAllStockFromMenu(btn){
+  if(isConsulta) return;
+  if(resetMenuPending){
+    resetMenuPending=false;
+    closeMoreMenu();
+    pushUndo('Reset stock general');
+    for(var i=0;i<models.length;i++){
+      models[i].stock=0;models[i].cajas=0;
+      supaUpsertModel(models[i]).catch(function(e){showToast('Error: '+e.message);});
+    }
+    renderList();showToast('Stock reseteado a cero');return;
+  }
+  resetMenuPending=true;
+  btn.textContent='Seguro?';
+  btn.style.color='var(--zero)';
+  setTimeout(function(){
+    document.addEventListener('click',function cancelMenu(e){
+      if(btn.contains(e.target)){return;}
+      resetMenuPending=false;
+      btn.textContent='Reset stock';
+      btn.style.color='';
+      document.removeEventListener('click',cancelMenu,{capture:true});
+    },{once:true,capture:true});
+  },0);
 }
 
 // ===== SUMMARY =====
