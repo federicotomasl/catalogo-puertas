@@ -714,31 +714,6 @@ function togglePhoto(id){
   if(btn){btn.className=open?'photo-btn':'photo-btn open';btn.textContent=open?'▼ Foto':'▲ Foto';}
 }
 
-// ===== RESET STOCK =====
-var resetStockPending=false;
-function resetAllStock(){
-  if(isConsulta) return;
-  if(resetStockPending){
-    resetStockPending=false;
-    pushUndo('Reset stock general');
-    for(var i=0;i<models.length;i++){
-      models[i].stock=0;models[i].cajas=0;
-      supaUpsertModel(models[i]).catch(function(e){showToast('Error: '+e.message);});
-    }
-    renderList();showToast('Stock reseteado a cero');return;
-  }
-  resetStockPending=true;
-  var chip=document.getElementById('reset-stock-chip');
-  if(chip){chip.textContent='Seguro?';chip.style.background='var(--zero)';chip.style.color='#fff';chip.style.borderColor='var(--zero)';}
-  setTimeout(function(){document.addEventListener('click',cancelResetStock,{once:true,capture:true});},0);
-}
-function cancelResetStock(e){
-  var chip=document.getElementById('reset-stock-chip');
-  if(chip&&chip.contains(e.target))return;
-  resetStockPending=false;
-  if(chip){chip.textContent='Reset stock';chip.style.background='';chip.style.color='';chip.style.borderColor='';}
-}
-
 var resetMenuPending=false;
 function resetAllStockFromMenu(btn){
   if(isConsulta) return;
@@ -775,15 +750,11 @@ function renderSummary(){
     cajas+=(mi.cajas||0);
     totalUds+=(mi.cajas||0)*(mi.cxc||20)+(mi.stock||0);
   }
-  var resetCls='summary-chip alert'+(isConsulta?' consulta':'');
   document.getElementById('summary-bar').innerHTML=
     '<div class="summary-chip">Modelos: <span>'+total+'</span></div>'+
     '<div class="summary-chip">Unidades: <span>'+units+'</span></div>'+
     '<div class="summary-chip">Cajas: <span>'+cajas+'</span></div>'+
-    '<div class="summary-chip">Total: <span>'+totalUds+'</span></div>'+
-    '<div class="'+resetCls+'" id="reset-stock-chip" title="Resetear todo el stock a cero">Reset stock</div>';
-  var rc=document.getElementById('reset-stock-chip');
-  if(rc&&!isConsulta) rc.addEventListener('click',resetAllStock);
+    '<div class="summary-chip">Total: <span>'+totalUds+'</span></div>';
 }
 
 // ===== FILTER =====
