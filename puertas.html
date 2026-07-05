@@ -1961,7 +1961,7 @@ function clearAllFilters(){
 
 function updateResetBtn(){
   var ff=(document.getElementById('f-fabrica-filter')||{}).value||'';
-  var anyActive = !!(ff||mf||cf||medf);
+  var anyActive = !!ff;
   var clearTab=document.getElementById('filter-clear-tab');
   if(clearTab) clearTab.className = anyActive ? 'filter-tab' : 'filter-tab active';
 }
