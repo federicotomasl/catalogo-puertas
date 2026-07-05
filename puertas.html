@@ -1445,22 +1445,17 @@ function editStockDirect(span, modelId, sizeIdx, side){
 
 function updateCardStockIndicator(modelId){
   var m=getModel(modelId); if(!m) return;
-  var sinAmbos=0, sinUno=0;
-  for(var i=0;i<(m.sizes||[]).length;i++){
-    var r=m.sizes[i].r||0, l=m.sizes[i].l||0;
-    if(r===0&&l===0) sinAmbos++;
-    else if(r===0||l===0) sinUno++;
-  }
+  var ind=calcStockIndicators(m.sizes);
   var card=document.querySelector('.door-card[data-order-id="'+modelId+'"]');
   if(!card) return;
   var indUno=card.querySelector('.stock-indicator-uno');
   if(indUno){
-    if(sinUno>0){ indUno.className='stock-indicator-uno stock-ind-uno'; indUno.innerHTML='&#9679;&nbsp;'+sinUno; }
+    if(ind.uno>0){ indUno.className='stock-indicator-uno stock-ind-uno'; indUno.innerHTML='&#9679;&nbsp;'+ind.uno; indUno.style.display=''; }
     else { indUno.className='stock-indicator-uno'; indUno.style.display='none'; indUno.innerHTML=''; }
   }
   var indRojo=card.querySelector('.stock-indicator');
   if(indRojo){
-    if(sinAmbos>0){ indRojo.className='stock-indicator stock-ind-rojo'; indRojo.innerHTML='&#9679;&nbsp;'+sinAmbos; indRojo.style.display=''; }
+    if(ind.ambos>0){ indRojo.className='stock-indicator stock-ind-rojo'; indRojo.innerHTML='&#9679;&nbsp;'+ind.ambos; indRojo.style.display=''; }
     else { indRojo.className='stock-indicator'; indRojo.style.display='none'; indRojo.innerHTML=''; }
   }
 }
@@ -1527,6 +1522,16 @@ function resetSizeStock(chip, modelId, sizeIdx){
     document.removeEventListener('click', _resetSizeCancel, {capture:true});
   };
   setTimeout(function(){ document.addEventListener('click', _resetSizeCancel, {once:true, capture:true}); }, 0);
+}
+
+function calcStockIndicators(sizes){
+  var ambos=0, uno=0;
+  for(var i=0;i<(sizes||[]).length;i++){
+    var rv=sizes[i].r||0, lv=sizes[i].l||0;
+    if(rv===0&&lv===0) ambos++;
+    else if(rv===0||lv===0) uno++;
+  }
+  return {ambos:ambos, uno:uno};
 }
 
 // ===== TOGGLE CARD =====
@@ -2300,14 +2305,9 @@ function renderList(){
     var hasBody=hasSizes||!!m.photo;
     var photoHtml=''; // fotos solo en mosaico
     // Calcular indicadores de stock
-    var _sinAmbos=0, _sinUno=0;
-    for(var _si=0;_si<(m.sizes||[]).length;_si++){
-      var _rv=m.sizes[_si].r||0, _lv=m.sizes[_si].l||0;
-      if(_rv===0&&_lv===0) _sinAmbos++;
-      else if(_rv===0||_lv===0) _sinUno++;
-    }
-    var _indUno=_sinUno>0?'<span class="stock-indicator-uno stock-ind-uno">&#9679;&nbsp;'+_sinUno+'</span>':'<span class="stock-indicator-uno" style="display:none;"></span>';
-    var _indRojo=_sinAmbos>0?'<span class="stock-indicator stock-ind-rojo">&#9679;&nbsp;'+_sinAmbos+'</span>':'<span class="stock-indicator" style="display:none;"></span>';
+    var _ind=calcStockIndicators(m.sizes);
+    var _indUno=_ind.uno>0?'<span class="stock-indicator-uno stock-ind-uno">&#9679;&nbsp;'+_ind.uno+'</span>':'<span class="stock-indicator-uno" style="display:none;"></span>';
+    var _indRojo=_ind.ambos>0?'<span class="stock-indicator stock-ind-rojo">&#9679;&nbsp;'+_ind.ambos+'</span>':'<span class="stock-indicator" style="display:none;"></span>';
     html+='<div class="door-card'+(reorderMode?' reorder-mode':'')+'" data-order-id="'+esc(mid)+'" draggable="'+(reorderMode?'true':'false')+'">'
       +(reorderMode?'<span class="reorder-handle" aria-hidden="true">⠿</span>':'')
       +'<input type="checkbox" class="door-check" data-id="'+mid+'" onchange="updateSelLabel()">'
