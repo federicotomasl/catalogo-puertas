@@ -1462,27 +1462,43 @@ function adjustStock(btn, modelId, sizeIdx, side, delta){
   renderSummary();
 }
 
-function resetSizeStock(btn, modelId, sizeIdx){
+var _resetSizePending = false;
+var _resetSizeCancel = null;
+
+function resetSizeStock(chip, modelId, sizeIdx){
   if(isConsulta()) return;
-  if(!btn.classList.contains('confirm')){
-    btn.classList.add('confirm');
-    btn.title='Confirmar reset';
-    setTimeout(function(){ btn.classList.remove('confirm'); btn.title='Resetear esta medida'; }, 2000);
+  if(_resetSizePending && _resetSizeCancel){
+    // Segundo click: confirmar
+    document.removeEventListener('click', _resetSizeCancel, {capture:true});
+    _resetSizePending = false;
+    _resetSizeCancel = null;
+    chip.textContent='Reset';
+    chip.style.background=''; chip.style.color=''; chip.style.borderColor='';
+    var m=getModel(modelId); if(!m||!m.sizes[sizeIdx]) return;
+    pushUndo('Reset medida '+m.sizes[sizeIdx].medida);
+    m.sizes[sizeIdx].r=0; m.sizes[sizeIdx].l=0;
+    supaUpsert(m.id, m);
+    var sc=chip.closest('.size-chip');
+    if(sc){
+      var qvals=sc.querySelectorAll('.qval');
+      if(qvals[0]){ qvals[0].textContent='0'; qvals[0].className='qval stock-zero'; }
+      if(qvals[1]){ qvals[1].textContent='0'; qvals[1].className='qval stock-zero'; }
+    }
+    renderTotals(getFiltered()); renderSummary();
     return;
   }
-  btn.classList.remove('confirm');
-  var m=getModel(modelId); if(!m||!m.sizes[sizeIdx]) return;
-  pushUndo('Reset medida '+m.sizes[sizeIdx].medida);
-  m.sizes[sizeIdx].r=0; m.sizes[sizeIdx].l=0;
-  supaUpsert(m.id, m);
-  var chip=btn.closest('.size-chip');
-  if(chip){
-    var qvals=chip.querySelectorAll('.qval');
-    if(qvals[0]){ qvals[0].textContent='0'; qvals[0].className='qval stock-zero'; }
-    if(qvals[1]){ qvals[1].textContent='0'; qvals[1].className='qval stock-zero'; }
-  }
-  renderTotals(getFiltered());
-  renderSummary();
+  // Primer click: mostrar "Seguro?"
+  _resetSizePending = true;
+  chip.textContent='Seguro?';
+  chip.style.background='var(--zero)'; chip.style.color='#fff'; chip.style.borderColor='var(--zero)';
+  _resetSizeCancel = function(e){
+    if(chip.contains(e.target)) return;
+    _resetSizePending = false; _resetSizeCancel = null;
+    chip.textContent='Reset';
+    chip.style.background=''; chip.style.color=''; chip.style.borderColor='';
+    document.removeEventListener('click', _resetSizeCancel, {capture:true});
+  };
+  setTimeout(function(){ document.addEventListener('click', _resetSizeCancel, {once:true, capture:true}); }, 0);
 }
 
 // ===== TOGGLE CARD =====
@@ -2187,7 +2203,7 @@ function renderList(){
         +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+li+',\'l\',-1)">-</button>'
         +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+li+',\'l\',1)">+</button>'
         +'</div>'
-        +'<button class="qbtn-reset" onclick="resetSizeStock(this,\''+mid+'\','+li+')" title="Resetear esta medida">✕</button>'
+        +'<span class="summary-chip alert" style="cursor:pointer;font-size:10px;padding:1px 6px;margin-left:4px;" onclick="resetSizeStock(this,\''+mid+'\','+li+')">Reset</span>'
         +'</div>';
       // Right chip (only if exists)
       if(ri!==undefined){
@@ -2208,7 +2224,7 @@ function renderList(){
           +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+ri+',\'l\',-1)">-</button>'
           +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+ri+',\'l\',1)">+</button>'
           +'</div>'
-          +'<button class="qbtn-reset" onclick="resetSizeStock(this,\''+mid+'\','+ri+')" title="Resetear esta medida">✕</button>'
+          +'<span class="summary-chip alert" style="cursor:pointer;font-size:10px;padding:1px 6px;margin-left:4px;" onclick="resetSizeStock(this,\''+mid+'\','+ri+')">Reset</span>'
           +'</div>';
       }
     }
