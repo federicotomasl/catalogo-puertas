@@ -70,6 +70,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .door-top{flex:1;min-width:0;display:flex;align-items:flex-start;gap:5px;flex-wrap:wrap;}
 .door-top .door-header{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
 .door-top .door-actions{flex-shrink:0;display:flex;flex-direction:row;gap:3px;align-items:center;}
+.stock-ind-verde{display:inline-flex;align-items:center;gap:2px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:var(--color-stock-r);padding:2px 5px;border-radius:3px;background:rgba(122,191,158,0.12);border:1px solid rgba(122,191,158,0.3);}
 .stock-ind-uno{display:inline-flex;align-items:center;gap:2px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:#c8a020;padding:2px 5px;border-radius:3px;background:rgba(200,160,32,0.12);border:1px solid rgba(200,160,32,0.3);}
 .stock-ind-rojo{display:inline-flex;align-items:center;gap:2px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:var(--color-danger);padding:2px 5px;border-radius:3px;background:rgba(224,85,85,0.12);border:1px solid rgba(224,85,85,0.3);}
 .card-body{display:none;width:100%;}
@@ -1448,6 +1449,11 @@ function updateCardStockIndicator(modelId){
   var ind=calcStockIndicators(m.sizes);
   var card=document.querySelector('.door-card[data-order-id="'+modelId+'"]');
   if(!card) return;
+  var indVerde=card.querySelector('.stock-indicator-verde');
+  if(indVerde){
+    if(ind.completo>0){ indVerde.className='stock-indicator-verde stock-ind-verde'; indVerde.innerHTML='&#9679;&nbsp;'+ind.completo; indVerde.style.display=''; }
+    else { indVerde.className='stock-indicator-verde'; indVerde.style.display='none'; indVerde.innerHTML=''; }
+  }
   var indUno=card.querySelector('.stock-indicator-uno');
   if(indUno){
     if(ind.uno>0){ indUno.className='stock-indicator-uno stock-ind-uno'; indUno.innerHTML='&#9679;&nbsp;'+ind.uno; indUno.style.display=''; }
@@ -1525,13 +1531,14 @@ function resetSizeStock(chip, modelId, sizeIdx){
 }
 
 function calcStockIndicators(sizes){
-  var ambos=0, uno=0;
+  var ambos=0, uno=0, completo=0;
   for(var i=0;i<(sizes||[]).length;i++){
     var rv=sizes[i].r||0, lv=sizes[i].l||0;
     if(rv===0&&lv===0) ambos++;
     else if(rv===0||lv===0) uno++;
+    else completo++;
   }
-  return {ambos:ambos, uno:uno};
+  return {ambos:ambos, uno:uno, completo:completo};
 }
 
 // ===== TOGGLE CARD =====
@@ -2262,6 +2269,7 @@ function renderList(){
     var photoHtml=''; // fotos solo en mosaico
     // Calcular indicadores de stock
     var _ind=calcStockIndicators(m.sizes);
+    var _indVerde=_ind.completo>0?'<span class="stock-indicator-verde stock-ind-verde">&#9679;&nbsp;'+_ind.completo+'</span>':'<span class="stock-indicator-verde" style="display:none;"></span>';
     var _indUno=_ind.uno>0?'<span class="stock-indicator-uno stock-ind-uno">&#9679;&nbsp;'+_ind.uno+'</span>':'<span class="stock-indicator-uno" style="display:none;"></span>';
     var _indRojo=_ind.ambos>0?'<span class="stock-indicator stock-ind-rojo">&#9679;&nbsp;'+_ind.ambos+'</span>':'<span class="stock-indicator" style="display:none;"></span>';
     html+='<div class="door-card'+(reorderMode?' reorder-mode':'')+'" data-order-id="'+esc(mid)+'" draggable="'+(reorderMode?'true':'false')+'">'
@@ -2280,7 +2288,7 @@ function renderList(){
       +'</div>'
       +'<div class="door-actions">'
       +(m.photo?'<button class="abtn abtn-edit" onclick="showPhotoPanel(\''+mid+'\')" title="Ver foto">Foto</button>':'')
-      +_indUno+_indRojo
+      +_indVerde+_indUno+_indRojo
       +'<button class="abtn abtn-edit" onclick="openForm(\''+mid+'\')" aria-label="Editar" title="Editar">Editar</button>'
       +'</div>'
       +'</div>'
