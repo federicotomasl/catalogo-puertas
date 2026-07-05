@@ -99,9 +99,12 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .sizes-row-wrap{display:block;width:100%;}
 .sizes-row{display:grid;grid-template-columns:1fr;gap:1px;border:1px solid var(--border);border-radius:4px;overflow:hidden;background:var(--border);width:100%;}
 .size-chip{font-family:'Barlow Condensed',sans-serif;font-size:12px;display:flex;align-items:stretch;justify-content:center;gap:4px;padding:4px 7px;background:var(--bg2);}
-.size-val{color:var(--text);font-weight:700;align-self:center;}
+.size-val{color:var(--text);font-weight:700;align-self:center;font-size:15px;font-family:'Barlow Condensed',sans-serif;min-width:36px;}
 .ssep{font-size:13px;font-weight:800;font-family:'Barlow Condensed',sans-serif;letter-spacing:0.05em;align-self:center;}
 .ssep-div{display:inline-block;width:2px;background:var(--muted);align-self:stretch;margin:0 5px;border-radius:1px;}
+.qbtn-reset{background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:11px;padding:0 2px;align-self:center;margin-left:4px;line-height:1;}
+.qbtn-reset:hover{color:var(--color-danger);}
+.qbtn-reset.confirm{color:var(--color-danger);font-weight:700;}
 .stock-r{color:var(--color-stock-r);}
 .stock-l{color:var(--color-stock-l);}
 .stock-zero{color:var(--zero);font-weight:700;}
@@ -1459,6 +1462,29 @@ function adjustStock(btn, modelId, sizeIdx, side, delta){
   renderSummary();
 }
 
+function resetSizeStock(btn, modelId, sizeIdx){
+  if(isConsulta()) return;
+  if(!btn.classList.contains('confirm')){
+    btn.classList.add('confirm');
+    btn.title='Confirmar reset';
+    setTimeout(function(){ btn.classList.remove('confirm'); btn.title='Resetear esta medida'; }, 2000);
+    return;
+  }
+  btn.classList.remove('confirm');
+  var m=getModel(modelId); if(!m||!m.sizes[sizeIdx]) return;
+  pushUndo('Reset medida '+m.sizes[sizeIdx].medida);
+  m.sizes[sizeIdx].r=0; m.sizes[sizeIdx].l=0;
+  supaUpsert(m.id, m);
+  var chip=btn.closest('.size-chip');
+  if(chip){
+    var qvals=chip.querySelectorAll('.qval');
+    if(qvals[0]){ qvals[0].textContent='0'; qvals[0].className='qval stock-zero'; }
+    if(qvals[1]){ qvals[1].textContent='0'; qvals[1].className='qval stock-zero'; }
+  }
+  renderTotals(getFiltered());
+  renderSummary();
+}
+
 // ===== TOGGLE CARD =====
 function toggleCard(id){
   var body=document.getElementById(id);
@@ -2161,6 +2187,7 @@ function renderList(){
         +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+li+',\'l\',-1)">-</button>'
         +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+li+',\'l\',1)">+</button>'
         +'</div>'
+        +'<button class="qbtn-reset" onclick="resetSizeStock(this,\''+mid+'\','+li+')" title="Resetear esta medida">✕</button>'
         +'</div>';
       // Right chip (only if exists)
       if(ri!==undefined){
@@ -2181,6 +2208,7 @@ function renderList(){
           +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+ri+',\'l\',-1)">-</button>'
           +'<button class="qbtn" onclick="adjustStock(this,\''+mid+'\','+ri+',\'l\',1)">+</button>'
           +'</div>'
+          +'<button class="qbtn-reset" onclick="resetSizeStock(this,\''+mid+'\','+ri+')" title="Resetear esta medida">✕</button>'
           +'</div>';
       }
     }
