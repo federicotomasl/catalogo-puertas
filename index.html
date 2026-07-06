@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aberturas Torri — Catálogos</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IiMxMTEiIHJ4PSIxMCIvPgogIDxyZWN0IHg9IjEzIiB5PSI3IiB3aWR0aD0iMzgiIGhlaWdodD0iNTIiIHJ4PSIyIiBmaWxsPSIjMWUxZTFlIiBzdHJva2U9IiNjODYyMWEiIHN0cm9rZS13aWR0aD0iMi41Ii8+CiAgPHJlY3QgeD0iMTciIHk9IjExIiB3aWR0aD0iMzAiIGhlaWdodD0iMjAiIHJ4PSIxIiBmaWxsPSJub25lIiBzdHJva2U9IiNlOGUwZDgiIHN0cm9rZS13aWR0aD0iMSIgb3BhY2l0eT0iMC4xNSIvPgogIDxyZWN0IHg9IjE3IiB5PSIzNSIgd2lkdGg9IjMwIiBoZWlnaHQ9IjIwIiByeD0iMSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZThlMGQ4IiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9IjAuMTUiLz4KICA8cmVjdCB4PSI0MiIgeT0iMzEiIHdpZHRoPSIzIiBoZWlnaHQ9IjUiIHJ4PSIxLjUiIGZpbGw9IiNjODYyMWEiLz4KPC9zdmc+">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTQwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iIzExMSIgcng9IjgiLz48cmVjdCB4PSIxMiIgeT0iMTIiIHdpZHRoPSI3NiIgaGVpZ2h0PSIxMTYiIGZpbGw9IndoaXRlIi8+PHBvbHlnb24gcG9pbnRzPSIxMiwxMiA1NSwxMiAxMiw1MiIgZmlsbD0iIzRhOGZkNCIvPjxkZWZzPjxjbGlwUGF0aCBpZD0iYyI+PHJlY3QgeD0iMTIiIHk9IjEyIiB3aWR0aD0iNzYiIGhlaWdodD0iMTE2Ii8+PC9jbGlwUGF0aD48L2RlZnM+PGcgY2xpcC1wYXRoPSJ1cmwoI2MpIj48bGluZSB4MT0iLTEwIiB5MT0iMTAwIiB4Mj0iMTEwIiB5Mj0iLTIwIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjgiLz48bGluZSB4MT0iLTEwIiB5MT0iMTMwIiB4Mj0iMTEwIiB5Mj0iMTAiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iOCIvPjxsaW5lIHgxPSItMTAiIHkxPSIxNjAiIHgyPSIxMTAiIHkyPSI0MCIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSI4Ii8+PC9nPjwvc3ZnPg==">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Barlow:wght@400;500&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -263,8 +263,10 @@ body {
 }
 
 /* ── LOGIN SCREEN ── */
+#catalog-page { display: none !important; }
+#catalog-page.visible { display: flex !important; }
+
 #login-screen {
-  display: none;
   position: fixed;
   inset: 0;
   z-index: 100;
@@ -272,9 +274,10 @@ body {
   align-items: center;
   justify-content: center;
   padding: 24px;
+  display: none !important;
 }
 
-#login-screen.visible { display: flex; }
+#login-screen.visible { display: flex !important; }
 
 .login-box {
   width: 100%;
@@ -397,12 +400,6 @@ body {
 
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-/* ocultar ambas vistas hasta que JS decida cuál mostrar */
-#login-screen { display: none; }
-#login-screen.visible { display: flex !important; }
-#catalog-page { display: none; }
-#catalog-page.visible { display: flex !important; }
 </style>
 </head>
 <body>
@@ -545,7 +542,6 @@ function checkSession() {
 function showLogin() {
   document.getElementById('login-screen').classList.add('visible');
   document.getElementById('catalog-page').classList.remove('visible');
-  // Precargar credenciales guardadas
   try {
     var savedEmail = localStorage.getItem('torri_saved_email');
     var savedPassword = localStorage.getItem('torri_saved_password');
