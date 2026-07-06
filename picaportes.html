@@ -290,6 +290,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
     </div>
 
     <button class="btn-save" id="btn-save" type="button" onclick="saveModel()">Guardar Picaporte</button>
+    <button id="btn-delete-model" onclick="deleteModelFromForm()" style="display:none;width:100%;padding:12px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:transparent;color:#e05555;border:1px solid #e05555;border-radius:6px;cursor:pointer;margin-top:8px;">Eliminar Picaporte</button>
   </div>
 </div>
 
@@ -303,7 +304,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
       <div class="mosaic-modal-meta" id="mosaic-modal-meta"></div>
       <div class="mosaic-modal-actions">
         <button class="abtn abtn-edit" id="mosaic-modal-edit">Editar</button>
-        <button class="abtn abtn-del" id="mosaic-modal-del">Eliminar</button>
       </div>
     </div>
   </div>
@@ -589,6 +589,8 @@ function openForm(id){
   document.getElementById('ff-cajas').value=0;
   document.getElementById('form-title-bar').textContent=id?'Editar Picaporte':'Nuevo Picaporte';
   document.getElementById('btn-save').textContent=id?'Guardar Cambios':'Guardar Picaporte';
+  var delBtn=document.getElementById('btn-delete-model');
+  if(delBtn) delBtn.style.display=id?'block':'none';
   if(id){
     var m=getModel(id);
     if(m){
@@ -646,6 +648,27 @@ function deleteModel(id){
   supaDeleteModel(id).catch(function(e){showToast('Error al eliminar: '+e.message);});
   renderList();
   showToast('Picaporte eliminado');
+}
+
+var _deleteModelPending=false;
+function deleteModelFromForm(){
+  if(isConsulta||!editingId) return;
+  var btn=document.getElementById('btn-delete-model');
+  if(!_deleteModelPending){
+    _deleteModelPending=true;
+    btn.textContent='¿Seguro? Tocá de nuevo';
+    btn.style.background='#e05555';
+    btn.style.color='#fff';
+    setTimeout(function(){
+      _deleteModelPending=false;
+      if(btn){btn.textContent='Eliminar Picaporte';btn.style.background='transparent';btn.style.color='#e05555';}
+    },2500);
+    return;
+  }
+  _deleteModelPending=false;
+  var id=editingId;
+  deleteModel(id);
+  closeForm();
 }
 
 // ===== QUICK STOCK =====
@@ -808,7 +831,6 @@ function openMosaicModal(id){
   var descEl=document.getElementById('mosaic-modal-desc');
   var metaEl=document.getElementById('mosaic-modal-meta');
   var editBtn=document.getElementById('mosaic-modal-edit');
-  var delBtn=document.getElementById('mosaic-modal-del');
   if(m.photo){imgEl.src=m.photo;imgEl.style.display='block';}
   else{imgEl.src='';imgEl.style.display='none';}
   descEl.textContent=(m.descripcion||'Sin descripcion');
@@ -818,12 +840,9 @@ function openMosaicModal(id){
   metaEl.innerHTML=metaHtml;
   if(isConsulta){
     editBtn.classList.add('consulta');
-    delBtn.classList.add('consulta');
   } else {
     editBtn.classList.remove('consulta');
-    delBtn.classList.remove('consulta');
     editBtn.onclick=function(){closeMosaicModal();openForm(id);};
-    delBtn.onclick=function(){closeMosaicModal();deleteModel(id);};
   }
   modal.className='mosaic-modal open';
   document.body.style.overflow='hidden';
@@ -871,7 +890,6 @@ function renderList(){
     var actCell='<div style="display:flex;gap:3px;align-items:center;justify-content:flex-end;flex-wrap:nowrap;">'
       +photoBtn
       +'<button class="abtn abtn-edit'+qc+'" onclick="openForm(\''+mid+'\')">Editar</button>'
-      +'<button class="abtn abtn-del'+qc+'" onclick="deleteModel(\''+mid+'\')" title="Eliminar">✕</button>'
       +'</div>';
     var handleTd=reorderMode?'<td class="reorder-handle">&#8942;&#8942;</td>':'';
     var draggableAttr=reorderMode?' draggable="true" data-order-id="'+mid+'"':'';
