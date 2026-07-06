@@ -327,22 +327,22 @@ select.finput{cursor:pointer;}
     </div>
 
     <div class="catalog-controls">
-      <!-- Filtro rápido de depósitos: siempre visible, chips centrados -->
-      <div id="deposito-filter-row" style="margin-bottom:6px;align-items:center;flex-wrap:wrap;display:none;">
-        <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Depósito</span>
-        <div style="display:flex;flex-wrap:wrap;gap:3px;flex:1;justify-content:center;" id="dep-filter-chips">
-          <button class="filter-tab active" id="dep-filter-all" onclick="setDepositoFilter('',this)">Todos</button>
-        </div>
-      </div>
-
       <!-- Buscador + botón toggle filtros -->
       <div class="search-wrap" style="display:flex;align-items:center;gap:8px;">
-        <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Buscar</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Buscar</span>
         <div style="position:relative;flex:1;">
           <span class="search-icon">&#128269;</span>
           <input class="search-box" id="search-input" type="text" placeholder="Buscar fabrica, descripcion, medida..." oninput="debouncedRender()">
         </div>
         <button class="filter-tab" id="reorder-toggle-btn" onclick="toggleReorderMode()" title="Reordenar manualmente las cards" aria-label="Reordenar manual" style="flex-shrink:0;">&#8645;</button>
+      </div>
+
+      <!-- Filtro rápido de depósitos: siempre visible, chips a la izquierda -->
+      <div id="deposito-filter-row" style="margin-top:6px;align-items:center;flex-wrap:wrap;display:none;">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Depósito</span>
+        <div style="display:flex;flex-wrap:wrap;gap:3px;flex:1;justify-content:flex-start;" id="dep-filter-chips">
+          <button class="filter-tab active" id="dep-filter-all" onclick="setDepositoFilter('',this)">Todos</button>
+        </div>
       </div>
 
       <!-- Filtros + Agrupar en un mismo renglón -->
