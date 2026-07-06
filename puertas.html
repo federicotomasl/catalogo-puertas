@@ -1765,9 +1765,20 @@ function getFiltered(){
     }
     if(ff && (m.fabrica||'')!==ff) continue;
     if(currentDepositoFilter && (m.deposito||'')!==currentDepositoFilter) continue;
+    if(noStockFilterActive){
+      var hasZero=false;
+      for(var zi=0;zi<(m.sizes||[]).length;zi++){
+        if((m.sizes[zi].r||0)===0||(m.sizes[zi].l||0)===0){ hasZero=true; break; }
+      }
+      if(!hasZero) continue;
+    }
     out.push(m);
   }
-  if(currentSort==='fabrica') out.sort(function(a,b){return(a.fabrica||'').localeCompare(b.fabrica||'');});
+  if(noStockFilterActive){
+    out.sort(function(a,b){
+      return countZeroSizes(b)-countZeroSizes(a);
+    });
+  } else if(currentSort==='fabrica') out.sort(function(a,b){return(a.fabrica||'').localeCompare(b.fabrica||'');});
   else if(currentSort==='marco') out.sort(function(a,b){return(a.marco||'').localeCompare(b.marco||'');});
   else if(currentSort==='color') out.sort(function(a,b){return(a.color||'').localeCompare(b.color||'');});
   else out.sort(function(a,b){
@@ -1778,8 +1789,17 @@ function getFiltered(){
   return out;
 }
 
+function countZeroSizes(m){
+  var n=0;
+  for(var i=0;i<(m.sizes||[]).length;i++){
+    if((m.sizes[i].r||0)===0||(m.sizes[i].l||0)===0) n++;
+  }
+  return n;
+}
+
 // ===== SUMMARY =====
 var noStockIds = [];
+var noStockFilterActive = false;
 
 function renderSummary(){
   var depLabel = currentDepositoFilter ? ' ('+currentDepositoFilter+')' : '';
@@ -1789,16 +1809,15 @@ function renderSummary(){
   var total=scope.length, units=0, noStock=0;
   noStockIds=[];
   for(var i=0;i<scope.length;i++){
-    var m=scope[i], any=false, hasZero=false;
+    var m=scope[i], hasZero=false;
     for(var j=0;j<(m.sizes||[]).length;j++){
       var r=m.sizes[j].r||0, l=m.sizes[j].l||0;
       units+=r+l;
-      if(r>0||l>0) any=true;
-      if(r===0&&l===0) hasZero=true;
+      if(r===0||l===0) hasZero=true;
     }
     if((m.sizes||[]).length>0&&hasZero){noStock++;noStockIds.push(m.id);}
   }
-  var sinStockChip=noStock>0?'<div class="summary-chip alert" id="sin-stock-chip" style="cursor:pointer;" title="Ver modelos sin stock'+depLabel+'">Sin stock: <span>'+noStock+'</span></div>':'';
+  var sinStockChip=noStock>0?'<div class="summary-chip alert" id="sin-stock-chip" style="cursor:pointer;'+(noStockFilterActive?'background:var(--zero);color:#fff;border-color:var(--zero);':'')+'" title="Filtrar modelos con alguna medida sin stock'+depLabel+'">Sin stock: <span>'+noStock+'</span></div>':'';
   document.getElementById('summary-bar').innerHTML=
     '<div class="summary-chip">Modelos: <span>'+total+'</span></div>'+
     '<div class="summary-chip">Unidades: <span>'+units+'</span></div>'+
@@ -1806,7 +1825,7 @@ function renderSummary(){
   var grid=document.getElementById('totals-grid');
   if(grid) grid.style.display='none';
   var sc=document.getElementById('sin-stock-chip');
-  if(sc) sc.addEventListener('click', expandNoStock);
+  if(sc) sc.addEventListener('click', toggleNoStockFilter);
   // Actualizar texto del botón en el menú según depósito activo
   var menuBtn=document.getElementById('more-reset-stock-btn');
   if(menuBtn) menuBtn.textContent='Reset stock'+depLabel;
@@ -1852,28 +1871,9 @@ function resetAllStockFromMenu(btn){
 
 
 
-var noStockExpanded = false;
-
-function expandNoStock(){
-  var bodies=document.querySelectorAll('.card-body');
-  if(noStockExpanded){
-    for(var b=0;b<bodies.length;b++) bodies[b].className='card-body';
-    document.querySelectorAll('.door-card.card-open').forEach(function(el){el.classList.remove('card-open');});
-    noStockExpanded=false;
-    return;
-  }
-  var idSet={};
-  for(var i=0;i<noStockIds.length;i++) idSet[noStockIds[i]]=true;
-  for(var b2=0;b2<bodies.length;b2++) bodies[b2].className='card-body';
-  document.querySelectorAll('.door-card.card-open').forEach(function(el){el.classList.remove('card-open');});
-  for(var id in idSet){
-    var body=document.getElementById('cb-'+id);
-    if(body){
-      body.className='card-body open';
-      if(body.parentNode) body.parentNode.classList.add('card-open');
-    }
-  }
-  noStockExpanded=true;
+function toggleNoStockFilter(){
+  noStockFilterActive=!noStockFilterActive;
+  renderList();
 }
 
 // ===== TOTALS =====
@@ -1900,7 +1900,7 @@ function renderTotals(filtered){
 
 // ===== RESET FILTERS =====
 function resetFilters(){
-  noStockExpanded=false;
+  noStockFilterActive=false;
   document.getElementById('search-input').value='';
   var ids=['f-fabrica-filter'];
   for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el)el.value='';}
