@@ -356,7 +356,7 @@ select.finput{cursor:pointer;}
           <span class="search-icon">&#128269;</span>
           <input class="search-box" id="search-input" type="text" placeholder="Buscar fabrica, descripcion, medida..." oninput="debouncedRender()">
         </div>
-
+        <button class="filter-tab" id="reorder-toggle-btn" onclick="toggleReorderMode()" title="Reordenar manualmente las cards" aria-label="Reordenar manual" style="flex-shrink:0;">&#8645;</button>
       </div>
 
       <!-- Filtros + Agrupar en un mismo renglón -->
@@ -370,10 +370,10 @@ select.finput{cursor:pointer;}
         </div>
         <select id="f-fabrica-filter" style="display:none;"><option value="">Todas</option></select>
         <button class="filter-tab" id="grp-fabrica" onclick="toggleGroupFabrica(this)">Agrupar por Fábrica</button>
+        <button class="filter-tab" id="no-stock-filter-btn" onclick="toggleNoStockFilter()" title="Filtrar modelos con alguna medida sin stock">Sin stock</button>
         <div style="margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0;">
           <button id="del-sel-btn" onclick="deleteSelected()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:default;white-space:nowrap;transition:all .15s;" disabled>Eliminar sel.</button>
           <button class="filter-tab" id="sel-all-btn" onclick="toggleSelectAll(this)">Sel. todo</button>
-          <button class="filter-tab" id="reorder-toggle-btn" onclick="toggleReorderMode()" title="Reordenar manualmente las cards" aria-label="Reordenar manual">&#8645;</button>
         </div>
       </div>
 
@@ -1817,15 +1817,13 @@ function renderSummary(){
     }
     if((m.sizes||[]).length>0&&hasZero){noStock++;noStockIds.push(m.id);}
   }
-  var sinStockChip=noStock>0?'<div class="summary-chip alert" id="sin-stock-chip" style="cursor:pointer;'+(noStockFilterActive?'background:var(--zero);color:#fff;border-color:var(--zero);':'')+'" title="Filtrar modelos con alguna medida sin stock'+depLabel+'">Sin stock: <span>'+noStock+'</span></div>':'';
   document.getElementById('summary-bar').innerHTML=
     '<div class="summary-chip">Modelos: <span>'+total+'</span></div>'+
-    '<div class="summary-chip">Unidades: <span>'+units+'</span></div>'+
-    sinStockChip;
+    '<div class="summary-chip">Unidades: <span>'+units+'</span></div>';
   var grid=document.getElementById('totals-grid');
   if(grid) grid.style.display='none';
-  var sc=document.getElementById('sin-stock-chip');
-  if(sc) sc.addEventListener('click', toggleNoStockFilter);
+  var nsBtn=document.getElementById('no-stock-filter-btn');
+  if(nsBtn) nsBtn.classList.toggle('active', noStockFilterActive);
   // Actualizar texto del botón en el menú según depósito activo
   var menuBtn=document.getElementById('more-reset-stock-btn');
   if(menuBtn) menuBtn.textContent='Reset stock'+depLabel;
@@ -1873,6 +1871,8 @@ function resetAllStockFromMenu(btn){
 
 function toggleNoStockFilter(){
   noStockFilterActive=!noStockFilterActive;
+  var btn=document.getElementById('no-stock-filter-btn');
+  if(btn) btn.classList.toggle('active', noStockFilterActive);
   renderList();
 }
 
@@ -1901,6 +1901,8 @@ function renderTotals(filtered){
 // ===== RESET FILTERS =====
 function resetFilters(){
   noStockFilterActive=false;
+  var nsBtn=document.getElementById('no-stock-filter-btn');
+  if(nsBtn) nsBtn.classList.remove('active');
   document.getElementById('search-input').value='';
   var ids=['f-fabrica-filter'];
   for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el)el.value='';}
