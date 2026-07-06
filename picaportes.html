@@ -52,19 +52,19 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .tbl-wrap{padding:0 8px 20px;}
 .tbl{width:100%;border-collapse:collapse;font-family:'Barlow Condensed',sans-serif;font-size:13px;}
 .tbl thead tr{border-bottom:1px solid var(--accent);}
-.tbl th{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);padding:6px 8px;text-align:left;white-space:nowrap;border-right:1px solid var(--border);}
+.tbl th{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);padding:6px 8px;text-align:center;white-space:nowrap;border-right:1px solid var(--border);}
 .tbl th:last-child{border-right:none;}
 .tbl tbody tr.tbl-main{border-bottom:1px solid var(--border);cursor:pointer;}
 .tbl tbody tr.tbl-main:hover td{background:var(--tbg);}
 .tbl tbody tr.tbl-odd td{background:var(--bg3);}
 .tbl tbody tr.tbl-photo-row td{padding:0;border-bottom:1px solid var(--border);}
 #reorder-toggle-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
-.tbl tbody tr.tbl-main.reorder-mode{cursor:grab;touch-action:none;}
+.tbl tbody tr.tbl-main.reorder-mode{touch-action:none;}
 .tbl tbody tr.tbl-main.reorder-mode:active{cursor:grabbing;}
 .tbl tbody tr.tbl-main.dragging{opacity:0.4;}
 .tbl tbody tr.tbl-main.drag-over-top{box-shadow:inset 0 2px 0 var(--accent);}
 .tbl tbody tr.tbl-main.drag-over-bottom{box-shadow:inset 0 -2px 0 var(--accent);}
-.reorder-handle{display:none;color:var(--muted);font-size:13px;padding-right:2px;}
+.reorder-handle{display:none;color:var(--muted);font-size:13px;padding-right:2px;cursor:grab;}
 .tbl tbody tr.tbl-main.reorder-mode .reorder-handle{display:inline-block;}
 .tbl td{padding:6px 8px;vertical-align:middle;color:var(--text);line-height:1.3;border-right:1px solid var(--border);}
 .tbl td:last-child{border-right:none;}
@@ -917,9 +917,9 @@ function renderList(){
     var oddCls=(isOdd?'tbl-main tbl-odd':'tbl-main')+rmCls;
     var cCls=(m.cajas||0)===0?'stock-zero':'stock-u';
     var cajasCell='<div class="qbtns">'
-      +'<button class="qbtn'+qc+'" onclick="adjustStock(this,\''+mid+'\',-1)">-</button>'
-      +'<span class="qval '+cCls+'" onclick="editStockDirect(this,\''+mid+'\')">'+(m.cajas||0)+'</span>'
-      +'<button class="qbtn'+qc+'" onclick="adjustStock(this,\''+mid+'\',1)">+</button>'
+      +'<button class="qbtn'+qc+'" onclick="event.stopPropagation();adjustStock(this,\''+mid+'\',-1)">-</button>'
+      +'<span class="qval '+cCls+'" onclick="event.stopPropagation();editStockDirect(this,\''+mid+'\')">'+(m.cajas||0)+'</span>'
+      +'<button class="qbtn'+qc+'" onclick="event.stopPropagation();adjustStock(this,\''+mid+'\',1)">+</button>'
       +'</div>';
     var total=(m.cajas||0)*(m.cxc||20);
     var totalCls=total===0?'stock-zero':'stock-u';
@@ -928,8 +928,8 @@ function renderList(){
       +photoBtn
       +'<button class="abtn abtn-edit'+qc+'" onclick="event.stopPropagation();openForm(\''+mid+'\')">Editar</button>'
       +'</div>';
-    var handleTd=reorderMode?'<td class="reorder-handle">&#8942;&#8942;</td>':'';
-    var draggableAttr=reorderMode?' draggable="true" data-order-id="'+mid+'"':'';
+    var handleTd=reorderMode?'<td class="reorder-handle" draggable="true" data-order-id="'+mid+'">&#8942;&#8942;</td>':'';
+    var draggableAttr='';
     var rowClick=(!reorderMode&&m.photo)?'onclick="togglePhoto(\''+mid+'\')"':'';
     html+='<tr class="'+oddCls+'" '+draggableAttr+' '+rowClick+'>'
       +handleTd
@@ -976,21 +976,31 @@ function attachReorderListeners(){
   var rows=document.querySelectorAll('.tbl-main.reorder-mode');
   for(var i=0;i<rows.length;i++){
     var row=rows[i];
-    row.addEventListener('dragstart', _onDragStart);
     row.addEventListener('dragover', _onDragOver);
     row.addEventListener('dragleave', _onDragLeave);
     row.addEventListener('drop', _onDrop);
     row.addEventListener('dragend', _onDragEnd);
-    row.addEventListener('touchstart', _onTouchStart, {passive:false});
-    row.addEventListener('touchmove', _onTouchMove, {passive:false});
-    row.addEventListener('touchend', _onTouchEnd);
+  }
+  var handles=document.querySelectorAll('.reorder-handle[data-order-id]');
+  for(var j=0;j<handles.length;j++){
+    handles[j].addEventListener('dragstart', _onHandleDragStart);
+    handles[j].addEventListener('touchstart', _onHandleTouchStart, {passive:false});
+    handles[j].addEventListener('touchmove', _onTouchMove, {passive:false});
+    handles[j].addEventListener('touchend', _onTouchEnd);
   }
 }
 
-function _onTouchStart(e){
-  _touchSrcEl=this;
+function _onHandleDragStart(e){
   _dragSrcId=this.getAttribute('data-order-id');
-  this.classList.add('dragging');
+  var row=this.closest('tr');
+  if(row) row.classList.add('dragging');
+  e.dataTransfer.effectAllowed='move';
+  try{e.dataTransfer.setData('text/plain',_dragSrcId);}catch(err){}
+}
+function _onHandleTouchStart(e){
+  _dragSrcId=this.getAttribute('data-order-id');
+  _touchSrcEl=this.closest('tr');
+  if(_touchSrcEl) _touchSrcEl.classList.add('dragging');
 }
 function _onTouchMove(e){
   if(!_touchSrcEl) return;
@@ -1022,15 +1032,14 @@ function _onTouchEnd(e){
   _touchSrcEl.classList.remove('dragging');
   _touchSrcEl=null; _touchCurrentOver=null; _dragSrcId=null;
 }
-function _onDragStart(e){
-  _dragSrcId=this.getAttribute('data-order-id');
-  this.classList.add('dragging');
-  e.dataTransfer.effectAllowed='move';
-  try{ e.dataTransfer.setData('text/plain', _dragSrcId); }catch(err){}
+function _getRowId(row){
+  var h=row.querySelector('.reorder-handle[data-order-id]');
+  return h?h.getAttribute('data-order-id'):null;
 }
 function _onDragOver(e){
   e.preventDefault();
-  if(this.getAttribute('data-order-id')===_dragSrcId) return;
+  var tid=_getRowId(this);
+  if(tid===_dragSrcId) return;
   var rect=this.getBoundingClientRect();
   var midY=rect.top+rect.height/2;
   this.classList.remove('drag-over-top','drag-over-bottom');
@@ -1041,18 +1050,16 @@ function _onDragLeave(){
 }
 function _onDrop(e){
   e.preventDefault();
-  var targetId=this.getAttribute('data-order-id');
+  var targetId=_getRowId(this);
   this.classList.remove('drag-over-top','drag-over-bottom');
-  if(!_dragSrcId || _dragSrcId===targetId) return;
+  if(!_dragSrcId||!targetId||_dragSrcId===targetId) return;
   var rect=this.getBoundingClientRect();
-  var midY=rect.top+rect.height/2;
-  var before=(e.clientY<midY);
+  var before=(e.clientY<rect.top+rect.height/2);
   _reorderModels(_dragSrcId, targetId, before);
 }
 function _onDragEnd(){
-  this.classList.remove('dragging');
   var all=document.querySelectorAll('.tbl-main');
-  for(var i=0;i<all.length;i++) all[i].classList.remove('drag-over-top','drag-over-bottom');
+  for(var i=0;i<all.length;i++) all[i].classList.remove('dragging','drag-over-top','drag-over-bottom');
   _dragSrcId=null;
 }
 function _reorderModels(srcId, targetId, before){
