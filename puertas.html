@@ -329,7 +329,7 @@ select.finput{cursor:pointer;}
     <div class="catalog-controls">
       <!-- Buscador + botón toggle filtros -->
       <div class="search-wrap" style="display:flex;align-items:center;gap:8px;">
-        <span style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Buscar</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;min-width:74px;">Buscar</span>
         <div style="position:relative;flex:1;">
           <span class="search-icon">&#128269;</span>
           <input class="search-box" id="search-input" type="text" placeholder="Buscar fabrica, descripcion, medida..." oninput="debouncedRender()">
@@ -339,7 +339,7 @@ select.finput{cursor:pointer;}
 
       <!-- Filtro rápido de depósitos: siempre visible, chips a la izquierda -->
       <div id="deposito-filter-row" style="margin-top:6px;align-items:center;flex-wrap:wrap;display:none;">
-        <span style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Depósito</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;min-width:74px;">Depósito</span>
         <div style="display:flex;flex-wrap:wrap;gap:3px;flex:1;justify-content:flex-start;" id="dep-filter-chips">
           <button class="filter-tab active" id="dep-filter-all" onclick="setDepositoFilter('',this)">Todos</button>
         </div>
