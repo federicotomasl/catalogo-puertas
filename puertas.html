@@ -2084,8 +2084,10 @@ function openMosaicModal(id){
 
   var metaHtml='';
   if(m.fabrica) metaHtml+='<span class="mosaic-tag">'+esc(m.fabrica)+'</span>';
+  if(m.linea)   metaHtml+='<span class="mosaic-tag">'+esc(m.linea)+'</span>';
   if(m.color)   metaHtml+='<span class="mosaic-tag">'+esc(m.color)+'</span>';
   if(m.marco)   metaHtml+='<span class="mosaic-tag">'+esc(m.marco)+'</span>';
+  if(m.deposito) metaHtml+='<span class="mosaic-tag">'+esc(m.deposito)+'</span>';
   var total=0; for(var i=0;i<(m.sizes||[]).length;i++) total+=(m.sizes[i].r||0)+(m.sizes[i].l||0);
   if((m.sizes||[]).length>0) metaHtml+='<span class="mosaic-tag" style="color:var(--text);">Stock: '+total+'</span>';
   metaEl.innerHTML=metaHtml;
