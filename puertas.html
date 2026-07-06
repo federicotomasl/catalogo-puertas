@@ -78,8 +78,8 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 
 .door-header{display:flex;flex-direction:column;gap:2px;}
 .door-header-row1{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
-.door-desc-row{font-size:13px;color:var(--text);font-style:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.ftag{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;padding:1px 6px;border-radius:3px;background:var(--tbg);border:1px solid var(--tbd);color:var(--muted);flex-shrink:0;}
+.door-desc-row{font-size:15px;color:var(--text);font-style:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;}
+.ftag{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;padding:3px 8px;border-radius:4px;background:var(--tbg);border:1px solid var(--tbd);color:var(--muted);flex-shrink:0;}
 /* Fábrica + Línea: naranja */
 .ftag-fab{background:rgba(212,113,31,0.12);border-color:rgba(212,113,31,0.4);color:var(--color-fab);}
 /* Marco: azul */
@@ -322,7 +322,6 @@ select.finput{cursor:pointer;}
           <button class="btn btn-ghost" onclick="toggleTheme()" aria-label="Cambiar tema claro/oscuro">&#9788;</button>
           <div style="width:1px;height:20px;background:var(--border);margin:0 2px;flex-shrink:0;"></div>
           <button id="btn-nuevo" class="btn btn-accent" onclick="openForm(null)">+ Nuevo</button>
-          <button class="btn btn-outline" onclick="openGlobalPanel()">Actualizar</button>
         </div>
       </div>
     </div>
@@ -358,10 +357,6 @@ select.finput{cursor:pointer;}
         <select id="f-fabrica-filter" style="display:none;"><option value="">Todas</option></select>
         <button class="filter-tab" id="grp-fabrica" onclick="toggleGroupFabrica(this)">Agrupar por Fábrica</button>
         <button class="filter-tab" id="no-stock-filter-btn" onclick="toggleNoStockFilter()" title="Filtrar modelos con alguna medida sin stock">Sin stock</button>
-        <div style="margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0;">
-          <button id="del-sel-btn" onclick="deleteSelected()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:default;white-space:nowrap;transition:all .15s;" disabled>Eliminar sel.</button>
-          <button class="filter-tab" id="sel-all-btn" onclick="toggleSelectAll(this)">Sel. todo</button>
-        </div>
       </div>
 
     </div>
@@ -434,6 +429,7 @@ select.finput{cursor:pointer;}
           </div>
         </div>
         <button class="btn-save" id="btn-save" onclick="saveModel()">Guardar Modelo</button>
+        <button id="btn-delete-model" onclick="deleteModelFromForm()" style="display:none;width:100%;padding:12px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:transparent;color:var(--color-danger);border:1px solid var(--color-danger);border-radius:6px;cursor:pointer;margin-top:8px;">Eliminar Modelo</button>
       </div>
     </div>
   </div>
@@ -471,7 +467,7 @@ select.finput{cursor:pointer;}
           <input class="finput" id="gp-new-fabrica" type="text" placeholder="Nueva fábrica..." style="flex:1;" onkeydown="if(event.keyCode===13){event.preventDefault();gpAddFabrica();}">
           <button type="button" onclick="gpAddFabrica()" class="btn-panel-add">+ Agregar</button>
         </div>
-        <div id="gp-fabrica-list"></div>
+        <div id="gp-fabrica-list" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;"></div>
       </div>
 
       <div style="height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:2px 0;opacity:0.5;border-radius:1px;"></div>
@@ -586,7 +582,7 @@ function isConsulta(){ return consultaMode; }
 
 function applyConsultaMode(){
   if(!consultaMode) return;
-  var staticIds=['btn-nuevo','del-sel-btn','undo-btn','redo-btn','reorder-toggle-btn'];
+  var staticIds=['btn-nuevo','undo-btn','redo-btn','reorder-toggle-btn'];
   for(var i=0;i<staticIds.length;i++){
     var el=document.getElementById(staticIds[i]);
     if(el) el.classList.add('consulta-disabled');
@@ -676,7 +672,6 @@ function _applyHistorySnap(fromHistory, toHistory, verbo){
   if(JSON.stringify(prevMedidas)!==JSON.stringify(medidas)) saveMedidas();
   updateFilters(); renderList();
   restoreOpenCards(open);
-  updateSelLabel();
   showToast(verbo+': '+snap.label);
   updateUndoBtn();
   updateRedoBtn();
@@ -844,6 +839,8 @@ function openForm(id){
   renderLineaChips('', '');
   document.getElementById('form-title-bar').textContent = id ? 'Editar Modelo' : 'Nuevo Modelo';
   document.getElementById('btn-save').textContent = id ? 'Guardar Cambios' : 'Guardar Modelo';
+  var delBtn=document.getElementById('btn-delete-model');
+  if(delBtn) delBtn.style.display = id ? 'block' : 'none';
 
   if(id){
     var m = getModel(id);
@@ -1094,7 +1091,7 @@ function gpRenderFabricas(){
     c.innerHTML='<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;color:var(--dim);">Sin fábricas cargadas</div>';
     return;
   }
-  var h='<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:3px;" id="gp-fab-grid">';
+  var h='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;" id="gp-fab-grid">';
   for(var i=0;i<fabricas.length;i++){
     var f=fabricas[i], fab_lineas=(lineas[f]||[]);
     var lineCount=fab_lineas.length>0?'<span style="font-size:9px;color:var(--accent);"> ('+fab_lineas.length+')</span>':'';
@@ -1365,6 +1362,27 @@ function deleteModel(id){
   pushUndo('Eliminar: '+(models[idx].fabrica||models[idx].descripcion||'modelo'));
   models.splice(idx,1); supaDelete(id); updateFilters(); renderList();
   showToast('Modelo eliminado');
+}
+
+var _deleteModelPending = false;
+function deleteModelFromForm(){
+  if(isConsulta()||!editingId) return;
+  var btn=document.getElementById('btn-delete-model');
+  if(!_deleteModelPending){
+    _deleteModelPending=true;
+    btn.textContent='¿Seguro? Toca de nuevo';
+    btn.style.background='var(--color-danger)';
+    btn.style.color='#fff';
+    setTimeout(function(){
+      _deleteModelPending=false;
+      if(btn){ btn.textContent='Eliminar Modelo'; btn.style.background='transparent'; btn.style.color='var(--color-danger)'; }
+    },2500);
+    return;
+  }
+  _deleteModelPending=false;
+  var id=editingId;
+  deleteModel(id);
+  closeForm();
 }
 
 // ===== QUICK STOCK (no re-render) =====
@@ -2175,7 +2193,6 @@ function renderList(){
     var _indRojo=_ind.ambos>0?'<span class="stock-indicator stock-ind-rojo">'+_ind.ambos+'</span>':'<span class="stock-indicator" style="display:none;"></span>';
     html+='<div class="door-card'+(reorderMode?' reorder-mode':'')+'" data-order-id="'+esc(mid)+'" draggable="'+(reorderMode?'true':'false')+'">'
       +(reorderMode?'<span class="reorder-handle" aria-hidden="true">⠿</span>':'')
-      +'<input type="checkbox" class="door-check" data-id="'+mid+'" onchange="updateSelLabel()">'
       +'<div class="door-top">'
       +'<div class="door-header" onclick="handleCardClick(event,\'cb-'+mid+'\',\''+mid+'\')" style="cursor:pointer;">'
       +(m.descripcion?'<div class="door-desc-row">'+esc(m.descripcion)+'</div>':'')
@@ -2205,53 +2222,9 @@ function renderList(){
 }
 
 // ===== SELECT ALL =====
-function toggleSelectAll(btn){
-  var checks=document.querySelectorAll('.door-check');
-  var allChecked=true;
-  for(var i=0;i<checks.length;i++){if(!checks[i].checked){allChecked=false;break;}}
-  for(var j=0;j<checks.length;j++) checks[j].checked=!allChecked;
-  btn.classList.toggle('active',!allChecked);
-  updateSelLabel();
-}
-
-function updateSelLabel(){
-  var checks=document.querySelectorAll('.door-check'), n=0;
-  for(var i=0;i<checks.length;i++){if(checks[i].checked)n++;}
-  var lbl=document.getElementById('count-label');
-  var btn=document.getElementById('del-sel-btn');
-  var total=checks.length;
-  if(n>0){
-    lbl.innerHTML=total+' modelo'+(total!==1?'s':'')+' &nbsp;<span style="color:var(--accent);font-weight:600">'+n+' seleccionado'+(n!==1?'s':'')+'</span>';
-    if(btn){ btn.disabled=false; btn.classList.add('pill-danger'); }
-  } else {
-    lbl.textContent=total+' modelo'+(total!==1?'s':'');
-    if(btn){ btn.disabled=true; btn.classList.remove('pill-danger'); btn.style.background='transparent'; }
-  }
-}
-
-// ===== DELETE SELECTED =====
-function deleteSelected(){
-  if(isConsulta()) return;
-  var checked=document.querySelectorAll('.door-check:checked'), ids={};
-  for(var i=0;i<checked.length;i++) ids[checked[i].getAttribute('data-id')]=true;
-  var n=Object.keys(ids).length;
-  if(n===0) return;
-  pushUndo('Eliminar '+n+' modelo'+(n!==1?'s':''));
-  for(var delId in ids){ if(ids.hasOwnProperty(delId)) supaDelete(delId); }
-  models=models.filter(function(m){return !ids[m.id];});
-  updateFilters(); renderList();
-  updateSelLabel();
-  showToast(n+' modelo'+(n!==1?'s':'')+' eliminado'+(n!==1?'s':''));
-}
-
 // ===== EXPORT / IMPORT =====
 function getExportModels(){
-  var checked=document.querySelectorAll('.door-check:checked'), ids={};
-  for(var i=0;i<checked.length;i++) ids[checked[i].getAttribute('data-id')]=true;
-  if(Object.keys(ids).length===0) return getFiltered();
-  var out=[];
-  for(var j=0;j<models.length;j++){if(ids[models[j].id])out.push(models[j]);}
-  return out;
+  return getFiltered();
 }
 
 // ===== PHOTO PANEL =====
