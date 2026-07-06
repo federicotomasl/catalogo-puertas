@@ -264,15 +264,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
       <div class="flabel-section">Stock</div>
       <div style="display:flex;gap:16px;justify-content:center;align-items:center;">
         <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
-          <div class="stock-input-lbl" style="color:var(--muted);">Unidades</div>
-          <div style="display:flex;align-items:center;gap:6px;">
-            <button type="button" class="stock-adj-btn" onclick="adjFormStock('ff-stock',-1)">−</button>
-            <input class="stock-number" id="ff-stock" type="number" value="0" min="0">
-            <button type="button" class="stock-adj-btn" onclick="adjFormStock('ff-stock',1)">+</button>
-          </div>
-        </div>
-        <div style="color:var(--dim);font-size:20px;font-weight:300;padding-top:18px;">/</div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
           <div class="stock-input-lbl" style="color:var(--muted);">Cajas</div>
           <div style="display:flex;align-items:center;gap:6px;">
             <button type="button" class="stock-adj-btn" onclick="adjFormStock('ff-cajas',-1)">−</button>
@@ -605,7 +596,6 @@ function openForm(id){
   editingId=id||null;formPhoto=null;formCxc=20;
   document.getElementById('ff-desc').value='';
   document.getElementById('ff-codigo').value='';
-  document.getElementById('ff-stock').value=0;
   document.getElementById('ff-cajas').value=0;
   document.getElementById('form-title-bar').textContent=id?'Editar Picaporte':'Nuevo Picaporte';
   document.getElementById('btn-save').textContent=id?'Guardar Cambios':'Guardar Picaporte';
@@ -614,7 +604,6 @@ function openForm(id){
     if(m){
       document.getElementById('ff-desc').value=m.descripcion||'';
       document.getElementById('ff-codigo').value=m.codigo||'';
-      document.getElementById('ff-stock').value=m.stock||0;
       document.getElementById('ff-cajas').value=m.cajas||0;
       formCxc=m.cxc||20;
       formPhoto=m.photo||null;
@@ -640,7 +629,6 @@ function saveModel(){
     id:editingId||String(Date.now()),
     descripcion:desc,
     codigo:(document.getElementById('ff-codigo').value.trim().toUpperCase())||'',
-    stock:parseInt(document.getElementById('ff-stock').value)||0,
     cajas:parseInt(document.getElementById('ff-cajas').value)||0,
     cxc:formCxc,
     photo:formPhoto,
@@ -671,24 +659,22 @@ function deleteModel(id){
 }
 
 // ===== QUICK STOCK =====
-function adjustStock(btn,modelId,field,delta){
+function adjustStock(btn,modelId,delta){
   if(isConsulta) return;
   var m=getModel(modelId);if(!m)return;
-  if(field==='cajas') m.cajas=Math.max(0,(m.cajas||0)+delta);
-  else m.stock=Math.max(0,(m.stock||0)+delta);
-  pushUndo('Stock: '+esc(m.descripcion)+' '+(field==='cajas'?'Cajas':'Uds')+' '+(delta>0?'+':'')+delta);
+  m.cajas=Math.max(0,(m.cajas||0)+delta);
+  pushUndo('Stock: '+esc(m.descripcion)+' Cajas '+(delta>0?'+':'')+delta);
   supaUpsertModel(m).catch(function(e){showToast('Error al guardar: '+e.message);});
   var span=btn.parentNode.querySelector('.qval');
   if(span){
-    var newVal=field==='cajas'?m.cajas:m.stock;
-    span.textContent=newVal;
-    span.className='qval '+(newVal===0?'stock-zero':'stock-u');
+    span.textContent=m.cajas;
+    span.className='qval '+(m.cajas===0?'stock-zero':'stock-u');
   }
   renderSummary();
   var tc=document.getElementById('tbl-total-'+modelId);
   if(tc){
     var cxc=m.cxc||20;
-    var total=(m.cajas||0)*cxc+(m.stock||0);
+    var total=(m.cajas||0)*cxc;
     tc.textContent=total;
     tc.className=total===0?'stock-zero':'stock-u';
   }
@@ -722,7 +708,7 @@ function resetAllStockFromMenu(btn){
     closeMoreMenu();
     pushUndo('Reset stock general');
     for(var i=0;i<models.length;i++){
-      models[i].stock=0;models[i].cajas=0;
+      models[i].cajas=0;
       supaUpsertModel(models[i]).catch(function(e){showToast('Error: '+e.message);});
     }
     renderList();showToast('Stock reseteado a cero');return;
@@ -743,16 +729,14 @@ function resetAllStockFromMenu(btn){
 
 // ===== SUMMARY =====
 function renderSummary(){
-  var total=models.length,units=0,cajas=0,totalUds=0;
+  var total=models.length,cajas=0,totalUds=0;
   for(var i=0;i<models.length;i++){
     var mi=models[i];
-    units+=(mi.stock||0);
     cajas+=(mi.cajas||0);
-    totalUds+=(mi.cajas||0)*(mi.cxc||20)+(mi.stock||0);
+    totalUds+=(mi.cajas||0)*(mi.cxc||20);
   }
   document.getElementById('summary-bar').innerHTML=
     '<div class="summary-chip">Modelos: <span>'+total+'</span></div>'+
-    '<div class="summary-chip">Unidades: <span>'+units+'</span></div>'+
     '<div class="summary-chip">Cajas: <span>'+cajas+'</span></div>'+
     '<div class="summary-chip">Total: <span>'+totalUds+'</span></div>';
 }
@@ -840,7 +824,6 @@ function openMosaicModal(id){
   descEl.textContent=(m.descripcion||'Sin descripcion');
   var metaHtml='';
   if(m.codigo) metaHtml+='<span class="mosaic-tag">'+esc(m.codigo)+'</span>';
-  metaHtml+='<span class="mosaic-tag" style="color:var(--text);">Uds: '+(m.stock||0)+'</span>';
   metaHtml+='<span class="mosaic-tag" style="color:var(--text);">Cajas: '+(m.cajas||0)+'</span>';
   metaEl.innerHTML=metaHtml;
   if(isConsulta){
@@ -880,25 +863,19 @@ function renderList(){
   var rmCls=reorderMode?' reorder-mode':'';
   var handleTh=reorderMode?'<th></th>':'';
   var html='<table class="tbl"><thead><tr>'
-    +handleTh+'<th>Cod</th><th>Descripcion</th><th>Uds</th><th>Cajas</th><th>Total</th><th></th>'
+    +handleTh+'<th>Cod</th><th>Descripcion</th><th>Cajas</th><th>Total</th><th></th>'
     +'</tr></thead><tbody>';
   for(var j=0;j<filtered.length;j++){
     var m=filtered[j],mid=m.id;
     var isOdd=(j%2===1);
     var oddCls=(isOdd?'tbl-main tbl-odd':'tbl-main')+rmCls;
-    var uCls=(m.stock||0)===0?'stock-zero':'stock-u';
     var cCls=(m.cajas||0)===0?'stock-zero':'stock-u';
-    var stockCell='<div class="qbtns">'
-      +'<button class="qbtn'+qc+'" onclick="adjustStock(this,\''+mid+'\',\'stock\',-1)">-</button>'
-      +'<span class="qval '+uCls+'">'+(m.stock||0)+'</span>'
-      +'<button class="qbtn'+qc+'" onclick="adjustStock(this,\''+mid+'\',\'stock\',1)">+</button>'
-      +'</div>';
     var cajasCell='<div class="qbtns">'
-      +'<button class="qbtn'+qc+'" onclick="adjustStock(this,\''+mid+'\',\'cajas\',-1)">-</button>'
+      +'<button class="qbtn'+qc+'" onclick="adjustStock(this,\''+mid+'\',-1)">-</button>'
       +'<span class="qval '+cCls+'">'+(m.cajas||0)+'</span>'
-      +'<button class="qbtn'+qc+'" onclick="adjustStock(this,\''+mid+'\',\'cajas\',1)">+</button>'
+      +'<button class="qbtn'+qc+'" onclick="adjustStock(this,\''+mid+'\',1)">+</button>'
       +'</div>';
-    var total=(m.cajas||0)*(m.cxc||20)+(m.stock||0);
+    var total=(m.cajas||0)*(m.cxc||20);
     var totalCls=total===0?'stock-zero':'stock-u';
     var photoBtn=m.photo?'<button class="photo-btn" id="phbtn-'+mid+'" onclick="togglePhoto(\''+mid+'\')">▼ Foto</button>':'';
     var actCell='<div style="display:flex;gap:3px;align-items:center;justify-content:flex-end;flex-wrap:nowrap;">'
@@ -912,7 +889,6 @@ function renderList(){
       +handleTd
       +'<td class="td-code">'+(m.codigo?esc(m.codigo):'<span style="color:var(--dim)">—</span>')+'</td>'
       +'<td class="td-desc">'+esc(m.descripcion||'—')+'</td>'
-      +'<td style="white-space:nowrap;">'+stockCell+'</td>'
       +'<td style="white-space:nowrap;">'+cajasCell+'</td>'
       +'<td style="text-align:center;font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:12px;" id="tbl-total-'+mid+'" class="'+totalCls+'">'+total+'</td>'
       +'<td style="text-align:right;">'+actCell+'</td>'
@@ -1118,8 +1094,8 @@ function importBackup(e){
 function exportCSV(){
   try{
     var data=getExportModels();
-    var rows=[['Codigo','Descripcion','Unidades','Cajas']];
-    for(var i=0;i<data.length;i++){var m=data[i];rows.push([m.codigo||'',m.descripcion||'',m.stock||0,m.cajas||0]);}
+    var rows=[['Codigo','Descripcion','Cajas']];
+    for(var i=0;i<data.length;i++){var m=data[i];rows.push([m.codigo||'',m.descripcion||'',m.cajas||0]);}
     var csv=rows.map(function(r){return r.map(function(c){var s=String(c);return s.indexOf(',')!==-1||s.indexOf('"')!==-1||s.indexOf('\n')!==-1?'"'+s.replace(/"/g,'""')+'"':s;}).join(',');}).join('\r\n');
     var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
     var url=URL.createObjectURL(blob);
@@ -1135,7 +1111,7 @@ function exportPDF(){
   var rows='';
   for(var i=0;i<data.length;i++){
     var m=data[i],rc=(i%2===1)?'even':'';
-    rows+='<tr class="'+rc+'"><td>'+(m.codigo?esc(m.codigo):'—')+'</td><td>'+esc(m.descripcion||'-')+'</td><td>'+(m.stock||0)+'</td><td>'+(m.cajas||0)+'</td></tr>';
+    rows+='<tr class="'+rc+'"><td>'+(m.codigo?esc(m.codigo):'—')+'</td><td>'+esc(m.descripcion||'-')+'</td><td>'+(m.cajas||0)+'</td></tr>';
   }
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Catalogo de Picaportes</title><style>'
     +'body{font-family:Arial,sans-serif;padding:20px;font-size:12px;max-width:640px;margin:0 auto;}'
@@ -1144,7 +1120,7 @@ function exportPDF(){
     +'td{padding:5px 6px;border-bottom:1px solid #eee;vertical-align:middle;}tr.even td{background:#fdf5ef;}'
     +'</style></head><body>'
     +'<h1>Catalogo de Picaportes <span>'+data.length+' modelo'+(data.length!==1?'s':'')+'</span></h1>'
-    +'<table><thead><tr><th>Cod</th><th>Descripcion</th><th>Unidades</th><th>Cajas</th></tr></thead><tbody>'+rows+'</tbody></table></body></html>';
+    +'<table><thead><tr><th>Cod</th><th>Descripcion</th><th>Cajas</th></tr></thead><tbody>'+rows+'</tbody></table></body></html>';
   var win=window.open('','_blank');
   if(win){win.document.write(html);win.document.close();}
   else{var blob=new Blob([html],{type:'text/html'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='catalogo-picaportes.html';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(url);},1000);}
