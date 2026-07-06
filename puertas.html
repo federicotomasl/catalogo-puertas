@@ -361,28 +361,25 @@ select.finput{cursor:pointer;}
 
       <!-- Filtros + Agrupar en un mismo renglón -->
       <div style="display:flex;align-items:center;justify-content:flex-start;gap:5px;margin-top:6px;flex-wrap:wrap;position:relative;">
-        <button class="filter-tab" id="grp-fabrica" onclick="toggleGroupFabrica(this)">Agrupar por Fábrica</button>
-        <!-- Filtro fábrica: ✕ + chip agrupados -->
-        <div style="display:inline-flex;align-items:center;gap:0;border:1px solid var(--border);border-radius:20px;overflow:hidden;background:var(--bg2);">
-          <button class="filter-tab active" id="filter-clear-tab" onclick="resetFilters()" title="Limpiar filtro" style="border:none;border-radius:0;border-right:1px solid var(--border);padding:3px 8px;">✕</button>
+        <div style="display:inline-flex;align-items:center;gap:0;border:1px solid var(--border);border-radius:20px;overflow:visible;background:var(--bg2);flex-shrink:0;position:relative;">
+          <button class="filter-tab active" id="filter-clear-tab" onclick="resetFilters()" title="Limpiar filtro" style="border:none;border-radius:20px 0 0 20px;border-right:1px solid var(--border);padding:3px 8px;">✕</button>
           <div class="fchip-wrap" style="margin:0;">
-            <button class="fchip" id="fchip-fabrica" onclick="toggleFchip('fabrica')" style="border:none;border-radius:0;background:transparent;padding:3px 10px;">Fábrica <span class="fchip-arrow">▼</span></button>
+            <button class="fchip" id="fchip-fabrica" onclick="toggleFchip('fabrica')" style="border:none;border-radius:0 20px 20px 0;background:transparent;padding:3px 10px;">Fábrica <span class="fchip-arrow">▼</span></button>
             <div class="fchip-drop" id="fchip-drop-fabrica"><div class="fchip-opts" id="fchip-opts-fabrica"></div></div>
           </div>
         </div>
         <select id="f-fabrica-filter" style="display:none;"><option value="">Todas</option></select>
+        <button class="filter-tab" id="grp-fabrica" onclick="toggleGroupFabrica(this)">Agrupar por Fábrica</button>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0;">
+          <button id="del-sel-btn" onclick="deleteSelected()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:default;white-space:nowrap;transition:all .15s;" disabled>Eliminar sel.</button>
+          <button class="filter-tab" id="sel-all-btn" onclick="toggleSelectAll(this)">Sel. todo</button>
+          <button class="filter-tab" id="reorder-toggle-btn" onclick="toggleReorderMode()" title="Reordenar manualmente las cards" aria-label="Reordenar manual">&#8645;</button>
+        </div>
       </div>
 
     </div>
 
-    <div style="display:flex;align-items:center;justify-content:flex-start;gap:5px;margin:8px 12px 6px;">
-      <div id="count-label" style="display:none;"></div>
-      <div style="margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0;">
-        <button id="del-sel-btn" onclick="deleteSelected()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:default;white-space:nowrap;transition:all .15s;" disabled>Eliminar sel.</button>
-        <button class="filter-tab" id="sel-all-btn" onclick="toggleSelectAll(this)">Sel. todo</button>
-        <button class="filter-tab" id="reorder-toggle-btn" onclick="toggleReorderMode()" title="Reordenar manualmente las cards" aria-label="Reordenar manual">Orden manual</button>
-      </div>
-    </div>
+    <div style="margin:4px 12px 6px;"><div id="count-label" style="display:none;"></div></div>
     <div class="divider"></div>
     <div class="door-list" id="door-list" role="list" aria-label="Catálogo de puertas"></div>
   </div>
