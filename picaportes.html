@@ -79,6 +79,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 .qval{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;min-width:18px;text-align:center;display:inline-block;}
 .stock-u{color:var(--text);}
 .stock-zero{color:var(--zero);font-weight:700;}
+.qval-input{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;width:36px;height:22px;text-align:center;background:var(--bg3);border:1px solid var(--accent);border-radius:3px;color:var(--text);padding:0;}
 
 /* PHOTO TOGGLE BTN */
 .photo-btn{background:transparent;border:1px solid var(--border);border-radius:3px;color:var(--dim);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;padding:2px 6px;transition:all .15s;white-space:nowrap;}
@@ -693,6 +694,42 @@ function adjustStock(btn,modelId,delta){
   }
 }
 
+// ===== INLINE STOCK EDIT =====
+function editStockDirect(span, modelId){
+  if(isConsulta) return;
+  var m=getModel(modelId); if(!m) return;
+  var cur=m.cajas||0;
+  var inp=document.createElement('input');
+  inp.type='number'; inp.min='0'; inp.value=cur;
+  inp.className='qval-input';
+  span.parentNode.replaceChild(inp, span);
+  inp.focus(); inp.select();
+  var committed=false;
+  function commit(){
+    if(committed) return; committed=true;
+    var val=Math.max(0,parseInt(inp.value)||0);
+    var m2=getModel(modelId); if(!m2) return;
+    if(val!==m2.cajas){
+      pushUndo('Stock: '+esc(m2.descripcion)+' Cajas '+val);
+      m2.cajas=val;
+      supaUpsertModel(m2).catch(function(e){showToast('Error: '+e.message);});
+    }
+    var newSpan=document.createElement('span');
+    newSpan.className='qval '+(val===0?'stock-zero':'stock-u');
+    newSpan.textContent=val;
+    newSpan.onclick=function(){ editStockDirect(newSpan, modelId); };
+    if(inp.parentNode) inp.parentNode.replaceChild(newSpan, inp);
+    renderSummary();
+    var tc=document.getElementById('tbl-total-'+modelId);
+    if(tc){var t=val*(m2.cxc||20);tc.textContent=t;tc.className=t===0?'stock-zero':'stock-u';}
+  }
+  inp.addEventListener('blur', commit);
+  inp.addEventListener('keydown', function(e){
+    if(e.key==='Enter'){e.preventDefault();inp.blur();}
+    if(e.key==='Escape'){committed=true;if(inp.parentNode)inp.parentNode.replaceChild(span,inp);}
+  });
+}
+
 // ===== PHOTO TOGGLE =====
 function togglePhoto(id){
   var expand=document.getElementById('ph-'+id);
@@ -881,7 +918,7 @@ function renderList(){
     var cCls=(m.cajas||0)===0?'stock-zero':'stock-u';
     var cajasCell='<div class="qbtns">'
       +'<button class="qbtn'+qc+'" onclick="adjustStock(this,\''+mid+'\',-1)">-</button>'
-      +'<span class="qval '+cCls+'">'+(m.cajas||0)+'</span>'
+      +'<span class="qval '+cCls+'" onclick="editStockDirect(this,\''+mid+'\')">'+(m.cajas||0)+'</span>'
       +'<button class="qbtn'+qc+'" onclick="adjustStock(this,\''+mid+'\',1)">+</button>'
       +'</div>';
     var total=(m.cajas||0)*(m.cxc||20);
