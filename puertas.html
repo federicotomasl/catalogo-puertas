@@ -42,7 +42,9 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font
 
 /* CATALOG CONTROLS */
 .catalog-controls{padding:8px 12px 0;}
-.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:12px;pointer-events:none;}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:12px;pointer-events:none;transition:opacity .15s;}
+.search-icon.spinning{animation:search-spin .6s linear infinite;}
+@keyframes search-spin{from{transform:translateY(-50%) rotate(0deg);}to{transform:translateY(-50%) rotate(360deg);}}
 .search-box{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:7px 10px 7px 30px;color:var(--text);font-family:'Barlow',sans-serif;font-size:12px;outline:none;}
 .search-box::placeholder{color:var(--dim);}
 .filter-tab{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:8px 14px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .15s;min-height:38px;display:inline-flex;align-items:center;justify-content:center;}
@@ -1994,7 +1996,12 @@ var searchTimer=null;
 function debouncedRender(){
   if(searchTimer) clearTimeout(searchTimer);
   if(reorderMode){ toggleReorderMode(); return; }
-  searchTimer=setTimeout(renderList,180);
+  var icon=document.querySelector('.search-icon');
+  if(icon) icon.classList.add('spinning');
+  searchTimer=setTimeout(function(){
+    renderList();
+    if(icon) icon.classList.remove('spinning');
+  },180);
 }
 
 // ===== GROUP BY =====
