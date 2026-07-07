@@ -328,7 +328,7 @@ select.finput{cursor:pointer;}
 
     <div class="catalog-controls">
       <!-- Buscador + botón toggle filtros -->
-      <div class="search-wrap" style="display:flex;align-items:center;gap:8px;">
+      <div class="search-wrap autofit-row" style="display:flex;align-items:center;gap:8px;">
         <span style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;min-width:74px;">Buscar</span>
         <div style="position:relative;flex:1;">
           <span class="search-icon">&#128269;</span>
@@ -338,7 +338,7 @@ select.finput{cursor:pointer;}
       </div>
 
       <!-- Filtro rápido de depósitos: siempre visible, chips a la izquierda -->
-      <div id="deposito-filter-row" style="margin-top:6px;align-items:center;flex-wrap:wrap;display:none;">
+      <div id="deposito-filter-row" class="autofit-row" style="margin-top:6px;align-items:center;flex-wrap:wrap;display:none;">
         <span style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;min-width:74px;">Depósito</span>
         <div style="display:flex;flex-wrap:wrap;gap:3px;flex:1;justify-content:flex-start;" id="dep-filter-chips">
           <button class="filter-tab active" id="dep-filter-all" onclick="setDepositoFilter('',this)">Todos</button>
@@ -346,7 +346,7 @@ select.finput{cursor:pointer;}
       </div>
 
       <!-- Filtros + Agrupar en un mismo renglón -->
-      <div style="display:flex;align-items:center;justify-content:flex-start;gap:5px;margin-top:6px;flex-wrap:wrap;position:relative;">
+      <div class="autofit-row" style="display:flex;align-items:center;justify-content:flex-start;gap:5px;margin-top:6px;flex-wrap:wrap;position:relative;">
         <button class="filter-tab active" id="filter-clear-tab" onclick="resetFilters()" title="Limpiar filtro">✕</button>
         <div class="fchip-wrap">
           <button class="fchip" id="fchip-fabrica" onclick="toggleFchip('fabrica')">Fábrica <span class="fchip-arrow">▼</span></button>
@@ -1559,6 +1559,7 @@ function updateDepositoFilterRow(){
     html+='<button class="filter-tab'+(currentDepositoFilter===d?' active':'')+'" onclick="setDepositoFilter(\''+esc(d)+'\',this)">'+esc(d)+'</button>';
   }
   chips.innerHTML=html;
+  if(typeof scheduleAutofit==='function') scheduleAutofit();
 }
 
 function setFchipValue(key, val, label){
@@ -2110,6 +2111,7 @@ function renderList(){
   var n=filtered.length;
   var cl=document.getElementById('count-label'); if(cl) cl.textContent=n+' modelo'+(n!==1?'s':'');
   renderSummary();
+  if(typeof scheduleAutofit==='function') scheduleAutofit();
 
   var groups=groupModels(filtered);
   if(viewMode==='mosaic'){ renderMosaic(filtered, groups); updateResetBtn(); if(consultaMode) applyConsultaMode(); return; }
@@ -2756,6 +2758,71 @@ function updateTotalsBarTop(){
 }
 updateTotalsBarTop();
 window.addEventListener('resize', updateTotalsBarTop);
+
+// ===== AUTOFIT: reduce font-size/padding si una fila de controles no entra en una línea =====
+var AUTOFIT_MIN_FONT = 10;
+var AUTOFIT_MAX_STEPS = 6;
+var AUTOFIT_STEP = 0.5;
+
+function autofitRow(row){
+  if(!row || row.style.display==='none') return;
+  var targets=row.querySelectorAll('.filter-tab,.fchip,span');
+  if(!targets.length) return;
+  // Restaurar a valores base antes de medir (guardados en dataset la primera vez)
+  for(var i=0;i<targets.length;i++){
+    var el=targets[i];
+    if(el.dataset.autofitBaseFont===undefined){
+      var cs=window.getComputedStyle(el);
+      el.dataset.autofitBaseFont=parseFloat(cs.fontSize);
+      el.dataset.autofitBasePadV=parseFloat(cs.paddingTop);
+      el.dataset.autofitBasePadH=parseFloat(cs.paddingLeft);
+    }
+    el.style.fontSize=el.dataset.autofitBaseFont+'px';
+    if(el.dataset.autofitBasePadV!==undefined){
+      el.style.paddingTop=el.dataset.autofitBasePadV+'px';
+      el.style.paddingBottom=el.dataset.autofitBasePadV+'px';
+      el.style.paddingLeft=el.dataset.autofitBasePadH+'px';
+      el.style.paddingRight=el.dataset.autofitBasePadH+'px';
+    }
+  }
+  var steps=0;
+  while(row.scrollWidth>row.clientWidth+1 && steps<AUTOFIT_MAX_STEPS){
+    var reduced=false;
+    for(var j=0;j<targets.length;j++){
+      var t=targets[j];
+      var curFont=parseFloat(t.style.fontSize)||parseFloat(t.dataset.autofitBaseFont);
+      var newFont=Math.max(AUTOFIT_MIN_FONT, curFont-AUTOFIT_STEP);
+      if(newFont<curFont){
+        t.style.fontSize=newFont+'px';
+        reduced=true;
+      }
+      if(t.dataset.autofitBasePadH!==undefined){
+        var curPadH=parseFloat(t.style.paddingLeft)||parseFloat(t.dataset.autofitBasePadH);
+        var newPadH=Math.max(4, curPadH-1);
+        if(newPadH<curPadH){
+          t.style.paddingLeft=newPadH+'px';
+          t.style.paddingRight=newPadH+'px';
+        }
+      }
+    }
+    steps++;
+    if(!reduced) break;
+  }
+}
+
+function autofitAllRows(){
+  var rows=document.querySelectorAll('.autofit-row');
+  for(var i=0;i<rows.length;i++) autofitRow(rows[i]);
+}
+
+var _autofitTimer=null;
+function scheduleAutofit(){
+  if(_autofitTimer) clearTimeout(_autofitTimer);
+  _autofitTimer=setTimeout(autofitAllRows, 180);
+}
+
+window.addEventListener('resize', scheduleAutofit);
+scheduleAutofit();
 
 // Ctrl+Z / Ctrl+Y / Ctrl+Shift+Z keyboard shortcuts
 document.addEventListener('keydown', function(e){
